@@ -138,7 +138,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className=" grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4 max-h-128 ">
+    <div className=" grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4  ">
       {/* contorle panel */}
       <div className="col-start-1  col-end-2  row-start-1 row-end-2  flex flex-row items-center shadow_box  border-2 border-light-primary">
         {/*  */}

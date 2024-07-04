@@ -295,6 +295,9 @@ export const schoolData = [
             ]
           }
         ]
+      },{
+        name:"Middle Secondary",
+        standards:[]
       },
       {
         name: "Higher Secondary",

@@ -18,10 +18,8 @@ const Main = () => {
 
     
     <div
-      className={classNames(
-        "h-full w-full grid  grid-rows-[5rem_1fr] duration-500 bg-dark-background1",
-        fullMenu ? "grid-cols-[10rem_1fr]" : "grid-cols-[5rem_1fr] "
-      )}
+      className={`h-full  w-full grid  grid-rows-[5rem_1fr] duration-500 bg-dark-background1
+        ${fullMenu? "grid-cols-[10rem_1fr]" : "grid-cols-[5rem_1fr]"}   `}
     >
       {/* grind item one */}
       <div class="bg-light-primary opacity-90 border-b border-white border-opacity-70 flex justify-center items-center ">
