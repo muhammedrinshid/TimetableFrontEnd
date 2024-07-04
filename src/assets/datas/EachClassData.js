@@ -3,7 +3,9 @@ export const schoolData = [
         name: "Elementary",
         standards: [
           {
-            name: "KG",
+            name: "LKG",
+            shortName :"LKG",
+
             divisions: [
               {
                 name: "A",
@@ -24,7 +26,7 @@ export const schoolData = [
                     lessonsPerWeek: 3
                   }
                 ],
-                totalClassesPerWeek: 25
+                totalAssingedClassesPerWeek: 25
               },
               {
                 name: "B",
@@ -45,12 +47,13 @@ export const schoolData = [
                     lessonsPerWeek: 3
                   }
                 ],
-                totalClassesPerWeek: 25
+                totalAssingedClassesPerWeek: 25
               }
             ]
           },
           {
             name: "1st Grade",
+            shortName :"1",
             divisions: [
               {
                 name: "A",
@@ -71,7 +74,7 @@ export const schoolData = [
                     lessonsPerWeek: 3
                   }
                 ],
-                totalClassesPerWeek: 25
+                totalAssingedClassesPerWeek: 25
               },
               {
                 name: "B",
@@ -92,7 +95,7 @@ export const schoolData = [
                     lessonsPerWeek: 3
                   }
                 ],
-                totalClassesPerWeek: 25
+                totalAssingedClassesPerWeek: 25
               }
             ]
           }
@@ -103,6 +106,8 @@ export const schoolData = [
         standards: [
           {
             name: "6th Grade",
+            shortName :"6",
+
             divisions: [
               {
                 name: "A",
@@ -123,10 +128,11 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 30
+                totalAssingedClassesPerWeek: 30
               },
               {
                 name: "B",
+                
                 subjects: [
                   {
                     name: "English",
@@ -144,12 +150,14 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 30
+                totalAssingedClassesPerWeek: 30
               }
             ]
           },
           {
             name: "7th Grade",
+            shortName :"7",
+
             divisions: [
               {
                 name: "A",
@@ -170,7 +178,7 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 30
+                totalAssingedClassesPerWeek: 30
               },
               {
                 name: "B",
@@ -191,7 +199,7 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 30
+                totalAssingedClassesPerWeek: 30
               }
             ]
           }
@@ -202,6 +210,8 @@ export const schoolData = [
         standards: [
           {
             name: "9th Grade",
+            shortName :"9",
+
             divisions: [
               {
                 name: "A",
@@ -222,7 +232,7 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 35
+                totalAssingedClassesPerWeek: 35
               },
               {
                 name: "B",
@@ -243,12 +253,14 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 35
+                totalAssingedClassesPerWeek: 35
               }
             ]
           },
           {
             name: "10th Grade",
+            shortName :"10",
+
             divisions: [
               {
                 name: "A",
@@ -269,7 +281,7 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 35
+                totalAssingedClassesPerWeek: 35
               },
               {
                 name: "B",
@@ -290,7 +302,7 @@ export const schoolData = [
                     lessonsPerWeek: 4
                   }
                 ],
-                totalClassesPerWeek: 35
+                totalAssingedClassesPerWeek: 35
               }
             ]
           }
@@ -304,6 +316,8 @@ export const schoolData = [
         standards: [
           {
             name: "11th Grade",
+            shortName :"11",
+
             divisions: [
               {
                 name: "A",
@@ -329,7 +343,7 @@ export const schoolData = [
                     lessonsPerWeek: 6
                   }
                 ],
-                totalClassesPerWeek: 40
+                totalAssingedClassesPerWeek: 40
               },
               {
                 name: "B",
@@ -355,12 +369,14 @@ export const schoolData = [
                     lessonsPerWeek: 6
                   }
                 ],
-                totalClassesPerWeek: 40
+                totalAssingedClassesPerWeek: 40
               }
             ]
           },
           {
             name: "12th Grade",
+            shortName :"12",
+
             divisions: [
               {
                 name: "A",
@@ -386,7 +402,7 @@ export const schoolData = [
                     lessonsPerWeek: 6
                   }
                 ],
-                totalClassesPerWeek: 40
+                totalAssingedClassesPerWeek: 40
               },
               {
                 name: "B",
@@ -412,7 +428,7 @@ export const schoolData = [
                     lessonsPerWeek: 6
                   }
                 ],
-                totalClassesPerWeek: 40
+                totalAssingedClassesPerWeek: 40
               }
             ]
           }
