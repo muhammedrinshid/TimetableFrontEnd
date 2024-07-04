@@ -1,3 +1,4 @@
+import { schoolData } from "./EachClassData";
 import { Teacher_data } from "./Teacher";
 import bottomMenu from "./bottommenu";
 import { class_data } from "./class_data";
@@ -18,4 +19,5 @@ export {
   timeSlots,
   teachers1,
   subjectData,
+  schoolData
 };

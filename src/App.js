@@ -6,6 +6,7 @@ import PrivateRoute from "./utlts/PrivateRoute";
 import Wrokshop from "./pages/Workshop";
 import TeachersInSchool from "./pages/Main/TeachersInSchool";
 import Dashboard from "./pages/Main/Dashboard";
+import ClassesInSchool from "./pages/Main/ClassesInSchool";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
                 <Route path="/" element={<Main />}>
                   <Route index element={<Dashboard />} />
                   <Route path="teachers" element={<TeachersInSchool />} />
+                  <Route path="classes" element={<ClassesInSchool />} />
                 </Route>
               </Route>
               <Route path="login" element={<Login />} />
