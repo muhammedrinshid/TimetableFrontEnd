@@ -27,7 +27,9 @@ export const AuthProvider = ({children})=>{
         is_authenticated:is_authenticated,
         fullMenu:fullMenu,
         setFullmenu:setFullmenu,
-        NumberOfPeriodsInAday:6
+        NumberOfPeriodsInAday:7,
+        numbeOfDayInWeek:5,
+        totalperiodsInWeek:40,
 
     }
 

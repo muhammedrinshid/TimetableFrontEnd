@@ -11,14 +11,13 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 const getRandomLightColor = () => {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 70%, 80%)`;
 };
 
-const DivisionCard = ({ divisionName, totalAssignedLessons, totalNeededLessons }) => {
+const DivisionCard = ({ divisionName, totalAssignedLessons, totalNeededLessons,setISelectedClassforView }) => {
   const avatarLetter = divisionName.charAt(0).toUpperCase();
   const avatarColor = getRandomLightColor();
   const progressPercentage = (parseInt(totalAssignedLessons) / totalNeededLessons) * 100;
@@ -75,8 +74,8 @@ const DivisionCard = ({ divisionName, totalAssignedLessons, totalNeededLessons }
           </IconButton>
         </Tooltip>
         <Tooltip title="Add lesson" arrow>
-          <IconButton aria-label="add lesson" size="small">
-            <AddIcon />
+          <IconButton aria-label="add lesson" size="small" onClick={()=>setISelectedClassforView({isOpen:true})}>
+            <FullscreenIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete division" arrow>

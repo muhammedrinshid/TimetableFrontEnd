@@ -17,7 +17,7 @@ const getRandomLightColor = () => {
   return `hsl(${hue}, 70%, 80%)`;
 };
 
-const ClassCard = ({ standardName, numberOfDivisions,shortName ,addNewDivision,grade }) => {
+const ClassCard = ({ standardName, numberOfDivisions,shortName ,addNewDivision,grade,openAssignTeacherForm }) => {
   const avatarLetter = shortName 
   const avatarColor = getRandomLightColor();
 
@@ -52,7 +52,7 @@ const ClassCard = ({ standardName, numberOfDivisions,shortName ,addNewDivision,g
           {standardName}
         </Typography>
         <Typography variant="body2" color="text.secondary" component="div">
-          {numberOfDivisions} {numberOfDivisions === 1 ? 'Division' : 'Divisions'}
+          {numberOfDivisions+1} {numberOfDivisions === 1 ? 'Division' : 'Divisions'}
         </Typography>
       </CardContent>
       <Box sx={{ 
@@ -66,7 +66,7 @@ const ClassCard = ({ standardName, numberOfDivisions,shortName ,addNewDivision,g
           </IconButton>
         </Tooltip>
         <Tooltip title="Assign subjects to all sections" arrow>
-          <IconButton aria-label="assign subjects" size="small">
+          <IconButton aria-label="assign subjects" size="small" onClick={()=>openAssignTeacherForm({grade:grade.name,standard:standardName,type:"all"})}>
             <SubjectIcon />
           </IconButton>
         </Tooltip>

@@ -7,6 +7,7 @@ import Wrokshop from "./pages/Workshop";
 import TeachersInSchool from "./pages/Main/TeachersInSchool";
 import Dashboard from "./pages/Main/Dashboard";
 import ClassesInSchool from "./pages/Main/ClassesInSchool";
+import SavedTimeTables from "./pages/Main/YourtimeTables";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="teachers" element={<TeachersInSchool />} />
                   <Route path="classes" element={<ClassesInSchool />} />
+                  <Route path="saved-timetables" element={<SavedTimeTables />} />
                 </Route>
               </Route>
               <Route path="login" element={<Login />} />
