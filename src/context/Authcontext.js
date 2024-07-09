@@ -1,3 +1,4 @@
+import { Password } from "@mui/icons-material";
 import React, {
     
     createContext,
@@ -11,8 +12,11 @@ const AuthContext = createContext();
 export const useAuth=()=>{
     return useContext(AuthContext)
 }
-
+let apiDomain="http://127.0.0.1:8000"
 export const AuthProvider = ({children})=>{
+
+
+   
 
 
 
@@ -30,6 +34,7 @@ export const AuthProvider = ({children})=>{
         NumberOfPeriodsInAday:7,
         numbeOfDayInWeek:5,
         totalperiodsInWeek:40,
+        apiDomain:apiDomain,
 
     }
 

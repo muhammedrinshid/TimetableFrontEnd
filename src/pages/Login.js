@@ -4,6 +4,29 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 const Login = () => {
+
+
+  const tempUserLogin=async(e)=>{
+    console.log("submitted")
+
+    e.preventDefault()
+    let response=fetch('http://127.0.0.1:8000/api/token/',{
+        method:'POST',
+        headers:{
+            'Content-type':'application/json'
+
+        },
+        body:JSON.stringify({
+            'username':null
+            ,
+            'password':null
+        })
+
+    })
+    console.log(response)
+
+}
+
   return (
     <div className=" bg-white h-full w-full flex flex-col sm:flex-row   overflow-clip backdrop-blur-xl bg-white/30 ">
       <div class=" bg-white h-1/2 w-full sm:w-1/2 sm:h-full ">
@@ -17,7 +40,9 @@ const Login = () => {
           </p>
 
           {/* sign in form starts here */}
-          <form className="w-full ">
+          <form className="w-full "  onSubmit={(e)=>{
+              tempUserLogin(e)
+            }}>
             {/* email section */}
             <div className="mb-8 w-full ">
               <label className="input-label1" htmlFor="email">
@@ -60,7 +85,7 @@ const Login = () => {
           <p className="m-8 text-text_2 text-center">
             Don't have an account?{" "}
             <span className="text-light-primary text-nowrap font-semibold opacity-60 hover:opacity-100">
-              <Link>Sign Up</Link>
+              <Link >Sign Up</Link>
             </span>
           </p>
         </div>
