@@ -12,7 +12,7 @@ import SavedTimeTables from "./pages/Main/YourtimeTables";
 function App() {
   return (
     <div className="w-full min-h-screen bg-light-background flex items-center justify-center font-Roboto">
-      <div className="w-full wide:max-w-8xl  h-screen  wide:max-h-128   rounded-md   shadow-custom-2 overflow-clip bg-slate-50">
+      <div className="w-full wide:max-w-8xl  h-screen  wide:max-h-128   wide:rounded-md   shadow-custom-2 overflow-clip bg-slate-50">
         <BrowserRouter>
           <AuthProvider>
             <Routes>
