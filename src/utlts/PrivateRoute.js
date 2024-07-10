@@ -6,12 +6,13 @@ import { useAuth } from '../context/Authcontext'
 const PrivateRoute = () => {
 
                                                                                                     
-    const {is_authenticated}=useAuth()
+    const {user}=useAuth()
+    console.log(user)
 
   
 
   return (
-    is_authenticated?<Outlet/>:<Navigate to="/login" />
+    user===null?<Navigate to="/login" />:<Outlet/>
   )
 }
 

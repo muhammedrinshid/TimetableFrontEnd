@@ -220,7 +220,7 @@ const ClassList = ({ setISelectedClassforView }) => {
   // filter the grade accroding to the selected grade
 const filteredGrades = whichGradeToDisplay ? classByGrade.filter(grade => grade.name === whichGradeToDisplay) : classByGrade;
   return (
-    <div className=" relative">
+    <div className=" relative ">
       {/* header and contorle  section */}
       <div className="">
         {/* header */}

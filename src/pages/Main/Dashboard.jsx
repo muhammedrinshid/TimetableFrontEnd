@@ -18,6 +18,7 @@ import TeacherViewOneDayTt from "../../components/specific/Dashboard/TeacherView
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import StudentrViewOneDayTt from "../../components/specific/Dashboard/StudentrViewOneDayTt";
 import SwapTeacherPopus from "../../components/specific/Dashboard/SwapTeacherPopus";
+import CustomDatePicker from "../../components/Mui components/StyledDatePicker";
 
 const Dashboard = () => {
   const [whoWantSwap, setWhoWantSwap] = useState({
@@ -140,7 +141,7 @@ const Dashboard = () => {
   return (
     <div className=" grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4  ">
       {/* contorle panel */}
-      <div className="col-start-1  col-end-2  row-start-1 row-end-2  flex flex-row items-center shadow_box  border-2 border-light-primary">
+      <div className="col-start-1  col-end-2  row-start-1 row-end-2  flex flex-row items-center shadow_box   border-light-primary">
         {/*  */}
         {/* view controler tacher and student */}
         <div className="flex flex-row  w-full h-full basis-2/3 rounded-lg mr-2">
@@ -160,7 +161,9 @@ const Dashboard = () => {
         </div>
       </div>
       {/* date selector */}
-      <div className="col-start-2 col-end-3 row-start-1 row-end-2 shadow_box flex flex-row justify-be items-center "></div>
+      <div className="col-start-2 col-end-3 row-start-1 row-end-2 shadow_box flex flex-row justify-be items-center ">
+            
+      </div>
       {/* thecher present status of the day  */}
       <div className="col-start-3 col-end-4 row-start-1 row-end-3 shadow_box flex flex-col overflow-hidden">
         <TeacherAttendanceStatus

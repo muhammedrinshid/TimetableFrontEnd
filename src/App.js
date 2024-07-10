@@ -8,10 +8,26 @@ import TeachersInSchool from "./pages/Main/TeachersInSchool";
 import Dashboard from "./pages/Main/Dashboard";
 import ClassesInSchool from "./pages/Main/ClassesInSchool";
 import SavedTimeTables from "./pages/Main/YourtimeTables";
-
+import { ToastContainer, toast, Flip } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <div className="w-full min-h-screen bg-light-background flex items-center justify-center font-Roboto">
+<ToastContainer
+  position="bottom-right"
+  autoClose={4000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="colored"
+  icon={true}
+  limit={3}
+  transition={Flip}
+/>
       <div className="w-full wide:max-w-8xl  h-screen  wide:max-h-128   wide:rounded-md   shadow-custom-2 overflow-clip bg-slate-50">
         <BrowserRouter>
           <AuthProvider>
