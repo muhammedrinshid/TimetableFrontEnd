@@ -6,7 +6,7 @@ const AuthContext = createContext();
 export const useAuth = () => {
   return useContext(AuthContext);
 };
-let apiDomain = "http://16.170.229.47:8000";
+let apiDomain = "http://127.0.0.1:8000/";
 export const AuthProvider = ({ children }) => {
   const [authTocken, setAuthTocken] = useState(() =>
     localStorage.getItem("authTokens")
@@ -82,7 +82,26 @@ export const AuthProvider = ({ children }) => {
     apiDomain: apiDomain,
     setAuthTocken:setAuthTocken,
     setUser:setUser,
-    logoutUser:logoutUser
+    logoutUser:logoutUser,
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+String(authTocken?.access)
+    },
+    fileUploadHeaders:{
+      headers:{
+        "Content-Type":"multipart/form-data",
+        'Authorization':'Bearer '+String(authTocken?.access)
+      }
+    
+    },
+    getHeaders:{
+      headers:{
+        'Authorization':'Bearer '+String(authTocken?.access)
+
+
+      }
+    
+    },
 
   };
 

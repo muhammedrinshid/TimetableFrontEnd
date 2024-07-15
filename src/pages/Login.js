@@ -28,6 +28,7 @@ let loginUser = async (e) => {
     });
 
     if (res.status === 200) {
+      console.log("success full")
       setAuthTocken(() => res.data);
       setUser(() => jwtDecode(res.data?.access));
       localStorage.setItem("authTokens", JSON.stringify(res.data));

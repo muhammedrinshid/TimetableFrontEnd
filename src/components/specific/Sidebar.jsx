@@ -1,15 +1,17 @@
 import React from "react";
 import { CgMenuLeft, CgMenuRight } from "react-icons/cg";
 
-import { IoSettingsOutline } from "react-icons/io5";
+import { LuSchool } from "react-icons/lu";
 
 import { AiOutlineLogout } from "react-icons/ai";
 import { menuData, bottomMenu } from "../../assets/datas";
 import { useAuth } from "../../context/Authcontext";
-import { NavLink, Navigate } from "react-router-dom";
+import { NavLink, Navigate, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const { fullMenu, setFullmenu, logoutUser } = useAuth();
+
+  const navigate=useNavigate()
   return (
     <div class="bg-light-primary opacity-90 flex flex-col justify-between">
       {/* menus */}
@@ -53,13 +55,14 @@ const Sidebar = () => {
           className={`flex ${
             fullMenu ? "justify-start" : "justify-center"
           } items-center rounded-lg  m-2 text-white text-opacity-80 hover:text-light-primary hover:bg-white duration-300 hover:opacity-70`}
+          onClick={()=>navigate("user-profile")}
         >
           <span className=" text-xl p-2 text-center    cursor-pointer">
-            <IoSettingsOutline />
+            <LuSchool />
           </span>
           {fullMenu && (
             <p className="animate-slide-in-left text-sm duration-200 ml-1">
-              Settings
+              Profile
             </p>
           )}
         </div>

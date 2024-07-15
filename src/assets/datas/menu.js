@@ -25,7 +25,7 @@ const menuData = [
   {
     name: 'Period Settings',
     icon: <FaCog />,
-    path: '/period-settings',
+    path: '/user-configurations',
   },
 ];
 

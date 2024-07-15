@@ -10,6 +10,8 @@ import ClassesInSchool from "./pages/Main/ClassesInSchool";
 import SavedTimeTables from "./pages/Main/YourtimeTables";
 import { ToastContainer, toast, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import UserConfiguration from "./pages/Main/UserConfiguration";
+import SchoolProfileDashboard from "./pages/Main/SchoolProfileDashboard";
 function App() {
   return (
     <div className="w-full min-h-screen bg-light-background flex items-center justify-center font-Roboto">
@@ -38,6 +40,8 @@ function App() {
                   <Route path="teachers" element={<TeachersInSchool />} />
                   <Route path="classes" element={<ClassesInSchool />} />
                   <Route path="saved-timetables" element={<SavedTimeTables />} />
+                  <Route path="user-configurations" element={<UserConfiguration />} />
+                  <Route path="user-profile" element={<SchoolProfileDashboard />} />
                 </Route>
               </Route>
               <Route path="login" element={<Login />} />
