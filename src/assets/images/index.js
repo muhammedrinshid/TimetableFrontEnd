@@ -1,5 +1,6 @@
 import logo from './logo.png'
 import loginimage from './loginImage.png'
+import defaultAvatarImage from './user1.jpg'
 import userAvatar from './user1.jpg'
 import teacher01 from './teacher01.jpg'
 import teacher02 from './teacher02.jpg'
@@ -15,4 +16,4 @@ import teacher010 from './teacher010.jpg'
 
 
 
-export {logo,loginimage,userAvatar,teacher010,teacher01,teacher02,teacher03,teacher04,teacher05,teacher06,teacher07,teacher08,teacher09}
+export {logo,loginimage,userAvatar,teacher010,teacher01,teacher02,teacher03,teacher04,teacher05,teacher06,teacher07,teacher08,teacher09,defaultAvatarImage}

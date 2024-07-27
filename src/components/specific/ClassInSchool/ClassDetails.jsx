@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
 import { LabelDispalyerWithIcon, LabelDisplayer } from "../../common";
 import {
   Avatar,
@@ -12,7 +13,6 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import { class_data } from "../../../assets/datas";
-import EditIcon from "@mui/icons-material/Edit";
 
 export const row1 = [
   "Instructor",
@@ -66,19 +66,96 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
     {
       name: "Mathematics",
       lessonsPerWeek: 5,
-      teacher: { name: "John Doe", avatar: "JD" },
+      is_elective: false,
+      teacher: [
+        { name: "John Doe", avatar: "JD" },
+        { name: "Jane Smith", avatar: "JS" },
+      ],
     },
     {
       name: "Science",
       lessonsPerWeek: 4,
-      teacher: { name: "Jane Smith", avatar: "JS" },
+      is_elective: false,
+      teacher: [{ name: "Emily Brown", avatar: "EB" }],
     },
     {
-      name: "English",
-      lessonsPerWeek: 4,
-      teacher: { name: "Bob Johnson", avatar: "BJ" },
+      name: "Languages",
+      lessonsPerWeek: 6,
+      is_elective: true,
+      elective_group_name: null,
+
+      options: [
+        {
+          subject: "French",
+          number_of_students: 15,
+          alotted_teachers: [
+            { name: "Michael Johnson", avatar: "MJ" },
+            { name: "Lisa Chen", avatar: "LC" },
+          ],
+        },
+        {
+          subject: "Spanish",
+          number_of_students: 18,
+          alotted_teachers: [
+            { name: "Sarah Lee", avatar: "SL" },
+            { name: "Carlos Rodriguez", avatar: "CR" },
+          ],
+        },
+        {
+          subject: "German",
+          number_of_students: 12,
+          alotted_teachers: [{ name: "Hans Mueller", avatar: "HM" }],
+        },
+      ],
+    },
+    {
+      name: "Social Studies",
+      lessonsPerWeek: 3,
+      is_elective: false,
+      teacher: [{ name: "Robert Wilson", avatar: "RW" }],
+    },
+    {
+      name: "Arts",
+      lessonsPerWeek: 2,
+      is_elective: true,
+      elective_group_name: "Foreign Languages C",
+
+      options: [
+        {
+          subject: "Visual Arts",
+          number_of_students: 20,
+          alotted_teachers: [
+            { name: "Alice Thompson", avatar: "AT" },
+            { name: "Emma White", avatar: "EW" },
+          ],
+        },
+        {
+          subject: "Music",
+          number_of_students: 16,
+          alotted_teachers: [
+            { name: "David Clark", avatar: "DC" },
+            { name: "Frank Miller", avatar: "FM" },
+          ],
+        },
+        {
+          subject: "Drama",
+          number_of_students: 14,
+          alotted_teachers: [{ name: "Grace Taylor", avatar: "GT" }],
+        },
+      ],
     },
   ];
+
+
+  const handleReassignGroup = (subjectName, optionSubject) => {
+    // Logic to reassign the group
+    console.log(`Reassign group for ${subjectName} - ${optionSubject}`);
+  };
+  
+  const handleAddGroup = (subjectName, optionSubject) => {
+    // Logic to add a new group
+    console.log(`Add group for ${subjectName} - ${optionSubject}`);
+  };
 
   return (
     <div className="w-full h-full rounded-2xl px-6 py-5">
@@ -221,45 +298,131 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
           {subjectsData.map((subject, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 mb-3"
+              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 mb-4"
             >
-              <div className="flex items-center">
+              <div className="flex items-stretch">
                 <div className="flex-shrink-0">
-                  <div className="h-16 w-16 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center rounded-l-lg">
-                    <span className="text-2xl font-bold text-white">
+                  <div className="h-full w-12 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center rounded-l-lg">
+                    <span className="text-xl font-bold text-white">
                       {subject.name.charAt(0)}
                     </span>
                   </div>
                 </div>
-                <div className="flex-grow p-4">
-                  <div className="flex justify-between items-center">
+                <div className="flex-grow p-3">
+                  <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800">
                         {subject.name}
                       </h3>
-                      <p className="text-sm text-gray-500">
-                        {subject.lessonsPerWeek} lessons per week
+                      <p className="text-xs text-gray-500">
+                        {subject.lessonsPerWeek} lessons/week •{" "}
+                        {subject.is_elective ? "Elective" : "Core"}
                       </p>
                     </div>
-                    <div className="flex items-center">
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          marginRight: 2,
-                          bgcolor: "secondary.main",
-                        }}
-                      >
-                        {subject.teacher.avatar}
-                      </Avatar>
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          {subject.teacher.name}
-                        </p>
-                        <p className="text-xs text-gray-500">Teacher</p>
+                  </div>
+
+                  {!subject.is_elective && (
+                    <div className="flex flex-wrap mt-2">
+                      {subject.teacher.map((teacher, teacherIndex) => (
+                        <div
+                          key={teacherIndex}
+                          className="flex items-center mr-3 mb-1"
+                        >
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              fontSize: "0.75rem",
+                              bgcolor: "secondary.main",
+                              marginRight: "4px",
+                            }}
+                          >
+                            {teacher.avatar}
+                          </Avatar>
+                          <span className="text-xs font-medium">
+                            {teacher.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {subject.is_elective && subject.options && (
+                    <div className="mt-2">
+                         <div className="flex justify-between items-center mb-1">
+                              {subject.elective_group_name ? (
+                                <div className="flex items-center">
+                                  <span className="text-xs text-gray-500 mr-2">
+                                    {subject.elective_group_name}
+                                  </span>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() =>
+                                      handleReassignGroup(
+                                        subject.name,
+                                        subject
+                                      )
+                                    }
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </div>
+                              ) : (
+                                <IconButton
+                                  size="small"
+                                  onClick={() =>
+                                    handleAddGroup(subject.name, subject)
+                                  }
+                                >
+                                 add new group <AddIcon fontSize="small" />
+                                </IconButton>
+                              )}
+                            </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        {subject.options.map((option, optionIndex) => (
+                          <div
+                            key={optionIndex}
+                            className="bg-gray-50 p-2 rounded-md text-sm"
+                          >
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="font-medium">
+                                {option.subject}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {option.number_of_students} students
+                              </span>
+                            </div>
+                         
+                            <div className="flex flex-wrap">
+                              {option.alotted_teachers.map(
+                                (teacher, teacherIndex) => (
+                                  <div
+                                    key={teacherIndex}
+                                    className="flex items-center mr-3 mb-1"
+                                  >
+                                    <Avatar
+                                      sx={{
+                                        width: 20,
+                                        height: 20,
+                                        fontSize: "0.625rem",
+                                        bgcolor: "secondary.main",
+                                        marginRight: "4px",
+                                      }}
+                                    >
+                                      {teacher.avatar}
+                                    </Avatar>
+                                    <span className="text-xs">
+                                      {teacher.name}
+                                    </span>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -332,8 +495,6 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
       </div>
     </div>
   );
-
-
 };
 
 export default ClassDetails;

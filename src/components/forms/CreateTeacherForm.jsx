@@ -1,5 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import {
+  Autocomplete,
   Avatar,
   Button,
   FormHelperText,
@@ -12,12 +13,18 @@ import MultiSelectCreatable from "../Mui components/MultiSelectCreatable";
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { teacherSchema } from "../../utlts/Schemas";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/Authcontext";
+import axios from "axios";
 
 function TeacherForm({
   subjects,
   handleCreateTeacherClose,
   tempCreateNewTeacher,
+  grades,
+  setRefetch,
 }) {
+  const { apiDomain, headers, logoutUser } = useAuth();
   const {
     formState: { errors },
     handleSubmit,
@@ -40,14 +47,81 @@ function TeacherForm({
     setPreview(URL.createObjectURL(file));
   };
 
-  const handleUpload = () => {
-    // Upload image logic here
-    setPreview(URL.createObjectURL(image));
-  };
-  const onSubmit = async (data) => {
-    data.image = image;
-    tempCreateNewTeacher(data);
-    handleCreateTeacherClose();
+  const onSubmit = async (formData) => {
+    try {
+      const form = new FormData();
+
+      // Append basic fields
+      form.append("name", formData.name);
+      form.append("surname", formData.surname);
+      form.append("email", formData.email);
+      form.append("phone", formData.phone);
+      form.append(
+        "min_lessons_per_week",
+        formData.min_lessons_per_week
+      );
+      form.append(
+        "max_lessons_per_week",
+        formData.max_lessons_per_week
+      );
+
+      // Handle qualified subjects as a list of names only
+      formData.qualified_subjects.forEach((subject, index) => {
+        form.append(`qualified_subjects[${index}]`, subject.name);
+      });
+
+      // Handle grades as a list of grade IDs
+      formData.grades.forEach((grade, index) => {
+        form.append(`grades[${index}]`, grade.id);
+      });
+
+      // Handle image
+      if (image instanceof File) {
+        form.append("profile_image", image);
+      }
+
+      const response = await axios.post(
+        `${apiDomain}/api/teacher/teacher/`,
+        form,
+        {
+          headers: {
+            ...headers,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Handle success
+      toast.success("Teacher created/updated successfully");
+      setRefetch((prev) => !prev);
+      handleCreateTeacherClose();
+      console.log("Teacher created/updated successfully:", response.data);
+
+      // Error handling...
+    } catch (error) {
+      // Handle error
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status === 401) {
+          toast.error("Error occurred: Unauthorized access");
+          logoutUser();
+        }
+        toast.error(
+          error.response.data.message ||
+            "An error occurred while submitting the form"
+        );
+        console.error("Error response:", error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        toast.error("No response received from the server");
+        console.error("Error request:", error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        toast.error("An error occurred while setting up the request");
+        console.error("Error message:", error.message);
+      }
+    }
   };
 
   return (
@@ -115,7 +189,7 @@ function TeacherForm({
                 fullWidth
                 size="small"
                 error={!!errors?.email}
-                helperText={errors?.email ? errors?.email.message : ""}
+                helperText={errors?.email ? errors?.email?.message : ""}
               />
             )}
           />
@@ -136,7 +210,7 @@ function TeacherForm({
                 variant="outlined"
                 type="tel"
                 error={!!errors?.phone}
-                helperText={errors?.phone ? errors?.phone.message : ""}
+                helperText={errors?.phone ? errors?.phone?.message : ""}
               />
             )}
           />
@@ -144,45 +218,52 @@ function TeacherForm({
       </div>
       <div className="flex flex-row py-4 gap-2">
         <div className="basis-1/2">
-          <MultiSelectCreatable
-            data={subjects}
-            name={"subjects"}
-            control={control}
-            errors={errors}
-          />
-          <p className="error">{errors.subjects?.message}</p>
-        </div>
-        <div className="basis-1/2">
           <Controller
-            name="grade"
+            name="grades"
             control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                onChange={(event) => field.onChange(event.target.value)}
-                fullWidth
+            defaultValue={[]}
+            render={({ field: { onChange, value, ...rest } }) => (
+              <Autocomplete
+                {...rest}
                 size="small"
-                error={!!errors?.grade}
-                value={field.value}
-              >
-                <MenuItem value={""}>Grade</MenuItem>
-                <MenuItem value={"hss"}>HigerSecondary</MenuItem>
-                <MenuItem value={"higschool"}>Hs</MenuItem>
-              </Select>
+                multiple
+                id="grades-autocomplete"
+                options={grades}
+                value={value}
+                onChange={(event, newValue) => {
+                  onChange(newValue);
+                }}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Grades"
+                    placeholder="Select Grades"
+                    error={!!errors?.grades}
+                    helperText={errors?.grades ? errors?.grades.message : ""}
+                  />
+                )}
+              />
             )}
           />
-          {errors?.grade && (
-            <FormHelperText error>{errors?.grade?.message}</FormHelperText>
-          )}
+        </div>
+        <div className="basis-1/2">
+          <MultiSelectCreatable
+            data={subjects}
+            name="qualified_subjects"
+            control={control}
+            defaultValue={[]}
+          />
+          <p className="error">{errors?.qualified_subjects?.message}</p>
         </div>
       </div>
       <div className="flex flex-row py-4 gap-2">
         <div className="basis-1/2">
           {" "}
           <Controller
-            name="minimum_number_periods_per_week"
+            name="min_lessons_per_week"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -190,7 +271,7 @@ function TeacherForm({
                 fullWidth
                 error={!!errors?.minPeriods}
                 helperText={
-                  errors?.minPeriods ? errors?.minPeriods.message : ""
+                  errors?.minPeriods ? errors?.minPeriods?.message : ""
                 }
                 placeholder="max period per week"
                 size="small"
@@ -204,7 +285,7 @@ function TeacherForm({
         <div className="basis-1/2">
           {" "}
           <Controller
-            name="maximum_number_periods_per_week"
+            name="max_lessons_per_week"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -216,7 +297,7 @@ function TeacherForm({
                 error={!!errors?.maxPeriods}
                 placeholder="max period per week"
                 helperText={
-                  errors?.maxPeriods ? errors?.maxPeriods.message : ""
+                  errors?.maxPeriods ? errors?.maxPeriods?.message : ""
                 }
               />
             )}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
+import PeopleIcon from '@mui/icons-material/People';
 
-const EmptyClassState = ({ grade, onAddClass }) => {
+const EmptyTeachersState = ({ grade, onAddTeacher }) => {
   return (
     <Box
       sx={{
@@ -15,22 +15,25 @@ const EmptyClassState = ({ grade, onAddClass }) => {
         textAlign: 'center',
       }}
     >
-      <SchoolIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+      <PeopleIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
       
       <Typography variant="h5" color="text.primary" gutterBottom>
-        No classes added
+        No teachers added
       </Typography>
       
       <Typography variant="body1" color="text.secondary" sx={{ mb: 1, maxWidth: 400 }}>
-        No classes added for you on {grade}.
+        No teachers added for grade {grade}.
       </Typography>
       
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 400 }}>
-        Please add classes and divisions.
+        Please add teachers for this grade.
       </Typography>
-
+      
+      <Button variant="contained" color="primary" onClick={onAddTeacher}>
+        Add Teacher
+      </Button>
     </Box>
   );
 };
 
-export default EmptyClassState;
+export default EmptyTeachersState;

@@ -6,7 +6,7 @@ const AuthContext = createContext();
 export const useAuth = () => {
   return useContext(AuthContext);
 };
-let apiDomain = "http://127.0.0.1:8000/";
+let apiDomain = "http://127.0.0.1:8000";
 export const AuthProvider = ({ children }) => {
   const [authTocken, setAuthTocken] = useState(() =>
     localStorage.getItem("authTokens")

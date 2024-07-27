@@ -10,8 +10,15 @@ import { Avatar, IconButton, Tooltip } from "@mui/material";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import CreateIcon from "@mui/icons-material/Create";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
+import { useAuth } from "../../../context/Authcontext";
+import { defaultAvatarImage } from "../../../assets/images";
+import axios from "axios";
+import { toast } from "react-toastify";
+import DeleteConfirmationPopup from "../../common/DeleteConfirmationPopup";
 
-const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,setSelectedTeacherForUpdation   ,selectedTeacher}) => {
+const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,setSelectedTeacherForUpdation   ,selectedTeacher,setIsDeleteTeacherPopupOpen}) => {
+
+  const {apiDomain}=useAuth()
 
     const iconStyle = {
         color: "#555555", // Change this to your desired color
@@ -21,6 +28,8 @@ const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,se
         { value: 20, label: "Twenty" },
         { value: 30, label: "Thirty" },
       ];
+
+
     
       const handleSelectedTeacher = (teacher_id) => {
         let teacher = teachers.find((teacher) => teacher.teacher_id === teacher_id);
@@ -35,6 +44,8 @@ const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,se
             }
         ))
       }
+
+    
   return (
     <div className="h-full w-full overflow-auto   flex flex-col">
     {/* heading section */}
@@ -43,11 +54,11 @@ const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,se
 
       <div className="bg-white rounded-3xl p-2 px-4 shadow-custom-8">
         <StyledAvatarGroup max={4}>
-          {teachers.map((teacher) => (
+          {teachers?.map((teacher) => (
             <Avatar
               alt={teacher?.name}
               sx={{ width: 30, height: 30, fontSize: 20 }}
-              src={teacher?.image}
+              src={teacher.profile_image&&`${apiDomain}${teacher.profile_image}`}
             />
           ))}
         </StyledAvatarGroup>
@@ -70,7 +81,7 @@ const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,se
       </div>
     </div>
     <div className="  grid grid-cols-[repeat(4,_minmax(120px,_1fr))] gap-6 overflow-auto mt-5 pr-4">
-      {teachers.map((teacher) => {
+      {teachers?.map((teacher) => {
         return (
           <div className="shadow-custom-8 rounded-2xl bg-white p-3  flex flex-col items-center ">
             <div className="flex flex-row justify-end w-full">
@@ -84,15 +95,17 @@ const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,se
                 height: 65,
                 border: "0.9px solid lightgray",
               }}
-              src={teacher?.image}
+              src={teacher.profile_image
+                ? `${apiDomain}${teacher.profile_image}`
+                : defaultAvatarImage}
             ></Avatar>
             <h2 className="text-base mt-2 font-semibold">{teacher.name}</h2>
             <h4 className="text-sm font-medium text-text_1">
               {teacher.surname}
             </h4>
             <div className="flex flex-row gap-1 flex-wrap mt-2">
-              {teacher.qualified_subjects?.map((subject) => (
-                <RandomColorChip subject={subject} />
+              {teacher.qualified_subjects_display?.map((subject) => (
+                <RandomColorChip subject={subject.name} />
               ))}
             </div>
             <div className="flex flex-row mt-8 justify-between gap-5">
@@ -118,6 +131,7 @@ const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,se
                   aria-label="expand"
                   size="small"
                   style={iconStyle}
+                  onClick={()=>setIsDeleteTeacherPopupOpen(teacher?.id)}
                 >
                   <PersonRemoveIcon fontSize="small" />
                 </IconButton>
@@ -140,6 +154,7 @@ const TeachersList = ({teachers, gradeType, handleChange,setISelectedTeacher ,se
         );
       })}
     </div>
+    
   </div>
   )
 }

@@ -17,10 +17,10 @@ const getRandomLightColor = () => {
   return `hsl(${hue}, 70%, 80%)`;
 };
 
-const DivisionCard = ({ divisionName, totalAssignedLessons, totalNeededLessons,setISelectedClassforView }) => {
-  const avatarLetter = divisionName.charAt(0).toUpperCase();
+const DivisionCard = ({  totalNeededLessons,setISelectedClassforView,division,handleClassroomDelete }) => {
+  const avatarLetter = division.division
   const avatarColor = getRandomLightColor();
-  const progressPercentage = (parseInt(totalAssignedLessons) / totalNeededLessons) * 100;
+  const progressPercentage = (parseInt(division.subject_count) / totalNeededLessons) * 100;
 
   return (
     <Card sx={{
@@ -50,11 +50,11 @@ const DivisionCard = ({ divisionName, totalAssignedLessons, totalNeededLessons,s
       </Avatar>
       <CardContent sx={{ textAlign: 'center', p: '0 !important', mb: 2, width: '100%' }}>
         <Typography component="div" variant="h6" fontWeight="bold">
-          Division {divisionName}
+           {division.divisionName}
         </Typography>
         <Box sx={{ width: '100%', mt: 2 }}>
           <Typography variant="body2" color="text.secondary" component="div">
-            Lessons: {totalAssignedLessons}/{totalNeededLessons}
+            Lessons: {division.subject_count}/{totalNeededLessons}
           </Typography>
           <LinearProgress 
             variant="determinate" 
@@ -79,7 +79,7 @@ const DivisionCard = ({ divisionName, totalAssignedLessons, totalNeededLessons,s
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete division" arrow>
-          <IconButton aria-label="delete division" size="small">
+          <IconButton aria-label="delete division" size="small" onClick={()=>handleClassroomDelete(division.id)}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>

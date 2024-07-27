@@ -14,25 +14,61 @@ const teacherSchema = yup.object().shape({
     .nullable() // Allow null values
     .matches(/^\+?[0-9]{8,}$/i, "Invalid phone number")
     .notRequired(), // Ensure the field is not required,
-  maximum_number_periods_per_week: yup
+    max_lessons_per_week: yup
     .number()
     .typeError("Maximum Periods must be a number")
     .required("Max Period is required")
     .min(
-      yup.ref("minimum_number_periods_per_week"),
+      yup.ref("min_lessons_per_week"),
       "Max Period must be greater than or equal to Min Periods"
     ),
-  minimum_number_periods_per_week: yup
+    min_lessons_per_week: yup
     .number()
     .typeError("Minimum Periods must be a number")
     .required("Minimum Periods per Week is required")
     .positive("Must be a positive number"),
-  qualified_subjects: yup
+    qualified_subjects: yup
     .array()
-    .required()
-    .of(yup.string().required("Subject is required"))
-    .min(1, "At least one subject is required"),
-  grade: yup.string().required("teacher grade is required field"),
+    .required('Qualified subjects are required')
+    .of(
+      yup.object().shape({
+        id: yup.string().nullable(), // Allow id to be nullable (null or undefined)
+        name: yup.string().required('Subject name is required'),
+        // Add more validation rules as needed for other properties
+      })
+    )
+    .min(1, 'At least one subject is required'),
+
+
+    grades: yup
+    .array()
+    .of(
+      yup.object().shape({
+        id: yup.string().required('Grade ID is required'),
+        name: yup.string().required('Grade name is required'),
+        // Add more validation rules as needed for other properties
+      })
+    )
+    .min(1, 'At least one grade must be selected')
+    .required('Teacher grade is a required field'),
 });
 
-export { teacherSchema };
+
+
+const AssignSubjectSchema = yup.object().shape({
+  selectedSubjects: yup
+    .array()
+    .of(
+      yup.object().shape({
+        name: yup.string().required("Subject name is required"),
+        type: yup.string().oneOf(["core", "elective"]).required(),
+        lessonsPerWeek: yup
+          .number()
+          .min(1, "Lessons must be at least 1")
+          .required(),
+      })
+    )
+    .min(1, "At least one subject is required"),
+});
+
+export { teacherSchema ,AssignSubjectSchema};

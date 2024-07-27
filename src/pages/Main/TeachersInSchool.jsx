@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { subjectData, teachers1 } from "../../assets/datas";
+import React, { useEffect, useState } from "react";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import TeachersTeacherList from "../../components/specific/Teachers/TeachersTeacherList";
 import { RandomColorChip } from "../../components/Mui components";
@@ -14,29 +13,120 @@ import {
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import CreateTeacherForm from "../../components/forms/CreateTeacherForm";
 import TeacherUpdateForm from "../../components/forms/TeacherUpdateForm";
-
-
-
-
-
-
+import axios from "axios";
+import { useAuth } from "../../context/Authcontext";
+import { toast } from "react-toastify";
+import { useStateManager } from "react-select";
+import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
 
 const TeachersInSchool = () => {
+  const {apiDomain,headers,logoutUser}=useAuth()
+  const [isDeleteTeacherPopupOpen,setIsDeleteTeacherPopupOpen]=useState(null)
+
   const [gradeType, setGradeType] = useState("");
-  const [teachers, setTeachers] = useState(teachers1);
-  const [subjects, setSubjects] = useState(subjectData);
-  
+  const [teachers, setTeachers] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [grades, setGrades] = useState([]);
+  const [subjectsTeachersCount,setSubjectsTeachersCount]=useState([])
+  const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
+  const [isLoadingSubjects, setIsLoadingSubjects] = useState(true);
+  const [isLoadingGrades, setIsLoadingGrades] = useState(true);
+  const [refetch,setRefetch]=useState(false)
+
+ 
+  const [createTeacherFormOpen, setCreateTeacherFormOpen] = useState(false);
+  const [selectedTeacherForUpdation, setSelectedTeacherForUpdation] = useState({
+    isOpen: false,
+  });
+
+  // Fetch teachers function
+  const fetchTeachers = async () => {
+    try {
+      const response = await axios.get(`${apiDomain}/api/teacher/teachers`, {
+        headers,
+      });
+      setTeachers(response.data);
+      setIsLoadingTeachers(false);
+
+      // Check if response.data is empty
+      if (response.data.length === 0) {
+        toast.info("You have no teachers. Create teacher to proceed.");
+      }
+    } catch (error) {
+      console.error("Error fetching teachers:", error);
+      toast.error("Error fetching teachers");
+    }
+  };
+  const fetchSubjectsTeachersCount = async () => {
+    try {
+      const response = await axios.get(`${apiDomain}/api/teacher/school-subject-teacher-count/`, {
+        headers,
+      });
+      setSubjectsTeachersCount(response.data.subjectData);
+      
+
+      // Check if response.data is empty
+      if (response.data.length === 0) {
+      }
+    } catch (error) {
+      console.error("Error fetching teachers:", error);
+      toast.error("Error fetching teachers");
+    }
+  };
+
+  // Fetch subjects function
+  const fetchSubjects = async () => {
+    try {
+      const response = await axios.get(`${apiDomain}/api/user/subjects`, {
+        headers,
+      });
+      setSubjects(response.data);
+      setIsLoadingSubjects(false);
+
+      // Check if response.data is empty
+      if (response.data.length === 0) {
+        toast.info("You have no subject. Create subjects to proceed.");
+      }
+    } catch (error) {
+      console.error("Error fetching subjects:", error);
+      toast.error("Error fetching subjects");
+    }
+  };
+
+  // Fetch grades function
+  const fetchGrades = async () => {
+    try {
+      const response = await axios.get(`${apiDomain}/api/user/grades`, {
+        headers,
+      });
+      setGrades(response.data);
+      setIsLoadingGrades(false);
+
+      // Check if response.data is empty
+      if (response.data.length === 0) {
+        toast.info("You have no grades. Create grades to proceed.");
+      }
+    } catch (error) {
+      console.error("Error fetching grades:", error);
+      toast.error("Error fetching grades");
+    }
+  };
+
+  useEffect(() => {
+    fetchTeachers();
+    fetchSubjects();
+    fetchGrades();
+    fetchSubjectsTeachersCount()
+  }, [refetch]);
+
 
 
   const handleGradeChange = (event) => {
     setGradeType(event.target.value);
   };
-  const [createTeacherFormOpen, setCreateTeacherFormOpen] = useState(false);
-  const [selectedTeacherForUpdation, setSelectedTeacherForUpdation] = useState({
-    isOpen:false
-  });
 
   const handleCreateTeacherOpen = () => {
+    console.log("hi");
     setCreateTeacherFormOpen(true);
   };
 
@@ -44,42 +134,63 @@ const TeachersInSchool = () => {
     setCreateTeacherFormOpen(false);
   };
   const handleUpdateTeacherClose = () => {
-    setSelectedTeacherForUpdation({isOpen:false});
+    setSelectedTeacherForUpdation({ isOpen: false });
   };
-  const tempUpdateTeacher = (data,teacher_id) => {
-
-    setTeachers((prev) => prev.map((teacher)=>teacher.teacher_id===teacher_id?{...teacher,...data}:teacher));
-    
+  const tempUpdateTeacher = (data, teacher_id) => {
+    setTeachers((prev) =>
+      prev.map((teacher) =>
+        teacher.teacher_id === teacher_id ? { ...teacher, ...data } : teacher
+      )
+    );
   };
-  const tempCreateNewTeacher = (data) => {
-    setTeachers((prev) => [
-      ...prev,
-      {
-        name: data?.name,
-        surname: data?.surname,
-        teacher_id: "t002",
-        email: data?.email,
-        image: data?.image,
-        maximum_number_periods_per_week: data?.maxPeriods,
-        minimum_number_periods_per_week: data?.minPeriods,
-        phone: data?.phone,
-        qualified_subjects: data.subjects.map((sub) => sub),
-        time_table: {},
-      },
-    ]);
+  const deleteSubmit = async () => {
+    let teacherId=isDeleteTeacherPopupOpen
+    try {
+      const response = await axios.delete(
+        `${apiDomain}/api/teacher/teacher/${teacherId}`,
+        {
+          headers: {
+            ...headers,
+          },
+        }
+      );
+  
+      // Handle success
+      toast.success("Teacher deleted successfully");
+      setRefetch((prev) => !prev); // Trigger refetching of data if needed
+      console.log("Teacher deleted successfully:", response.data);
+      setIsDeleteTeacherPopupOpen(null)
+  
+    } catch (error) {
+      // Error handling (similar to the update error handling)
+      if (error.response) {
+        if (error.response.status === 401) {
+          toast.error("Error occurred: Unauthorized access");
+          logoutUser();
+        } else {
+          toast.error(
+            error.response.data.message ||
+              "An error occurred while deleting the teacher"
+          );
+        }
+      } else {
+        toast.error("An error occurred: Unable to reach the server");
+      }
+      console.error("Error deleting teacher:", error);
+    }
   };
 
   return (
     <div className=" grid grid-rows-[10fr_4fr] grid-cols-[6fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4 ">
-
-    
       {/* teachers list placed */}
 
       <TeachersTeacherList
         gradeType={gradeType}
         handleChange={handleGradeChange}
         teachers={teachers}
+        setIsDeleteTeacherPopupOpen={setIsDeleteTeacherPopupOpen}
         setSelectedTeacherForUpdation={setSelectedTeacherForUpdation}
+        setRefetch={setRefetch}
       />
 
       {/* overall details */}
@@ -102,7 +213,7 @@ const TeachersInSchool = () => {
           </div>
         </div>
         <div className="flex flex-row flex-wrap gap-4 items-stretch justify-start mt-5 p-4">
-          {subjects.map((subject) => (
+          {subjectsTeachersCount.map((subject) => (
             <Badge color="secondary" badgeContent={subject?.count} max={99}>
               <RandomColorChip subject={subject.subject} />
             </Badge>
@@ -125,34 +236,41 @@ const TeachersInSchool = () => {
         </div>
       </div>
 
-
-
       {/* Create new teacher pop up */}
       <Dialog open={createTeacherFormOpen} onClose={handleCreateTeacherClose}>
         <DialogTitle>Create New Teacher</DialogTitle>
         <DialogContent>
           <CreateTeacherForm
             handleCreateTeacherClose={handleCreateTeacherClose}
-            tempCreateNewTeacher={tempCreateNewTeacher}
+            setRefetch={setRefetch}
             subjects={subjects}
+            grades={grades}
           />
         </DialogContent>
       </Dialog>
 
-
       {/* update existing teacher */}
-      <Dialog open={selectedTeacherForUpdation.isOpen} onClose={handleCreateTeacherClose}>
+      <Dialog
+        open={selectedTeacherForUpdation.isOpen}
+        onClose={handleCreateTeacherClose}
+      >
         <DialogTitle>Edit lisies details</DialogTitle>
         <DialogContent>
           <TeacherUpdateForm
             handleUpdateTeacherClose={handleUpdateTeacherClose}
-            tempUpdateTeacher={tempUpdateTeacher}
             subjects={subjects}
+            grades={grades}
+            setRefetch={setRefetch}
+
             teacherData={selectedTeacherForUpdation}
-            
           />
         </DialogContent>
       </Dialog>
+      <DeleteConfirmationPopup
+            isOpen={isDeleteTeacherPopupOpen}
+            onClose={() => setIsDeleteTeacherPopupOpen(false)}
+            onConfirm={deleteSubmit}
+          />
     </div>
   );
 };

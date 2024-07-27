@@ -1,23 +1,17 @@
 import React from "react";
-
 import CreatableSelect from "react-select/creatable";
 import { Controller } from "react-hook-form";
 
-const MultiSelectCreatable = ({ data, name, control,defaultValue }) => {
-
+const MultiSelectCreatable = ({ data, name, control, defaultValue }) => {
   const colourStyles = {
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-      return {
-        ...styles,
-        color: isSelected ? "#FFF" : "#000", // Set the text color
-        cursor: isDisabled ? "not-allowed" : "pointer",
-        // Add any other styles you want
-      };
-    },
+    option: (styles, { isDisabled, isSelected }) => ({
+      ...styles,
+      color: isSelected ? "#FFF" : "#000",
+      cursor: isDisabled ? "not-allowed" : "pointer",
+    }),
   };
 
-
-  return  (
+  return (
     <Controller
       name={name}
       control={control}
@@ -29,12 +23,20 @@ const MultiSelectCreatable = ({ data, name, control,defaultValue }) => {
           styles={colourStyles}
           isMulti
           options={data.map((item) => ({
-            value: item.subject,
-            label: item.subject,
+            value: item.id,
+            label: item.name,
           }))}
-          value={field.value.map(value => ({ value, label: value }))}
+          value={field.value.map(value => ({
+            value: value.id,
+            label: value.name,
+          }))}
           onChange={(values) =>
-            field.onChange(values.map((value) => value.value))
+            field.onChange(values.map((value) => {
+              if (value.__isNew__) {
+                return { id: null, name: value.label };
+              }
+              return { id: value.value, name: value.label };
+            }))
           }
         />
       )}

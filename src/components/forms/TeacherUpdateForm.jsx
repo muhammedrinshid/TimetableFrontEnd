@@ -2,6 +2,7 @@ import React from "react";
 
 import { useForm, Controller } from "react-hook-form";
 import {
+  Autocomplete,
   Avatar,
   Button,
   FormHelperText,
@@ -14,13 +15,19 @@ import MultiSelectCreatable from "../Mui components/MultiSelectCreatable";
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { teacherSchema } from "../../utlts/Schemas";
+import { useAuth } from "../../context/Authcontext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 function TeacherUpdateForm({
   subjects,
   handleUpdateTeacherClose,
-  tempUpdateTeacher,
   teacherData,
+  grades,
+  setRefetch,
 }) {
+
+  const {apiDomain,logoutUser,headers}=useAuth()
   const {
     formState: { errors },
     handleSubmit,
@@ -31,6 +38,7 @@ function TeacherUpdateForm({
   const [image, setImage] = useState(teacherData.image || null);
   const [preview, setPreview] = useState(teacherData.image || null);
 
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setImage(file);
@@ -40,14 +48,103 @@ function TeacherUpdateForm({
   const handleUpload = () => {
     setPreview(URL.createObjectURL(image));
   };
+  const onSubmit = async (formData) => {
 
+    try {
+      const form = new FormData();
+      let hasChanges = false;
+  
+      // Helper function to check and append changes
+      const appendIfChanged = (key, newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          form.append(key, newValue);
+          hasChanges = true;
+        }
+      };
+  
+      // Check and append basic fields
+      appendIfChanged("name", formData.name, teacherData.name);
+      appendIfChanged("surname", formData.surname, teacherData.surname);
+      appendIfChanged("email", formData.email, teacherData.email);
+      appendIfChanged("phone", formData.phone, teacherData.phone);
+      appendIfChanged("min_lessons_per_week", formData.min_lessons_per_week, teacherData.min_lessons_per_week);
+      appendIfChanged("max_lessons_per_week", formData.max_lessons_per_week, teacherData.max_lessons_per_week);
+      hasChanges&&console.log("change in fgx")
 
-  const onSubmit = async (data) => {
-    console.log("jlfjl")
+      // Handle qualified subjects
+      const oldSubjects = new Set(teacherData.qualified_subjects_display.map(s => s.name));
+      const newSubjects = new Set(formData.qualified_subjects.map(s => s.name));
+      console.log(oldSubjects,newSubjects)
+      if (JSON.stringify([...oldSubjects]) !== JSON.stringify([...newSubjects])) {
+        formData.qualified_subjects.forEach((subject, index) => {
+          form.append(`qualified_subjects[${index}]`, subject.name);
+        });
+        hasChanges = true;
+        hasChanges&&console.log("change in sub")
 
-    data.image = image;
-    tempUpdateTeacher(data,teacherData.teacher_id); 
-    handleUpdateTeacherClose();
+      }
+  
+      // Handle grades
+      const oldGrades = new Set(teacherData.grades_display.map(g => g.id));
+      const newGrades = new Set(formData.grades.map(g => g.id));
+      if (JSON.stringify([...oldGrades]) !== JSON.stringify([...newGrades])) {
+        formData.grades.forEach((grade, index) => {
+          form.append(`grades[${index}]`, grade.id);
+        });
+        hasChanges = true;
+
+      }
+  
+      // Handle image
+      if (image instanceof File && image !== teacherData.profile_image) {
+        form.append("profile_image", image);
+        hasChanges = true;
+      }
+    
+
+      // Only send request if there are changes
+      if (!hasChanges) {
+        toast.info("No changes detected");
+        return;
+      }
+  
+      const response = await axios.put(
+        `${apiDomain}/api/teacher/teacher/${teacherData.id}/`,
+        form,
+        {
+          headers: {
+            ...headers,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      // Handle success
+      toast.success("Teacher updated successfully");
+      setRefetch((prev) => !prev);
+      handleUpdateTeacherClose();
+      console.log("Teacher updated successfully:", response.data);
+  
+    } catch (error) {
+      // Error handling (same as before)
+      if (error.response) {
+        if (error.response.status === 401) {
+          toast.error("Error occurred: Unauthorized access");
+          logoutUser();
+        }
+        toast.error(
+          error.response.data.message ||
+            "An error occurred while updating the teacher"
+        );
+        console.error("Error response:", error.response.data);
+      } else if (error.request) {
+        toast.error("No response received from the server");
+        console.error("Error request:", error.request);
+      } else {
+        toast.error("An error occurred while setting up the request");
+        console.error("Error message:", error.message);
+      }
+    }
   };
 
   return (
@@ -59,7 +156,7 @@ function TeacherUpdateForm({
             height: 65,
             border: "0.9px solid lightgray",
           }}
-          src={preview}
+          src={preview||`${apiDomain}${teacherData.profile_image}`}
         ></Avatar>
       </div>
       <div className="flex flex-row py-4 gap-2">
@@ -146,32 +243,42 @@ function TeacherUpdateForm({
         <div className="basis-1/2">
           <MultiSelectCreatable
             data={subjects}
-            name={"qualified_subjects"}
+            name="qualified_subjects"
             control={control}
+            defaultValue={teacherData.qualified_subjects_display}
             errors={errors}
-            defaultValue={teacherData.qualified_subjects}
           />
           <p className="error">{errors.qualified_subjects?.message}</p>
         </div>
         <div className="basis-1/2">
           <Controller
-            name="grade"
+            name="grades"
             control={control}
-            defaultValue={teacherData.grade || ""}
-            render={({ field }) => (
-              <Select
-                {...field}
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                onChange={(event) => field.onChange(event.target.value)}
-                fullWidth
+            defaultValue={teacherData?.grades_display}
+            render={({ field: { onChange, value, ...rest } }) => (
+              <Autocomplete
+                {...rest}
                 size="small"
-                error={!!errors?.grade}
-              >
-                <MenuItem value={""}>Grade</MenuItem>
-                <MenuItem value={"hss"}>HigerSecondary</MenuItem>
-                <MenuItem value={"higschool"}>Hs</MenuItem>
-              </Select>
+                multiple
+                id="grades-autocomplete"
+                options={grades}
+                value={value}
+                onChange={(event, newValue) => {
+                  onChange(newValue);
+                }}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Grades"
+                    placeholder="Select Grades"
+                    error={!!errors?.grades}
+                    helperText={errors?.grades ? errors?.grades.message : ""}
+                  />
+                )}
+              />
             )}
           />
           {errors?.grade && (
@@ -183,9 +290,9 @@ function TeacherUpdateForm({
         <div className="basis-1/2">
           {" "}
           <Controller
-            name="minimum_number_periods_per_week"
+            name="min_lessons_per_week"
             control={control}
-            defaultValue={teacherData.minimum_number_periods_per_week || ""}
+            defaultValue={teacherData.min_lessons_per_week || ""}
             render={({ field }) => (
               <>
                 <OutlinedInput
@@ -193,25 +300,24 @@ function TeacherUpdateForm({
                   fullWidth
                   size="small"
                   type="number"
-                  error={!!errors?.minimum_number_periods_per_week}
+                  error={!!errors?.min_lessons_per_week}
                   placeholder="Max periods per week"
                 />
-                {errors?.minimum_number_periods_per_week && (
+                {errors?.min_lessons_per_week && (
                   <FormHelperText error>
-                    {errors.minimum_number_periods_per_week.message}
+                    {errors.min_lessons_per_week.message}
                   </FormHelperText>
                 )}
               </>
             )}
           />
-          
         </div>
         <div className="basis-1/2">
           {" "}
           <Controller
-            name="maximum_number_periods_per_week"
+            name="max_lessons_per_week"
             control={control}
-            defaultValue={teacherData.maximum_number_periods_per_week || ""}
+            defaultValue={teacherData.max_lessons_per_week || ""}
             render={({ field }) => (
               <>
                 <OutlinedInput
@@ -219,12 +325,12 @@ function TeacherUpdateForm({
                   fullWidth
                   size="small"
                   type="number"
-                  error={!!errors?.maximum_number_periods_per_week}
+                  error={!!errors?.max_lessons_per_week}
                   placeholder="Max periods per week"
                 />
-                {errors?.maximum_number_periods_per_week && (
+                {errors?.max_lessons_per_week && (
                   <FormHelperText error>
-                    {errors.maximum_number_periods_per_week.message}
+                    {errors.max_lessons_per_week.message}
                   </FormHelperText>
                 )}
               </>
@@ -257,7 +363,11 @@ function TeacherUpdateForm({
           Cancel
         </Button>
 
-        <Button   onClick={() => console.log(errors)} variant="contained" color="primary" type="submit">
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+        >
           Submit
         </Button>
       </div>

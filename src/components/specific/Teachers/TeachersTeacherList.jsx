@@ -21,6 +21,7 @@ const TeachersTeacherList = ({
   gradeType,
   handleChange,
   setSelectedTeacherForUpdation,
+  setIsDeleteTeacherPopupOpen
 }) => {
   const [selectedTeacher, setISelectedTeacher] = useState({
     isopen: false,
@@ -39,6 +40,8 @@ const TeachersTeacherList = ({
         teachers={teachers}
         handleChange={handleChange}
         setSelectedTeacherForUpdation={setSelectedTeacherForUpdation}
+        setIsDeleteTeacherPopupOpen={setIsDeleteTeacherPopupOpen}
+
       />
       <TeacherDetails
         selectedTeacher={selectedTeacher}

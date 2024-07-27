@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { availableSubjectsInSchool, schoolData } from "../../../assets/datas";
 import SchoolIcon from "@mui/icons-material/School";
@@ -11,28 +11,71 @@ import ClassCard from "../ClassInSchool/ClassCard";
 import DivisionCard from "../ClassInSchool/DivisionCard";
 import EmptyState from "../../common/EmptyState";
 import AddStandardForm from "../../forms/AddStandardForm";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useAuth } from "../../../context/Authcontext";
+import DeleteConfirmationPopup from "../../common/DeleteConfirmationPopup";
+import gradient from "@material-tailwind/react/theme/components/timeline/timelineIconColors/gradient";
 
-const ClassList = ({ setISelectedClassforView }) => {
+const ClassList = ({
+  setISelectedClassforView,
+  handleClassroomDelete,
+  handleStandardDelete,
+  refectClasssroomListdata,
+  refetchClassroomList,
+}) => {
+  const { apiDomain, logoutUser, headers } = useAuth();
   const [isAddStandarFormOpen, setIsAddStandarFormOpen] = useState(false);
   const [seletctedGreadeForCreation, setSeletctedGreadeForCreation] =
     useState("");
-  const [classByGrade, setClassByGrade] = useState(schoolData);
+  const [classByGrade, setClassByGrade] = useState([]);
+
   const [availableSubjcts, setcAvailableSubjects] = useState(
     availableSubjectsInSchool
   );
   const [OpenTeacherAssingmentForm, setOpenTeacherAssingmentForm] = useState({
     isOpen: false,
-    grade: "",
-    standard: "",
+    grade_id: "",
+    standard_id: "",
     type: "all",
     div: "",
   });
-  const [whichGradeToDisplay, setWhichGradeToDisplay] = useState('');
+  const [whichGradeToDisplay, setWhichGradeToDisplay] = useState("");
 
   const options = [
-    { value: '', label: 'All Grades' },
-    ...classByGrade.map(grade => ({ value: grade.name, label: grade.name }))
+    { value: "", label: "All Grades" },
+    ...classByGrade.map((grade) => ({ value: grade.name, label: grade.name })),
   ];
+
+  // functjion to refetch the data
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${apiDomain}/api/class-room/grades-standards-classrooms/`,
+          {
+            headers: headers,
+          }
+        );
+        setClassByGrade(response.data);
+      } catch (error) {
+        if (error.response) {
+          toast.error(
+            `Error: ${error.response.data.detail || "An error occurred"}`
+          );
+        } else if (error.request) {
+          toast.error("No response received from server");
+        } else {
+          toast.error("Error in setting up the request");
+        }
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [refetchClassroomList]);
+
   // handle the function of add button click on classCard
   const handleAddButtonClick = (data) => {
     setSeletctedGreadeForCreation(data);
@@ -75,129 +118,20 @@ const ClassList = ({ setISelectedClassforView }) => {
 
   const handleGradeChange = (value) => {
     setWhichGradeToDisplay(value);
-    console.log(value)
+    console.log(value);
   };
 
   // temprary function mock the add new divison
-  const addNewDivision = (gradeName, standardName) => {
-    setClassByGrade((prevState) => {
-      console.log(gradeName);
-      const newState = JSON.parse(JSON.stringify(prevState));
-
-      // Find the grade
-      const grade = newState.find((g) => g.name === gradeName);
-      if (!grade) {
-        console.error(`Grade "${gradeName}" not found`);
-        return newState;
-      }
-
-      // Find the standard within the grade
-      const standard = grade.standards.find((s) => s.name === standardName);
-      if (!standard) {
-        console.error(
-          `Standard "${standardName}" not found in grade "${gradeName}"`
-        );
-        return newState;
-      }
-
-      // Get existing division names
-      const existingDivisions = standard.divisions.map((d) => d.name);
-
-      // Find the next available division name
-      let newDivisionName = "";
-      for (let i = 0; i < 26; i++) {
-        const divName = String.fromCharCode(65 + i); // A to Z
-        if (!existingDivisions.includes(divName)) {
-          newDivisionName = divName;
-          break;
-        }
-      }
-
-      // If all single letters are used, start with AA, AB, etc.
-      if (!newDivisionName) {
-        let prefix = "A";
-        while (true) {
-          for (let i = 0; i < 26; i++) {
-            const divName = prefix + String.fromCharCode(65 + i);
-            if (!existingDivisions.includes(divName)) {
-              newDivisionName = divName;
-              break;
-            }
-          }
-          if (newDivisionName) break;
-          prefix = String.fromCharCode(prefix.charCodeAt(0) + 1);
-        }
-      }
-
-      // Create the new division
-      const newDivision = {
-        name: newDivisionName,
-        subjects: [],
-        totalAssignedClassesPerWeek: 0,
-      };
-
-      // Add the new division to the standard
-      standard.divisions.push(newDivision);
-
-      return newState;
-    });
-  };
-
-  // temprry function to mock the creation of a standard in a specific grade
-  const handleCreateStandardFormSubmit = (data) => {
-    const { standardName, shortName, numberOfDivisions } = data;
-
-    setClassByGrade((prevState) => {
-      // Create a deep copy of the state
-      const newState = JSON.parse(JSON.stringify(prevState));
-
-      // Create the new standard object
-      const newStandard = {
-        name: standardName,
-        shortName: shortName,
-        divisions: [],
-      };
-
-      // Create divisions based on the number provided
-      for (let i = 0; i < parseInt(numberOfDivisions); i++) {
-        const divisionName = String.fromCharCode(65 + i); // A, B, C, etc.
-        newStandard.divisions.push({
-          name: divisionName,
-          subjects: [],
-          totalAssignedClassesPerWeek: 0,
-        });
-      }
-
-      // Find the correct grade
-      const targetGrade = newState.find(
-        (g) => g.name === seletctedGreadeForCreation
-      );
-
-      if (targetGrade) {
-        // Add the new standard to the found grade
-        targetGrade.standards.push(newStandard);
-      } else {
-        console.error(`Grade "${seletctedGreadeForCreation}" not found`);
-        // Optionally, you could create a new grade here if it doesn't exist
-      }
-
-      return newState;
-    });
-
-    // Close the form and reset it
-    handleFormClose();
-
-    setIsAddStandarFormOpen(false);
-  };
 
   // function to open the assign teacher form
-  const openAssignTeacherForm = (grade, division, standard, type) => {
+  const openAssignTeacherForm = ({grade_id, division, standard_id, type}) => {
+    console.log("gradeid",grade_id)
     setOpenTeacherAssingmentForm((prev) => ({
       ...prev,
       isOpen: true,
-      grade: grade,
+      grade_id: grade_id,
       division: division,
-      standard: standard,
+      standard_id: standard_id,
       type: type,
     }));
   };
@@ -215,10 +149,10 @@ const ClassList = ({ setISelectedClassforView }) => {
     // Process the assigned subjects here
   };
 
-
-
   // filter the grade accroding to the selected grade
-const filteredGrades = whichGradeToDisplay ? classByGrade.filter(grade => grade.name === whichGradeToDisplay) : classByGrade;
+  const filteredGrades = whichGradeToDisplay
+    ? classByGrade.filter((grade) => grade.name === whichGradeToDisplay)
+    : classByGrade;
   return (
     <div className=" relative ">
       {/* header and contorle  section */}
@@ -251,7 +185,7 @@ const filteredGrades = whichGradeToDisplay ? classByGrade.filter(grade => grade.
       </div>
       <div className="overflow-y-auto h-full max-h-full ">
         {filteredGrades?.map((grade) => (
-          <div className="w-full min-h-44 my-2 flex items-center justify-start flex-col border-b py-6">
+          <div className="w-full min-h-44 my-2 flex items-center justify-start flex-col border-b-2 border-slate-300 py-6">
             <p className="text-sm font-medium text-slate-50 font-Inter my-2 p-2 rounded-xl bg-light-primary bg-opacity-75 flex items-center sticky top-0 z-10">
               <SchoolIcon className="mr-2" /> {grade.name}
             </p>
@@ -261,23 +195,20 @@ const filteredGrades = whichGradeToDisplay ? classByGrade.filter(grade => grade.
             ) : (
               <div className="flex flex-col w-full max-w-full ">
                 {grade.standards.map((standard) => (
-                  <div className="flex flex-row justify-start my-3 gap-5 items-center flex-wrap">
+                  <div className="flex flex-row justify-start my-3 gap-5 items-center flex-wrap border-b last:border-none">
                     <div className="">
                       <ClassCard
-                        addNewDivision={addNewDivision}
                         openAssignTeacherForm={openAssignTeacherForm}
                         grade={grade}
-                        numberOfDivisions={grade.standards.length}
-                        standardName={standard?.name}
-                        shortName={standard?.shortName}
+                        standard={standard}
+                        refectClasssroomListdata={refectClasssroomListdata}
+                        handleStandardDelete={handleStandardDelete}
                       />
                     </div>
-                    {standard?.divisions?.map((division) => (
+                    {standard?.classrooms?.map((division) => (
                       <DivisionCard
-                        divisionName={division.name}
-                        totalAssignedLessons={
-                          division?.totalAssignedClassesPerWeek
-                        }
+                        division={division}
+                        handleClassroomDelete={handleClassroomDelete}
                         setISelectedClassforView={setISelectedClassforView}
                         totalNeededLessons={50}
                       />
@@ -288,7 +219,7 @@ const filteredGrades = whichGradeToDisplay ? classByGrade.filter(grade => grade.
             )}
 
             <AddButton
-              onClick={() => handleAddButtonClick(grade.name)}
+              onClick={() => handleAddButtonClick(grade.id)}
               label={"Add New Standard"}
             />
           </div>
@@ -297,15 +228,15 @@ const filteredGrades = whichGradeToDisplay ? classByGrade.filter(grade => grade.
       <AddStandardForm
         open={isAddStandarFormOpen}
         onClose={handleFormClose}
-        onSubmit={handleCreateStandardFormSubmit}
+        seletctedGreadeForCreation={seletctedGreadeForCreation}
+        setClassByGrade={setClassByGrade}
       />
       <SubjectAssignmentForm
         open={OpenTeacherAssingmentForm.isOpen}
         onClose={() =>
           setOpenTeacherAssingmentForm((prev) => ({ ...prev, isOpen: false }))
         }
-        onSubmit={handleAssingTeacherSubmit}
-        availableSubjects={availableSubjcts}
+        OpenTeacherAssingmentForm={OpenTeacherAssingmentForm}
       />
     </div>
   );

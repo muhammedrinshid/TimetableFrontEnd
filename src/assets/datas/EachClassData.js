@@ -1214,3 +1214,133 @@ export const schoolData = [
     ],
   },
 ];
+
+
+const sampl=[
+  {
+      "id": "fea34d9c-bf94-433f-86d6-5b792429d023",
+      "name": "High School edited",
+      "short_name": "HS edited",
+      "standards": [
+          {
+              "id": "be4ebbb4-ae7a-4c24-b367-794b2e77bd41",
+              "name": "10 th  grade",
+              "short_name": "10",
+              "classrooms": [
+                  {
+                      "id": "a7c5ff1e-5cf4-4882-b6b2-54f634d011ae",
+                      "name": "Division A",
+                      "division": "A",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "dc795433-b57c-49dd-9653-0474c0ec6a23",
+                      "name": "Division B",
+                      "division": "B",
+                      "subject_count": 0
+                  }
+              ]
+          },
+          {
+              "id": "be4ebbb4-ae7a-4c24-b367-794b2e77bd41",
+              "name": "10 th  grade",
+              "short_name": "10",
+              "classrooms": [
+                  {
+                      "id": "a7c5ff1e-5cf4-4882-b6b2-54f634d011ae",
+                      "name": "Division A",
+                      "division": "A",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "dc795433-b57c-49dd-9653-0474c0ec6a23",
+                      "name": "Division B",
+                      "division": "B",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "a7c5ff1e-5cf4-4882-b6b2-54f634d011ae",
+                      "name": "Division A",
+                      "division": "A",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "dc795433-b57c-49dd-9653-0474c0ec6a23",
+                      "name": "Division B",
+                      "division": "B",
+                      "subject_count": 0
+                  }
+              ]
+          }
+      ]
+  },
+  {
+      "id": "6be8e9af-977b-4207-9662-299a2d352254",
+      "name": "Lower Primary",
+      "short_name": "LP",
+      "standards": [
+          {
+              "id": "5ba20ef9-f314-453b-8414-e5d8a9b94875",
+              "name": "1st standard",
+              "short_name": "1",
+              "classrooms": [
+                  {
+                      "id": "1d472efa-c1e5-4ed3-b5b5-a44a07019571",
+                      "name": "Division A",
+                      "division": "A",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "8598a72c-9eed-4996-8062-48882d7938bb",
+                      "name": "Division B",
+                      "division": "B",
+                      "subject_count": 0
+                  }
+              ]
+          },
+          {
+              "id": "5ba20ef9-f314-453b-8414-e5d8a9b94875",
+              "name": "1st standard",
+              "short_name": "1",
+              "classrooms": [
+                  {
+                      "id": "1d472efa-c1e5-4ed3-b5b5-a44a07019571",
+                      "name": "Division A",
+                      "division": "A",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "8598a72c-9eed-4996-8062-48882d7938bb",
+                      "name": "Division B",
+                      "division": "B",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "1d472efa-c1e5-4ed3-b5b5-a44a07019571",
+                      "name": "Division A",
+                      "division": "A",
+                      "subject_count": 0
+                  },
+                  {
+                      "id": "8598a72c-9eed-4996-8062-48882d7938bb",
+                      "name": "Division B",
+                      "division": "B",
+                      "subject_count": 0
+                  }
+              ]
+          }
+      ]
+  },
+  {
+      "id": "38aef8f9-90ca-49dc-9090-ec84454186ec",
+      "name": "Lower Primary",
+      "short_name": "LP",
+      "standards": []
+  },
+  {
+      "id": "bfbe174d-2226-473c-ad32-37c3e229bc6d",
+      "name": "Upper Primary",
+      "short_name": "UP",
+      "standards": []
+  }
+]
