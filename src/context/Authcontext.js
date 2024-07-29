@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
 
   
-
+  let totalperiodsInWeek=0
   useEffect(() => {
     if (loading) {
       if (authTocken) {
@@ -71,14 +71,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
   const contextData = {
     user:user,
     fullMenu: fullMenu,
     setFullmenu: setFullmenu,
-    NumberOfPeriodsInAday: 7,
-    numbeOfDayInWeek: 5,
-    totalperiodsInWeek: 40,
+    NumberOfPeriodsInAday: user?.teaching_slots,
+    numbeOfDayInWeek: user?.working_days.length,
+    totalperiodsInWeek: (user?.teaching_slots*user?.working_days.length),
     apiDomain: apiDomain,
     setAuthTocken:setAuthTocken,
     setUser:setUser,

@@ -208,9 +208,9 @@ const ClassList = ({
                     {standard?.classrooms?.map((division) => (
                       <DivisionCard
                         division={division}
+                        standard_id={standard?.id}
                         handleClassroomDelete={handleClassroomDelete}
                         setISelectedClassforView={setISelectedClassforView}
-                        totalNeededLessons={50}
                       />
                     ))}
                   </div>

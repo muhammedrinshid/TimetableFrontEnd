@@ -90,7 +90,7 @@ const ClassesInSchool = ({}) => {
 
 
         />
-        <ClassDetails setISelectedClassforView={setISelectedClassforView} />
+        <ClassDetails setISelectedClassforView={setISelectedClassforView} selectedClassforView={selectedClassforView}/>
       </ReactCardFlip>
       <DeleteConfirmationPopup
         isOpen={isClassroomDeletePopupOpen}

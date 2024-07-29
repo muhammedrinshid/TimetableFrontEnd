@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import { class_data } from "../../../assets/datas";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export const row1 = [
   "Instructor",
@@ -51,9 +53,78 @@ const getGridClassName = (NumberOfPeriodsInAday) => {
     "grid-cols-[minmax(80px,_1.5fr)_repeat(1,_minmax(70px,_1fr))]"
   );
 };
-const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
+const ClassDetails = ({ setISelectedClassforView, selectedClassforView }) => {
+  const { apiDomain, headers, logoutUser, totalperiodsInWeek, user } =
+    useAuth();
+
+  const [electiveData, setElectiveData] = useState(null);
+
+  const fetchElectiveGroupData = async (standardId) => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/class-room/elective-subject-add/${selectedClassforView.standard_id}/`,
+        {
+          headers,
+        }
+      );
+      setElectiveData(response.data);
+      toast.success("Data fetched successfully!");
+    } catch (err) {
+      toast.error(`Error fetching data: ${err.message}`);
+    } finally {
+    }
+  };
+
   const [classsRomms, setClassRooms] = useState(class_data); // Ensure class_data is defined or imported
+  const [classroomData, setClassroomData] = useState(null);
   const { NumberOfPeriodsInAday } = useAuth();
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/class-room/classroom/${selectedClassforView.id}/`,
+        {
+          headers,
+        }
+      );
+      setClassroomData(response.data);
+    } catch (err) {
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error(
+          "Response error:",
+          err.response.status,
+          err.response.data
+        );
+        if (err.response.status === 401) {
+          toast.error("Error occurred: Unauthorized access");
+          logoutUser();
+        } else {
+          toast.error(
+            `Error occurred: ${
+              err.response.data?.message || "Unexpected error"
+            }`
+          );
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        console.error("No response received:", err.request);
+        toast.error("Error occurred: No response from server");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error", err.message);
+        toast.error(`Error occurred: ${err.message}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedClassforView.isOpen) {
+      fetchData();
+      fetchElectiveGroupData()
+    }
+  }, [selectedClassforView]);
 
   const findClassById = (id) => {
     return classsRomms.find((cls) => cls.class_id === id) || null;
@@ -61,97 +132,11 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
 
   const gridClassName = getGridClassName(NumberOfPeriodsInAday);
 
-  // Mock data for subjects and teachers (replace with actual data later)
-  const subjectsData = [
-    {
-      name: "Mathematics",
-      lessonsPerWeek: 5,
-      is_elective: false,
-      teacher: [
-        { name: "John Doe", avatar: "JD" },
-        { name: "Jane Smith", avatar: "JS" },
-      ],
-    },
-    {
-      name: "Science",
-      lessonsPerWeek: 4,
-      is_elective: false,
-      teacher: [{ name: "Emily Brown", avatar: "EB" }],
-    },
-    {
-      name: "Languages",
-      lessonsPerWeek: 6,
-      is_elective: true,
-      elective_group_name: null,
-
-      options: [
-        {
-          subject: "French",
-          number_of_students: 15,
-          alotted_teachers: [
-            { name: "Michael Johnson", avatar: "MJ" },
-            { name: "Lisa Chen", avatar: "LC" },
-          ],
-        },
-        {
-          subject: "Spanish",
-          number_of_students: 18,
-          alotted_teachers: [
-            { name: "Sarah Lee", avatar: "SL" },
-            { name: "Carlos Rodriguez", avatar: "CR" },
-          ],
-        },
-        {
-          subject: "German",
-          number_of_students: 12,
-          alotted_teachers: [{ name: "Hans Mueller", avatar: "HM" }],
-        },
-      ],
-    },
-    {
-      name: "Social Studies",
-      lessonsPerWeek: 3,
-      is_elective: false,
-      teacher: [{ name: "Robert Wilson", avatar: "RW" }],
-    },
-    {
-      name: "Arts",
-      lessonsPerWeek: 2,
-      is_elective: true,
-      elective_group_name: "Foreign Languages C",
-
-      options: [
-        {
-          subject: "Visual Arts",
-          number_of_students: 20,
-          alotted_teachers: [
-            { name: "Alice Thompson", avatar: "AT" },
-            { name: "Emma White", avatar: "EW" },
-          ],
-        },
-        {
-          subject: "Music",
-          number_of_students: 16,
-          alotted_teachers: [
-            { name: "David Clark", avatar: "DC" },
-            { name: "Frank Miller", avatar: "FM" },
-          ],
-        },
-        {
-          subject: "Drama",
-          number_of_students: 14,
-          alotted_teachers: [{ name: "Grace Taylor", avatar: "GT" }],
-        },
-      ],
-    },
-  ];
-
-
   const handleReassignGroup = (subjectName, optionSubject) => {
     // Logic to reassign the group
     console.log(`Reassign group for ${subjectName} - ${optionSubject}`);
   };
-  
+
   const handleAddGroup = (subjectName, optionSubject) => {
     // Logic to add a new group
     console.log(`Add group for ${subjectName} - ${optionSubject}`);
@@ -170,7 +155,7 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
             <KeyboardBackspaceIcon fontSize="small" sx={{ color: "#818181" }} />
           </IconButton>
           <h1 className="text-xl font-semibold">
-            {SelectedClassforView?.name}
+            {selectedClassforView?.name}
           </h1>
         </div>
         <div className="flex flex-row gap-3">
@@ -220,7 +205,7 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
       <div className="flex flex-row pt-6 pl-1 border-b pb-5">
         <div className="basis-1/3 flex flex-col items-center">
           <div className="w-40 h-40 bg-blue-500 flex items-center justify-center text-white text-4xl font-bold rounded-lg shadow-lg">
-            {"8-B"}
+            {classroomData?.standard_short_name}-{classroomData?.division}
           </div>
           <Box sx={{ width: "100%", p: 2 }}>
             <Box sx={{ mb: 2 }}>
@@ -231,7 +216,13 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
                 <Box sx={{ width: "100%", mr: 1 }}>
                   <LinearProgress
                     variant="determinate"
-                    value={70}
+                    value={
+                      classroomData?.total_subjects
+                        ? (classroomData.subjects_assigned_teacher /
+                            classroomData.total_subjects) *
+                          100
+                        : 0
+                    }
                     sx={{
                       height: 4,
                       borderRadius: 2,
@@ -245,7 +236,8 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
                 </Box>
               </Box>
               <Typography variant="caption" color="text.secondary">
-                7 / 10
+                {classroomData?.subjects_assigned_teacher} /{" "}
+                {classroomData?.total_subjects}
               </Typography>
             </Box>
 
@@ -257,7 +249,13 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
                 <Box sx={{ width: "100%", mr: 1 }}>
                   <LinearProgress
                     variant="determinate"
-                    value={85}
+                    value={
+                      classroomData?.lessons_assigned_subjects
+                        ? (classroomData?.lessons_assigned_subjects /
+                            totalperiodsInWeek) *
+                          100
+                        : 0
+                    }
                     sx={{
                       height: 4,
                       borderRadius: 2,
@@ -271,7 +269,8 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
                 </Box>
               </Box>
               <Typography variant="caption" color="text.secondary" noWrap>
-                17 / 20
+                {classroomData?.lessons_assigned_subjects} /{" "}
+                {totalperiodsInWeek}
               </Typography>
             </Box>
           </Box>
@@ -281,10 +280,23 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
             CLASS DETAILS
           </p>
           <div className="grid grid-cols-2 gap-4">
-            <LabelDisplayer data={"8th"} label="Standard" />
-            <LabelDisplayer data={"B"} label="Division" />
-            <LabelDisplayer data="25" label="Number of Students" />
-            <LabelDisplayer data="Room 101" label="Classroom" />
+            <LabelDisplayer
+              data={classroomData?.standard_name}
+              label="Standard"
+            />
+            <LabelDisplayer data={classroomData?.division} label="Division" />
+            <LabelDisplayer
+              data={classroomData?.number_of_students}
+              label="Number of Students"
+            />
+            <LabelDisplayer
+              data={
+                classroomData?.room_no
+                  ? classroomData.room_no
+                  : "No room assigned"
+              }
+              label="Classroom"
+            />
           </div>
         </div>
       </div>
@@ -295,7 +307,7 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
           SUBJECTS AND TEACHERS
         </p>
         <div className="space-y-4">
-          {subjectsData.map((subject, index) => (
+          {classroomData?.subject_data.map((subject, index) => (
             <div
               key={index}
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 mb-4"
@@ -330,15 +342,14 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
                         >
                           <Avatar
                             sx={{
-                              width: 24,
-                              height: 24,
+                              width: 30,
+                              height: 30,
                               fontSize: "0.75rem",
                               bgcolor: "secondary.main",
                               marginRight: "4px",
                             }}
-                          >
-                            {teacher.avatar}
-                          </Avatar>
+                            src={`${apiDomain}${teacher.image}`}
+                          ></Avatar>
                           <span className="text-xs font-medium">
                             {teacher.name}
                           </span>
@@ -349,35 +360,32 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
 
                   {subject.is_elective && subject.options && (
                     <div className="mt-2">
-                         <div className="flex justify-between items-center mb-1">
-                              {subject.elective_group_name ? (
-                                <div className="flex items-center">
-                                  <span className="text-xs text-gray-500 mr-2">
-                                    {subject.elective_group_name}
-                                  </span>
-                                  <IconButton
-                                    size="small"
-                                    onClick={() =>
-                                      handleReassignGroup(
-                                        subject.name,
-                                        subject
-                                      )
-                                    }
-                                  >
-                                    <EditIcon fontSize="small" />
-                                  </IconButton>
-                                </div>
-                              ) : (
-                                <IconButton
-                                  size="small"
-                                  onClick={() =>
-                                    handleAddGroup(subject.name, subject)
-                                  }
-                                >
-                                 add new group <AddIcon fontSize="small" />
-                                </IconButton>
-                              )}
-                            </div>
+                      <div className="flex justify-between items-center mb-1">
+                        {subject.elective_group_name ? (
+                          <div className="flex items-center">
+                            <span className="text-xs text-gray-500 mr-2">
+                              {subject.elective_group_name}
+                            </span>
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                handleReassignGroup(subject.name, subject)
+                              }
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </div>
+                        ) : (
+                          <IconButton
+                            size="small"
+                            onClick={() =>
+                              handleAddGroup(subject.name, subject)
+                            }
+                          >
+                            add new group <AddIcon fontSize="small" />
+                          </IconButton>
+                        )}
+                      </div>
                       <div className="grid grid-cols-1 gap-2">
                         {subject.options.map((option, optionIndex) => (
                           <div
@@ -392,7 +400,7 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
                                 {option.number_of_students} students
                               </span>
                             </div>
-                         
+
                             <div className="flex flex-wrap">
                               {option.alotted_teachers.map(
                                 (teacher, teacherIndex) => (
@@ -445,7 +453,7 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
             </div>
           ))}
 
-          {SelectedClassforView?.time_table?.map((obj, dayIndex) => (
+          {selectedClassforView?.time_table?.map((obj, dayIndex) => (
             <React.Fragment key={dayIndex}>
               <div className="sticky left-0 bg-white z-10 border border-gray-300 border-opacity-15 bg-opacity-70 backdrop-blur-sm flex justify-center p-2 items-center">
                 <div className="w-full h-full flex flex-col justify-center items-center gap-2 bg-light-secondary bg-opacity-20 rounded-lg p-2 shadow-custom-10">
@@ -481,7 +489,7 @@ const ClassDetails = ({ setISelectedClassforView, SelectedClassforView }) => {
                           {classRoom?.division || "Free"}
                         </h1>
                         <h2 className="text-xs font-semibold text-dark-accent text-opacity-90 font-Roboto text-center mb-4">
-                          {SelectedClassforView?.qualified_subjects[
+                          {selectedClassforView?.qualified_subjects[
                             class_slot?.sub
                           ] || "Focus Time"}
                         </h2>

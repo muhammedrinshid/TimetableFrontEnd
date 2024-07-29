@@ -12,15 +12,17 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import { useAuth } from '../../../context/Authcontext';
 const getRandomLightColor = () => {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 70%, 80%)`;
 };
 
-const DivisionCard = ({  totalNeededLessons,setISelectedClassforView,division,handleClassroomDelete }) => {
+const DivisionCard = ({  setISelectedClassforView,division,handleClassroomDelete,standard_id }) => {
+  const {totalperiodsInWeek}=useAuth()
   const avatarLetter = division.division
   const avatarColor = getRandomLightColor();
-  const progressPercentage = (parseInt(division.subject_count) / totalNeededLessons) * 100;
+  const progressPercentage = (parseInt(division?.lessons_assigned_subjects) / totalperiodsInWeek) * 100;
 
   return (
     <Card sx={{
@@ -54,7 +56,7 @@ const DivisionCard = ({  totalNeededLessons,setISelectedClassforView,division,ha
         </Typography>
         <Box sx={{ width: '100%', mt: 2 }}>
           <Typography variant="body2" color="text.secondary" component="div">
-            Lessons: {division.subject_count}/{totalNeededLessons}
+            Lessons: {division?.lessons_assigned_subjects}/{totalperiodsInWeek}
           </Typography>
           <LinearProgress 
             variant="determinate" 
@@ -74,7 +76,7 @@ const DivisionCard = ({  totalNeededLessons,setISelectedClassforView,division,ha
           </IconButton>
         </Tooltip>
         <Tooltip title="Add lesson" arrow>
-          <IconButton aria-label="add lesson" size="small" onClick={()=>setISelectedClassforView({isOpen:true})}>
+          <IconButton aria-label="add lesson" size="small" onClick={()=>setISelectedClassforView({isOpen:true,id:division?.id,standard_id:standard_id})}>
             <FullscreenIcon />
           </IconButton>
         </Tooltip>
