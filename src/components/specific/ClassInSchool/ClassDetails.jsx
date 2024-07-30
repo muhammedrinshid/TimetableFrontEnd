@@ -53,27 +53,12 @@ const getGridClassName = (NumberOfPeriodsInAday) => {
     "grid-cols-[minmax(80px,_1.5fr)_repeat(1,_minmax(70px,_1fr))]"
   );
 };
-const ClassDetails = ({ setISelectedClassforView, selectedClassforView }) => {
-  const { apiDomain, headers, logoutUser, totalperiodsInWeek, user } =
+const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAddGroup}) => {
+  const { apiDomain, headers, logoutUser, totalperiodsInWeek } =
     useAuth();
 
-  const [electiveData, setElectiveData] = useState(null);
 
-  const fetchElectiveGroupData = async (standardId) => {
-    try {
-      const response = await axios.get(
-        `${apiDomain}/api/class-room/elective-subject-add/${selectedClassforView.standard_id}/`,
-        {
-          headers,
-        }
-      );
-      setElectiveData(response.data);
-      toast.success("Data fetched successfully!");
-    } catch (err) {
-      toast.error(`Error fetching data: ${err.message}`);
-    } finally {
-    }
-  };
+  
 
   const [classsRomms, setClassRooms] = useState(class_data); // Ensure class_data is defined or imported
   const [classroomData, setClassroomData] = useState(null);
@@ -122,7 +107,6 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView }) => {
   useEffect(() => {
     if (selectedClassforView.isOpen) {
       fetchData();
-      fetchElectiveGroupData()
     }
   }, [selectedClassforView]);
 
@@ -137,10 +121,10 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView }) => {
     console.log(`Reassign group for ${subjectName} - ${optionSubject}`);
   };
 
-  const handleAddGroup = (subjectName, optionSubject) => {
-    // Logic to add a new group
-    console.log(`Add group for ${subjectName} - ${optionSubject}`);
-  };
+  // const handleAddGroup = (subjectName, optionSubject) => {
+  //   // Logic to add a new group
+  //   console.log(`Add group for ${subjectName} - ${optionSubject}`);
+  // };
 
   return (
     <div className="w-full h-full rounded-2xl px-6 py-5">
@@ -379,7 +363,7 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView }) => {
                           <IconButton
                             size="small"
                             onClick={() =>
-                              handleAddGroup(subject.name, subject)
+                              handleAddGroup({standardId:selectedClassforView.standard_id,classroomId:selectedClassforView.id,electiveSubjectId:subject?.id})
                             }
                           >
                             add new group <AddIcon fontSize="small" />

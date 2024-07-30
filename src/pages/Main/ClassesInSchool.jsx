@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../context/Authcontext";
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
+import ElectiveGroupPopup from "../../components/specific/ClassInSchool/ElectiveGroupPopup";
 
 const ClassesInSchool = ({}) => {
   const { apiDomain, logoutUser, headers } = useAuth();
@@ -73,6 +74,21 @@ const ClassesInSchool = ({}) => {
       }
     }
   };
+  const [openElectiveGroupPopup, setOpenElectiveGroupPopup] = useState(null);
+  const handleAddGroup = ({ standardId, classroomId, electiveSubjectId }) => {
+    if (standardId && classroomId && electiveSubjectId) {
+      setOpenElectiveGroupPopup({
+        standardId:standardId,
+        classroomId:classroomId,
+        electiveSubjectId:electiveSubjectId
+      });
+    }
+    else{
+      toast.error("error occured")
+    }
+    
+  };
+
   return (
     <>
       <ReactCardFlip
@@ -80,17 +96,20 @@ const ClassesInSchool = ({}) => {
         isFlipped={selectedClassforView.isOpen}
         flipDirection="vertical"
       >
+        
+
         <ClassList
           setISelectedClassforView={setISelectedClassforView}
           handleClassroomDelete={handleClassroomDelete}
-          
           handleStandardDelete={handleStandardDelete}
           refetchClassroomList={refetchClassroomList}
           refectClasssroomListdata={refectClasssroomListdata}
-
-
         />
-        <ClassDetails setISelectedClassforView={setISelectedClassforView} selectedClassforView={selectedClassforView}/>
+        <ClassDetails
+          setISelectedClassforView={setISelectedClassforView}
+          selectedClassforView={selectedClassforView}
+          handleAddGroup={handleAddGroup}
+        />
       </ReactCardFlip>
       <DeleteConfirmationPopup
         isOpen={isClassroomDeletePopupOpen}
@@ -102,6 +121,11 @@ const ClassesInSchool = ({}) => {
         onClose={() => setIsStandardDeletePopupOpen(false)}
         onConfirm={handleConfirmStandardDelete}
       />
+      <ElectiveGroupPopup
+          open={openElectiveGroupPopup}
+          onClose={() => setOpenElectiveGroupPopup(null)}
+          openElectiveGroupPopup={openElectiveGroupPopup}
+        />
     </>
   );
 };
