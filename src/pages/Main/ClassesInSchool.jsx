@@ -7,15 +7,27 @@ import axios from "axios";
 import { useAuth } from "../../context/Authcontext";
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
 import ElectiveGroupPopup from "../../components/specific/ClassInSchool/ElectiveGroupPopup";
+import EditDivisionForm from "../../components/forms/EditDivisionForm";
 
 const ClassesInSchool = ({}) => {
   const { apiDomain, logoutUser, headers } = useAuth();
 
   const [refetchClassroomList, setRefetchClassroomList] = useState(false);
+  const [refetchClassroomdetails, setRefetchClassroomdetails] = useState(false);
+  const refreshClassDetails = () => {
+    setRefetchClassroomdetails((prev) => !prev);
+  };
   const [isClassroomDeletePopupOpen, setIsClassroomDeletePopupOpen] =
     useState(null);
   const [isStandardDeletePopupOpen, setIsStandardDeletePopupOpen] =
     useState(null);
+
+    const [editClassroomForm, setEditClassroomForm] = useState({
+      isOpen:false,
+      gradeId: "",
+      classroomId:"",
+      type: "all",
+    });
 
   const [selectedClassforView, setISelectedClassforView] = useState({
     isOpen: false,
@@ -75,20 +87,34 @@ const ClassesInSchool = ({}) => {
     }
   };
   const [openElectiveGroupPopup, setOpenElectiveGroupPopup] = useState(null);
-  const handleAddGroup = ({ standardId, classroomId, electiveSubjectId }) => {
+  const handleAddGroup = ({
+    standardId,
+    classroomId,
+    electiveSubjectId,
+    currenGrpId,
+  }) => {
+   
+
     if (standardId && classroomId && electiveSubjectId) {
       setOpenElectiveGroupPopup({
-        standardId:standardId,
-        classroomId:classroomId,
-        electiveSubjectId:electiveSubjectId
+        standardId: standardId,
+        classroomId: classroomId,
+        electiveSubjectId: electiveSubjectId,
+        currenGrpId: currenGrpId,
       });
+    } else {
+      toast.error("error occured");
     }
-    else{
-      toast.error("error occured")
-    }
-    
   };
-
+  const openEditCalssroomForm = ({gradeId, classroomId, }) => {
+    setEditClassroomForm((prev) => ({
+      ...prev,
+      isOpen: true,
+      gradeId:gradeId,
+      classroomId:classroomId
+      
+    }));
+  };
   return (
     <>
       <ReactCardFlip
@@ -96,19 +122,21 @@ const ClassesInSchool = ({}) => {
         isFlipped={selectedClassforView.isOpen}
         flipDirection="vertical"
       >
-        
-
         <ClassList
           setISelectedClassforView={setISelectedClassforView}
           handleClassroomDelete={handleClassroomDelete}
           handleStandardDelete={handleStandardDelete}
           refetchClassroomList={refetchClassroomList}
           refectClasssroomListdata={refectClasssroomListdata}
+          openEditCalssroomForm={openEditCalssroomForm}
         />
         <ClassDetails
           setISelectedClassforView={setISelectedClassforView}
           selectedClassforView={selectedClassforView}
           handleAddGroup={handleAddGroup}
+          refetch={refetchClassroomdetails}
+          refresh={refreshClassDetails}
+
         />
       </ReactCardFlip>
       <DeleteConfirmationPopup
@@ -122,10 +150,18 @@ const ClassesInSchool = ({}) => {
         onConfirm={handleConfirmStandardDelete}
       />
       <ElectiveGroupPopup
-          open={openElectiveGroupPopup}
-          onClose={() => setOpenElectiveGroupPopup(null)}
-          openElectiveGroupPopup={openElectiveGroupPopup}
-        />
+        open={openElectiveGroupPopup}
+        onClose={() => setOpenElectiveGroupPopup(null)}
+        openElectiveGroupPopup={openElectiveGroupPopup}
+        refresh={refreshClassDetails}
+      />
+        <EditDivisionForm
+        open={editClassroomForm.isOpen}
+        onClose={() =>
+          setEditClassroomForm((prev) => ({ ...prev, isOpen: false }))
+        }
+        editClassroomForm={editClassroomForm}
+      />
     </>
   );
 };

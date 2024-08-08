@@ -3,18 +3,22 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
 import { LabelDispalyerWithIcon, LabelDisplayer } from "../../common";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Avatar,
   Box,
   Button,
   IconButton,
   LinearProgress,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
-import { class_data } from "../../../assets/datas";
 import axios from "axios";
 import { toast } from "react-toastify";
+import UpdateSubjectForm from "../../forms/UpdateSubjectForm";
+import SubjectCard from "./SubjectCard";
+import AddNewSubjectForm from "../../forms/AddNewSubjectForm";
 
 export const row1 = [
   "Instructor",
@@ -53,16 +57,23 @@ const getGridClassName = (NumberOfPeriodsInAday) => {
     "grid-cols-[minmax(80px,_1.5fr)_repeat(1,_minmax(70px,_1fr))]"
   );
 };
-const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAddGroup}) => {
-  const { apiDomain, headers, logoutUser, totalperiodsInWeek } =
-    useAuth();
+const ClassDetails = ({
+  setISelectedClassforView,
+  selectedClassforView,
+  handleAddGroup,
+  refetch,
+  refresh,
+}) => {
+  const { apiDomain, headers, logoutUser, totalperiodsInWeek } = useAuth();
 
-
-  
-
-  const [classsRomms, setClassRooms] = useState(class_data); // Ensure class_data is defined or imported
   const [classroomData, setClassroomData] = useState(null);
+  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const { NumberOfPeriodsInAday } = useAuth();
+  const [openAddNewSubjectForm, setOpenAddNewSubjectForm] = useState({
+    isOpen: false,
+   
+  });
 
   const fetchData = async () => {
     try {
@@ -108,11 +119,7 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAd
     if (selectedClassforView.isOpen) {
       fetchData();
     }
-  }, [selectedClassforView]);
-
-  const findClassById = (id) => {
-    return classsRomms.find((cls) => cls.class_id === id) || null;
-  };
+  }, [selectedClassforView, refetch]);
 
   const gridClassName = getGridClassName(NumberOfPeriodsInAday);
 
@@ -121,11 +128,25 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAd
     console.log(`Reassign group for ${subjectName} - ${optionSubject}`);
   };
 
-  // const handleAddGroup = (subjectName, optionSubject) => {
-  //   // Logic to add a new group
-  //   console.log(`Add group for ${subjectName} - ${optionSubject}`);
-  // };
+  const handleDeleteSubject = () => {};
 
+  const handleSubjectEditButton = (subject) => {
+    let newData = { ...subject, gradeId: selectedClassforView.gradeId };
+    setSelectedSubject(newData);
+    setIsUpdateFormOpen(true);
+  };
+
+  const onClickAddNewSubject = () => {
+    setOpenAddNewSubjectForm((prev) => ({
+      ...prev,
+      isOpen: true,
+      classroomId: classroomData?.id,
+      selectedSubjects: classroomData.subject_data.map((sub) => sub.subjectId),
+      standardId: selectedClassforView?.standard_id,
+      gradeId: selectedClassforView?.gradeId,
+      currentLessonsPerWeek:classroomData.lessons_assigned_subjects
+    }));
+  };
   return (
     <div className="w-full h-full rounded-2xl px-6 py-5">
       {/* Header Section */}
@@ -275,8 +296,10 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAd
             />
             <LabelDisplayer
               data={
-                classroomData?.room_no
-                  ? classroomData.room_no
+                classroomData?.room
+                  ? classroomData.room?.room_number +
+                    " " +
+                    classroomData.room?.name
                   : "No room assigned"
               }
               label="Classroom"
@@ -292,138 +315,29 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAd
         </p>
         <div className="space-y-4">
           {classroomData?.subject_data.map((subject, index) => (
-            <div
+            <SubjectCard
               key={index}
-              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 mb-4"
-            >
-              <div className="flex items-stretch">
-                <div className="flex-shrink-0">
-                  <div className="h-full w-12 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center rounded-l-lg">
-                    <span className="text-xl font-bold text-white">
-                      {subject.name.charAt(0)}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex-grow p-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        {subject.name}
-                      </h3>
-                      <p className="text-xs text-gray-500">
-                        {subject.lessonsPerWeek} lessons/week •{" "}
-                        {subject.is_elective ? "Elective" : "Core"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {!subject.is_elective && (
-                    <div className="flex flex-wrap mt-2">
-                      {subject.teacher.map((teacher, teacherIndex) => (
-                        <div
-                          key={teacherIndex}
-                          className="flex items-center mr-3 mb-1"
-                        >
-                          <Avatar
-                            sx={{
-                              width: 30,
-                              height: 30,
-                              fontSize: "0.75rem",
-                              bgcolor: "secondary.main",
-                              marginRight: "4px",
-                            }}
-                            src={`${apiDomain}${teacher.image}`}
-                          ></Avatar>
-                          <span className="text-xs font-medium">
-                            {teacher.name}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {subject.is_elective && subject.options && (
-                    <div className="mt-2">
-                      <div className="flex justify-between items-center mb-1">
-                        {subject.elective_group_name ? (
-                          <div className="flex items-center">
-                            <span className="text-xs text-gray-500 mr-2">
-                              {subject.elective_group_name}
-                            </span>
-                            <IconButton
-                              size="small"
-                              onClick={() =>
-                                handleReassignGroup(subject.name, subject)
-                              }
-                            >
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                          </div>
-                        ) : (
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              handleAddGroup({standardId:selectedClassforView.standard_id,classroomId:selectedClassforView.id,electiveSubjectId:subject?.id})
-                            }
-                          >
-                            add new group <AddIcon fontSize="small" />
-                          </IconButton>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 gap-2">
-                        {subject.options.map((option, optionIndex) => (
-                          <div
-                            key={optionIndex}
-                            className="bg-gray-50 p-2 rounded-md text-sm"
-                          >
-                            <div className="flex justify-between items-center mb-1">
-                              <span className="font-medium">
-                                {option.subject}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {option.number_of_students} students
-                              </span>
-                            </div>
-
-                            <div className="flex flex-wrap">
-                              {option.alotted_teachers.map(
-                                (teacher, teacherIndex) => (
-                                  <div
-                                    key={teacherIndex}
-                                    className="flex items-center mr-3 mb-1"
-                                  >
-                                    <Avatar
-                                      sx={{
-                                        width: 20,
-                                        height: 20,
-                                        fontSize: "0.625rem",
-                                        bgcolor: "secondary.main",
-                                        marginRight: "4px",
-                                      }}
-                                    >
-                                      {teacher.avatar}
-                                    </Avatar>
-                                    <span className="text-xs">
-                                      {teacher.name}
-                                    </span>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+              subject={subject}
+              onEdit={handleSubjectEditButton}
+              onAddGroup={handleAddGroup}
+              selectedClassforView={selectedClassforView}
+              refresh={refresh}
+            />
           ))}
         </div>
       </div>
+      <Tooltip title={"add new subject"}>
+        <button
+          onClick={onClickAddNewSubject}
+          className="fixed  right-6 bottom-6 p-4 bg-primary hover:bg-primary-dark bg-light-primary rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          aria-label="Add new subject"
+        >
+          <AddIcon className="w-6 h-6 text-white" />
+        </button>
+      </Tooltip>
 
       {/* Timetable Section */}
-      <div className="overflow-auto py-6">
+      {/* <div className="overflow-auto py-6">
         <p className="text-sm font-medium text-text_2 font-Inter my-2">
           TIME TABLE FOR A WEEK
         </p>
@@ -449,7 +363,6 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAd
               {obj.class_slots
                 ?.slice(0, NumberOfPeriodsInAday)
                 .map((class_slot, ind) => {
-                  const classRoom = findClassById(class_slot?.class);
 
                   return (
                     <div
@@ -484,7 +397,22 @@ const ClassDetails = ({ setISelectedClassforView, selectedClassforView ,handleAd
             </React.Fragment>
           ))}
         </div>
-      </div>
+      </div> */}
+      <UpdateSubjectForm
+        subject={selectedSubject}
+        // onUpdate={handleUpdateSubject}
+        refresh={refresh}
+        open={isUpdateFormOpen}
+        onClose={() => setIsUpdateFormOpen(false)}
+      />
+      <AddNewSubjectForm
+        open={openAddNewSubjectForm.isOpen}
+        onClose={() =>
+          setOpenAddNewSubjectForm((prev) => ({ ...prev, isOpen: false }))
+        }
+        openAddNewSubjectForm={openAddNewSubjectForm}
+        refresh={refresh}
+      />
     </div>
   );
 };

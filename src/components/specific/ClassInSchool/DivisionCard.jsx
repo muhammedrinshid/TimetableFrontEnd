@@ -18,12 +18,11 @@ const getRandomLightColor = () => {
   return `hsl(${hue}, 70%, 80%)`;
 };
 
-const DivisionCard = ({  setISelectedClassforView,division,handleClassroomDelete,standard_id }) => {
+const DivisionCard = ({  setISelectedClassforView,division,handleClassroomDelete,standard_id,openEditCalssroomForm,grade, }) => {
   const {totalperiodsInWeek}=useAuth()
   const avatarLetter = division.division
   const avatarColor = getRandomLightColor();
   const progressPercentage = (parseInt(division?.lessons_assigned_subjects) / totalperiodsInWeek) * 100;
-
   return (
     <Card sx={{
       display: 'flex',
@@ -71,12 +70,18 @@ const DivisionCard = ({  setISelectedClassforView,division,handleClassroomDelete
         gap: 1
       }}>
         <Tooltip title="Edit division" arrow>
-          <IconButton aria-label="edit division" size="small">
+          <IconButton aria-label="edit division" size="small"  onClick={() =>
+              openEditCalssroomForm({
+                gradeId: grade?.id,
+                classroomId: division?.id,
+                type: "all",
+              })
+            }>
             <EditIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Add lesson" arrow>
-          <IconButton aria-label="add lesson" size="small" onClick={()=>setISelectedClassforView({isOpen:true,id:division?.id,standard_id:standard_id})}>
+          <IconButton aria-label="add lesson" size="small" onClick={()=>setISelectedClassforView({isOpen:true,id:division?.id,standard_id:standard_id,gradeId:grade.id})}>
             <FullscreenIcon />
           </IconButton>
         </Tooltip>

@@ -33,6 +33,8 @@ import axios from "axios";
 import { useAuth } from "../../context/Authcontext";
 import { toast } from "react-toastify";
 import { defaultAvatarImage } from "../../assets/images";
+import AddNewRoom from "../../components/forms/AddNewRoom";
+import RoomsSection from "../../components/specific/UserConfiguration/RoomsSection";
 
 // theme for the input fields
 const theme = createTheme({
@@ -96,7 +98,7 @@ const UserConfiguration = ({ setIsSchoolDetailsOpen }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [imagePreview, setImagePreview] = useState(schoolData.profile_image);
   const [newImage, setNewImage] = useState(null);
-
+  const [rooms, setRooms] = useState([]);
   const [openGradeDialog, setOpenGradeDialog] = useState(false);
   const [currentGrade, setCurrentGrade] = useState({
     name: "",
@@ -108,11 +110,12 @@ const UserConfiguration = ({ setIsSchoolDetailsOpen }) => {
   // this will fetch the data while loading the page
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${apiDomain}/api/user/info`, {
-        headers,
-      });
-      setSchoolData({ ...response.data });
-      console.log(response.data);
+      const [userInfoResponse, roomsResponse] = await Promise.all([
+        axios.get(`${apiDomain}/api/user/info`, { headers }),
+        axios.get(`${apiDomain}/api/room/rooms/`, { headers }),
+      ]);
+      setSchoolData({ ...userInfoResponse.data });
+      setRooms(roomsResponse.data);
       setIsLoading(false);
     } catch (err) {
       if (err.response) {
@@ -422,7 +425,47 @@ const UserConfiguration = ({ setIsSchoolDetailsOpen }) => {
       toast.error("Failed to update profile image");
     }
   };
+  const [openRoomForm, setOpenRoomForm] = useState(false);
+  const [currentRoom, setCurrentRoom] = useState(null);
 
+  const handleOpenRoomForm = (room = null) => {
+    setCurrentRoom(room);
+    setOpenRoomForm(true);
+  };
+
+  const handleCloseRoomForm = () => {
+    setOpenRoomForm(false);
+    setCurrentRoom(null);
+  };
+
+  const handleSaveRoom = async (roomData) => {
+    try {
+      let response;
+      if (roomData.id) {
+        // Editing existing room
+        response = await axios.put(
+          `${apiDomain}/api/room/rooms/${roomData.id}/`,
+          roomData,
+          { headers }
+        );
+        setRooms(
+          rooms.map((room) => (room.id === roomData.id ? response.data : room))
+        );
+        toast.success("Room updated successfully");
+      } else {
+        // Adding new room
+        response = await axios.post(`${apiDomain}/api/room/rooms/`, roomData, {
+          headers,
+        });
+        setRooms([...rooms, response.data]);
+        toast.success("Room added successfully");
+      }
+      handleCloseRoomForm();
+    } catch (error) {
+      console.error("Error saving room:", error);
+      toast.error("Failed to save room");
+    }
+  };
   return isLoading ? (
     <CircularProgress />
   ) : (
@@ -916,7 +959,18 @@ const UserConfiguration = ({ setIsSchoolDetailsOpen }) => {
             onConfirm={handleConfirmGradeDelete}
           />
         </div>
+        {/* Rooms Section */}
+        <RoomsSection
+          rooms={rooms}
+          handleOpenRoomForm={handleOpenRoomForm}
+        />
       </div>
+      <AddNewRoom
+        open={openRoomForm}
+        handleClose={handleCloseRoomForm}
+        handleSave={handleSaveRoom}
+        initialRoom={currentRoom}
+      />
     </ThemeProvider>
   );
 };

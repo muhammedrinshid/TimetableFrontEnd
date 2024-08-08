@@ -23,6 +23,7 @@ const ClassList = ({
   handleStandardDelete,
   refectClasssroomListdata,
   refetchClassroomList,
+  openEditCalssroomForm,
 }) => {
   const { apiDomain, logoutUser, headers } = useAuth();
   const [isAddStandarFormOpen, setIsAddStandarFormOpen] = useState(false);
@@ -40,6 +41,7 @@ const ClassList = ({
     type: "all",
     div: "",
   });
+
   const [whichGradeToDisplay, setWhichGradeToDisplay] = useState("");
 
   const options = [
@@ -87,34 +89,7 @@ const ClassList = ({
     setIsAddStandarFormOpen(false);
   };
 
-  // temperary function mock the backend
-  function assignSubjectsToStandard(subjects, standardName, gradeName) {
-    let tempTotal = subjects.reduce((total, subject) => {
-      return total + subject.lessonsPerWeek;
-    }, 0);
 
-    let oldGrade = JSON.parse(JSON.stringify(classByGrade));
-
-    return oldGrade.map((grade) =>
-      grade.name === gradeName
-        ? {
-            ...grade,
-            standards: grade.standards.map((standard) =>
-              standard.name === standardName
-                ? {
-                    ...standard,
-                    divisions: standard.divisions.map((division) => ({
-                      ...division,
-                      subjects: subjects,
-                      totalAssignedClassesPerWeek: tempTotal,
-                    })),
-                  }
-                : standard
-            ),
-          }
-        : grade
-    );
-  }
 
   const handleGradeChange = (value) => {
     setWhichGradeToDisplay(value);
@@ -125,7 +100,6 @@ const ClassList = ({
 
   // function to open the assign teacher form
   const openAssignTeacherForm = ({grade_id, division, standard_id, type}) => {
-    console.log("gradeid",grade_id)
     setOpenTeacherAssingmentForm((prev) => ({
       ...prev,
       isOpen: true,
@@ -136,18 +110,7 @@ const ClassList = ({
     }));
   };
 
-  // function to mock the teacher assignment afte the cre
-  const handleAssingTeacherSubmit = (subjects) => {
-    const newGrade = assignSubjectsToStandard(
-      subjects,
-      OpenTeacherAssingmentForm.standard,
-      OpenTeacherAssingmentForm.grade
-    );
-    setClassByGrade(newGrade);
-    console.log("success", newGrade[0]);
-    setOpenTeacherAssingmentForm((prev) => ({ ...prev, isOpen: false }));
-    // Process the assigned subjects here
-  };
+
 
   // filter the grade accroding to the selected grade
   const filteredGrades = whichGradeToDisplay
@@ -211,6 +174,8 @@ const ClassList = ({
                         standard_id={standard?.id}
                         handleClassroomDelete={handleClassroomDelete}
                         setISelectedClassforView={setISelectedClassforView}
+                        openEditCalssroomForm={openEditCalssroomForm}
+                        grade={grade}
                       />
                     ))}
                   </div>
@@ -238,6 +203,7 @@ const ClassList = ({
         }
         OpenTeacherAssingmentForm={OpenTeacherAssingmentForm}
       />
+    
     </div>
   );
 };

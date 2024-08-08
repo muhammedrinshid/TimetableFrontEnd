@@ -9,11 +9,14 @@ import {
   CircularProgress,
   Switch,
   FormControlLabel,
+  Tooltip,
 } from "@mui/material";
 import { Edit, Delete, Star, StarBorder } from "@mui/icons-material";
 import TeacherTimeTableComponent from "../../components/specific/saved Time tables/TimeTableforTeacher";
 import { weeklyTimetableTeacher, weeklyTimetablestudent,  } from "../../assets/datas";
 import TimeTableforStudentComponent from "../../components/specific/saved Time tables/TimeTableforStudent";
+import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
+import RoundButton from "../../components/common/RoundButton";
 
 const CustomChip = ({ label, color, icon }) => (
   <div
@@ -99,12 +102,14 @@ const SavedTimeTables = () => {
   };
 
   return (
-    <div className="w-full h-full p-6 bg-gray-100 overflow-auto">
+    <div className="w-full h-full p-6 bg-gray-100 overflow-auto relative">
+       
       <Typography variant="h4" className="mb-6 text-gray-800 font-bold">
         Saved Timetables
       </Typography>
 
-      <div className="space-y-4">
+      <div className="space-y-4 ">
+    
         {savedTables.map((table) => (
           <Card
             key={table.id}
@@ -184,8 +189,13 @@ const SavedTimeTables = () => {
                 </Button>
               </div>
             </CardContent>
+
           </Card>
+          
         ))}
+       <RoundButton
+      
+      />
       </div>
 
       <div className="mt-8">

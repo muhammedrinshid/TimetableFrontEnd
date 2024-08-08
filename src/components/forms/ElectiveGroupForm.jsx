@@ -1,7 +1,10 @@
 import React from 'react';
 import { Autocomplete, TextField, Chip } from '@mui/material';
+import { useAuth } from '../../context/Authcontext';
 
 const ElectiveGroupForm = ({ divisions, setDivisions, classrooms, isExisting }) => {
+  const {headers,apiDomain}=useAuth()
+  
   const handleDivisionChange = (event, newValue) => {
     setDivisions(newValue);
   };

@@ -1,129 +1,172 @@
-import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+// import React, { useState, useEffect } from 'react';
+// import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Checkbox, Avatar, FormControlLabel, Chip } from '@mui/material';
+// import { useAuth } from '../../context/Authcontext';
 
-const drawerWidth = 240;
+// const UpdateSubjectForm = ({ open, onClose, subject, onUpdate }) => {
+//   const { apiDomain, headers } = useAuth();
+//   const [formData, setFormData] = useState(null);
+//   const [availableSubjectAndTeachers, setAvailableSubjectAndTeachers] = useState([]);
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: `-${drawerWidth}px`,
-    ...(open && {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-    }),
-  }),
-);
+//   useEffect(() => {
+//     if (open && subject) {
+//       setFormData({
+//         name: subject.name,
+//         lessons_per_week: subject.lessons_per_week,
+//         is_elective: subject.is_elective,
+//         teacher: subject.teacher,
+//         options: subject.options || [],
+//       });
+//       fetchAvailableSubjectAndTeachers();
+//     } else {
+//       setFormData(null);
+//       setAvailableSubjectAndTeachers([]);
+//     }
+//   }, [open, subject]);
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
+//   const fetchAvailableSubjectAndTeachers = async () => {
+//     if (subject && subject.id) {
+//       try {
+//         const response = await fetch(`${apiDomain}/api/class-room/subjects-with-teachers/${subject.gradeId}`, { headers });
+//         const data = await response.json();
+//         setAvailableSubjectAndTeachers(data);
+//       } catch (error) {
+//         console.error("Error fetching available teachers:", error);
+//       }
+//     }
+//   };
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
-}));
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData(prev => ({ ...prev, [name]: value }));
+//   };
 
-export default function Workshop() {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+//   const handleTeacherToggle = (teacherId) => {
+//     setFormData(prev => ({
+//       ...prev,
+//       teacher: prev.teacher.some(t => t.id === teacherId)
+//         ? prev.teacher.filter(t => t.id !== teacherId)
+//         : [...prev.teacher, availableSubjectAndTeachers.find(item => item.id === subject.subjectId)?.qualified_teachers.find(t => t.id === teacherId)]
+//     }));
+//   };
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+//   const handleOptionChange = (index, field, value) => {
+//     setFormData(prev => ({
+//       ...prev,
+//       options: prev.options.map((option, i) => 
+//         i === index ? { ...option, [field]: value } : option
+//       )
+//     }));
+//   };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+//   const handleSubmit = () => {
+//     if (formData) {
+//       onUpdate(formData);
+//     }
+//     onClose();
+//   };
 
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Persistent drawer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-       
-        <Divider />
-     
-      </Drawer>
-      <Main open={open}>
-        <DrawerHeader />
+//   if (!open || !formData) {
+//     return null;
+//   }
+
+//   return (
+//     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+//       <DialogTitle>{formData.is_elective ? "Update Elective Subject" : "Update Core Subject"}</DialogTitle>
+//       <DialogContent>
+//         <TextField
+//           margin="dense"
+//           label="Subject Name"
+//           fullWidth
+//           name="name"
+//           value={formData.name}
+//           onChange={handleInputChange}
+//           disabled={!formData.is_elective}
+//         />
+//         <TextField
+//           margin="dense"
+//           label="Lessons per Week"
+//           type="number"
+//           fullWidth
+//           name="lessons_per_week"
+//           value={formData.lessons_per_week}
+//           onChange={handleInputChange}
+//         />
         
-      </Main>
-    </Box>
-  );
-}
+//         {!formData.is_elective && (
+//           <div>
+//             <h4>Assigned Teachers</h4>
+//             {(availableSubjectAndTeachers.find(item => item.id === subject.subjectId)?.qualified_teachers || []).map((teacher) => (
+//             <Chip
+//               key={teacher.id}
+//               avatar={
+//                 <Avatar
+//                   alt={teacher.full_name}
+//                   src={teacher.profile_image && `${apiDomain}${teacher.profile_image}`}
+//                 />
+//               }
+//               label={teacher.full_name}
+//               onClick={() => handleTeacherToggle(teacher.id)}
+//               color={formData.teacher.some(t => t.id === teacher.id) ? "primary" : "default"}
+//               sx={{ m: 0.5 }}
+//             />
+//           ))}
+//           </div>
+//         )}
+
+//         {formData.is_elective && (
+//           <div>
+//             <h4>Options</h4>
+//             {formData.options.map((option, index) => (
+//               <div key={index}>
+//                 <TextField
+//                   margin="dense"
+//                   label="Subject"
+//                   value={option.subject.name}
+//                   onChange={(e) => handleOptionChange(index, 'subject', { ...option.subject, name: e.target.value })}
+//                 />
+//                 <TextField
+//                   margin="dense"
+//                   label="Number of Students"
+//                   type="number"
+//                   value={option.number_of_students}
+//                   onChange={(e) => handleOptionChange(index, 'number_of_students', e.target.value)}
+//                 />
+//                 <div>
+//                   <h5>Assigned Teachers</h5>
+//                   {availableSubjectAndTeachers.map(teacher => (
+//                     <FormControlLabel
+//                       key={teacher.id}
+//                       control={
+//                         <Checkbox
+//                           checked={option.alotted_teachers.some(t => t.id === teacher.id)}
+//                           onChange={() => {
+//                             const updatedTeachers = option.alotted_teachers.some(t => t.id === teacher.id)
+//                               ? option.alotted_teachers.filter(t => t.id !== teacher.id)
+//                               : [...option.alotted_teachers, teacher];
+//                             handleOptionChange(index, 'alotted_teachers', updatedTeachers);
+//                           }}
+//                         />
+//                       }
+//                       label={
+//                         <div style={{ display: 'flex', alignItems: 'center' }}>
+//                           <Avatar src={`${apiDomain}${teacher.profile_image}`} style={{ marginRight: 8 }} />
+//                           {teacher.full_name}
+//                         </div>
+//                       }
+//                     />
+//                   ))}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </DialogContent>
+//       <DialogActions>
+//         <Button onClick={onClose}>Cancel</Button>
+//         <Button onClick={handleSubmit} color="primary">Update</Button>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// };
+
+// export default UpdateSubjectForm;

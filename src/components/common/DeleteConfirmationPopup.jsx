@@ -1,49 +1,101 @@
 import React from 'react';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+  IconButton,
+  Box,
+  Typography,
+} from '@mui/material';
+import { Close as CloseIcon, DeleteForever as DeleteIcon } from '@mui/icons-material';
 
 const DeleteConfirmationPopup = ({ isOpen, onClose, onConfirm }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-20">
-      <div className="bg-white rounded-lg shadow-xl max-w-sm w-full">
-        <div className="p-6">
-          <button onClick={onClose} className="float-right text-gray-400 hover:text-gray-600">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          
-          <div className="flex justify-center mb-4">
-            <div className="rounded-full border-4 border-red-500 p-2">
-              <svg className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-          </div>
-          
-          <h2 className="text-xl font-bold text-center mb-4">Are you sure?</h2>
-          
-          <p className="text-gray-600 text-center mb-6">
-            Do you really want to delete these records? This process cannot be undone.
-          </p>
-          
-          <div className="flex justify-center space-x-4">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={onConfirm}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      PaperProps={{
+        style: {
+          borderRadius: '16px',
+          padding: '16px',
+          maxWidth: '400px',
+        },
+      }}
+    >
+      <DialogTitle id="alert-dialog-title" sx={{ mb: 2, textAlign: 'center' }}>
+        <Typography variant="h5" component="div" fontWeight="bold">
+          Confirm Deletion
+        </Typography>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        <Box display="flex" justifyContent="center" mb={3}>
+          <Box
+            sx={{
+              bgcolor: 'error.light',
+              borderRadius: '50%',
+              p: 2,
+              animation: 'pulse 1.5s infinite',
+              '@keyframes pulse': {
+                '0%': {
+                  boxShadow: '0 0 0 0 rgba(244, 67, 54, 0.4)',
+                },
+                '70%': {
+                  boxShadow: '0 0 0 10px rgba(244, 67, 54, 0)',
+                },
+                '100%': {
+                  boxShadow: '0 0 0 0 rgba(244, 67, 54, 0)',
+                },
+              },
+            }}
+          >
+            <DeleteIcon color="error" sx={{ fontSize: 48 }} />
+          </Box>
+        </Box>
+        <DialogContentText id="alert-dialog-description" align="center">
+          <Typography variant="body1" gutterBottom>
+            Are you absolutely sure you want to delete these records?
+          </Typography>
+          <Typography variant="body2" color="error" fontWeight="medium">
+            This action cannot be undone.
+          </Typography>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions sx={{ justifyContent: 'center', mt: 2 }}>
+        <Button
+          onClick={onClose}
+          variant="outlined"
+          sx={{ minWidth: '120px' }}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={onConfirm}
+          variant="contained"
+          color="error"
+          autoFocus
+          sx={{ minWidth: '120px' }}
+        >
+          Yes, Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
