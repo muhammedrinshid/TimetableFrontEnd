@@ -10,13 +10,20 @@ import {
   Switch,
   FormControlLabel,
   Tooltip,
+  Chip,
 } from "@mui/material";
 import { Edit, Delete, Star, StarBorder } from "@mui/icons-material";
 import TeacherTimeTableComponent from "../../components/specific/saved Time tables/TimeTableforTeacher";
-import { weeklyTimetableTeacher, weeklyTimetablestudent,  } from "../../assets/datas";
+import {
+  weeklyTimetableTeacher,
+  weeklyTimetablestudent,
+} from "../../assets/datas";
 import TimeTableforStudentComponent from "../../components/specific/saved Time tables/TimeTableforStudent";
 import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
 import RoundButton from "../../components/common/RoundButton";
+import { useAuth } from "../../context/Authcontext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const CustomChip = ({ label, color, icon }) => (
   <div
@@ -28,6 +35,23 @@ const CustomChip = ({ label, color, icon }) => (
 );
 
 const SavedTimeTables = () => {
+  const { is_ready_for_timetable,apiDomain,headers } = useAuth();
+
+  const [scheduleErrorList, setScheduleErrorList] = useState([]);
+
+  const handleWhyDisabled = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/time-table/check-class-subjects/`,
+        { headers }
+      );
+      setScheduleErrorList(response.data.reasons);
+      toast.success("Schedule retrieved successfully");
+    } catch (error) {
+      toast.error("Failed to retrieve schedule");
+    }
+  };
+
   const [savedTables, setSavedTables] = useState([
     {
       id: 1,
@@ -103,13 +127,11 @@ const SavedTimeTables = () => {
 
   return (
     <div className="w-full h-full p-6 bg-gray-100 overflow-auto relative">
-       
       <Typography variant="h4" className="mb-6 text-gray-800 font-bold">
         Saved Timetables
       </Typography>
 
       <div className="space-y-4 ">
-    
         {savedTables.map((table) => (
           <Card
             key={table.id}
@@ -189,13 +211,41 @@ const SavedTimeTables = () => {
                 </Button>
               </div>
             </CardContent>
-
           </Card>
-          
         ))}
-       <RoundButton
-      
-      />
+        <div className="flex flex-col items-center space-y-4">
+          <RoundButton isDisabled={!is_ready_for_timetable} />
+
+          {!is_ready_for_timetable && (
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleWhyDisabled}
+              className="mt-2"
+            >
+              Why can't I schedule my table?
+            </Button>
+          )}
+
+          {scheduleErrorList.length > 0 && (
+            <div className="mt-4">
+              <Typography variant="h6" className="mb-2">
+                Available Schedules:
+              </Typography>
+              <div className="flex flex-wrap gap-2">
+                {scheduleErrorList.map((schedule, index) => (
+                  <Chip
+                    key={index}
+                    label={schedule}
+                    color="primary"
+                    variant="outlined"
+                    className="cursor-pointer hover:bg-primary-100"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mt-8">
@@ -238,8 +288,8 @@ const SavedTimeTables = () => {
             teacherTimetable={weeklyTimetableTeacher[selectedDay]}
           />
         ) : (
-          <TimeTableforStudentComponent StudentTimeTable={weeklyTimetablestudent[selectedDay]}
-           
+          <TimeTableforStudentComponent
+            StudentTimeTable={weeklyTimetablestudent[selectedDay]}
           />
         )}
       </div>

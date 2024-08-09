@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../../context/Authcontext';
 
 const RoundButton = ({ 
+  isDisabled
 
 }) => {
   const {apiDomain,logoutUser,headers}=useAuth()
@@ -43,6 +44,7 @@ const RoundButton = ({
 
   return (
     <Button
+      
       variant="contained"
       color="primary"
       sx={{
@@ -52,7 +54,7 @@ const RoundButton = ({
         height: '56px',
       }}
       onClick={handleClick}
-      disabled={loading}
+      disabled={loading||isDisabled}
     >
       {loading ? (
         <CircularProgress size={24} color="inherit" />

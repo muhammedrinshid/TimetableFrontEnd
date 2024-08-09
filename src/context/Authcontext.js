@@ -75,6 +75,7 @@ export const AuthProvider = ({ children }) => {
     user:user,
     fullMenu: fullMenu,
     setFullmenu: setFullmenu,
+    is_ready_for_timetable:user?.is_ready_for_timetable,
     NumberOfPeriodsInAday: user?.teaching_slots,
     numbeOfDayInWeek: user?.working_days.length,
     totalperiodsInWeek: (user?.teaching_slots*user?.working_days.length),
