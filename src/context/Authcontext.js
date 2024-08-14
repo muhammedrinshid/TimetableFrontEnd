@@ -80,6 +80,7 @@ export const AuthProvider = ({ children }) => {
     numbeOfDayInWeek: user?.working_days.length,
     totalperiodsInWeek: (user?.teaching_slots*user?.working_days.length),
     apiDomain: apiDomain,
+    updateTocken:updateTocken,
     setAuthTocken:setAuthTocken,
     setUser:setUser,
     logoutUser:logoutUser,

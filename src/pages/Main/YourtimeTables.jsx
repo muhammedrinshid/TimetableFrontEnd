@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Card,
-  CardContent,
+
   Typography,
   Button,
-  IconButton,
-  Box,
-  CircularProgress,
+
   Switch,
   FormControlLabel,
-  Tooltip,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
-import { Edit, Delete, Star, StarBorder } from "@mui/icons-material";
+
 import TeacherTimeTableComponent from "../../components/specific/saved Time tables/TimeTableforTeacher";
 import {
   weeklyTimetableTeacher,
@@ -24,20 +25,56 @@ import RoundButton from "../../components/common/RoundButton";
 import { useAuth } from "../../context/Authcontext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import SavedTimeTableCard from "../../components/specific/saved Time tables/SavedTimeTableCard";
+import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
 
-const CustomChip = ({ label, color, icon }) => (
-  <div
-    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${color} transition-all duration-300 hover:shadow-md`}
-  >
-    {icon && <span className="mr-1">{icon}</span>}
-    {label}
-  </div>
-);
+
 
 const SavedTimeTables = () => {
-  const { is_ready_for_timetable,apiDomain,headers } = useAuth();
-
+  const { is_ready_for_timetable, apiDomain, headers } = useAuth();
+  const [savedTables, setSavedTables] = useState([]);
   const [scheduleErrorList, setScheduleErrorList] = useState([]);
+  const [editingTableId, setEditingTableId] = useState(null);
+  const [editingName, setEditingName] = useState("");
+  const [deleteTimeTableDialogOpen, setDeleteTimeTableDialogOpen] = useState(false);
+  const fetchTimetables = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/time-table/timetables/`,
+        {
+          headers,
+        }
+      );
+      setSavedTables(response.data); // Assuming response.data is an array of timetables
+    } catch (error) {
+      if (error.response) {
+        // The request was made, and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error(
+          "Server responded with an error:",
+          error.response.status,
+          error.response.data
+        );
+        toast.error(
+          `Failed to retrieve timetables: ${
+            error.response.data.message || "Server error"
+          }`
+        );
+      } else if (error.request) {
+        // The request was made, but no response was received
+        console.error("No response received:", error.request);
+        toast.error("Failed to retrieve timetables: No response from server");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error setting up request:", error.message);
+        toast.error("Failed to retrieve timetables: Network error");
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchTimetables();
+  }, []);
 
   const handleWhyDisabled = async () => {
     try {
@@ -52,70 +89,59 @@ const SavedTimeTables = () => {
     }
   };
 
-  const [savedTables, setSavedTables] = useState([
-    {
-      id: 1,
-      name: "Summer Semester",
-      date: "2024-07-01",
-      score: 85,
-      feasible: true,
-      optimal: true,
-      isDefault: true,
-    },
-    {
-      id: 2,
-      name: "Fall Semester",
-      date: "2024-09-01",
-      score: 75,
-      feasible: true,
-      optimal: false,
-      isDefault: false,
-    },
-    {
-      id: 3,
-      name: "Winter Semester",
-      date: "2025-01-01",
-      score: 90,
-      feasible: true,
-      optimal: true,
-      isDefault: false,
-    },
-  ]);
   const [selectedDay, setSelectedDay] = useState("Monday");
   const [loadingDefault, setLoadingDefault] = useState(null);
   const [isTeacherView, setIsTeacherView] = useState(true);
 
-  const handleSetDefault = (id) => {
+  const handleSetDefault = async (id) => {
     setLoadingDefault(id);
-    setTimeout(() => {
-      setSavedTables(
-        savedTables.map((table) => ({
-          ...table,
-          isDefault: table.id === id,
-        }))
+
+    try {
+      // Call the API to set the timetable as default
+      const response = await axios.patch(
+        `${apiDomain}/api/time-table/set-default/${id}/`,
+        {}, // No body needed if only updating default status
+        { headers }
       );
+
+      // Assuming response.data.timetables contains the updated list of timetables
+      setSavedTables(response.data.timetables);
+      toast.success("Timetable set as default successfully");
+    } catch (error) {
+      console.error("Error setting default timetable:", error);
+      toast.error("Failed to set timetable as default");
+    } finally {
       setLoadingDefault(null);
-    }, 1500);
-  };
-
-  const handleDelete = (id) => {
-    setSavedTables(savedTables.filter((table) => table.id !== id));
-  };
-
-  const getScoreChip = (score) => {
-    let color, icon;
-    if (score >= 90) {
-      color = "bg-gradient-to-r from-green-400 to-green-600 text-white";
-      icon = "🏆";
-    } else if (score >= 70) {
-      color = "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white";
-      icon = "⭐";
-    } else {
-      color = "bg-gradient-to-r from-red-400 to-red-600 text-white";
-      icon = "❗";
     }
-    return <CustomChip label={`Score: ${score}`} color={color} icon={icon} />;
   };
+
+  const handleDelete = async() => {
+
+
+    let timetable=savedTables.find((table)=>table.id==deleteTimeTableDialogOpen)
+    console.log(timetable)
+    if (timetable?.is_default){
+      toast.info("change the default")
+
+    }else{
+      try {
+        // Call the API to delete the timetable
+        await axios.delete(`${apiDomain}/api/time-table/timetables/${deleteTimeTableDialogOpen}/`, { headers });
+    
+        // Remove the timetable from the list in the state
+        setSavedTables((prevTables) =>
+          prevTables.filter((table) => table.id !== deleteTimeTableDialogOpen)
+        );
+    
+        setDeleteTimeTableDialogOpen(false)
+        toast.success('Timetable deleted successfully');
+      } catch (error) {
+        console.error('Error deleting timetable:', error);
+        toast.error('Failed to delete timetable');
+      
+    };
+    }
+  }
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
@@ -133,85 +159,17 @@ const SavedTimeTables = () => {
 
       <div className="space-y-4 ">
         {savedTables.map((table) => (
-          <Card
-            key={table.id}
-            className="w-full shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-blue-500 overflow-hidden"
-          >
-            <CardContent className="flex items-center justify-between p-6 bg-gradient-to-r from-white to-blue-50">
-              <div className="flex-grow">
-                <Typography
-                  variant="h6"
-                  className="font-bold text-gray-800 mb-2"
-                >
-                  {table.name}
-                </Typography>
-                <Typography variant="body2" className="text-gray-600 mb-3">
-                  Created on {new Date(table.date).toLocaleDateString()}
-                </Typography>
-                <Box className="flex flex-wrap gap-2">
-                  {getScoreChip(table.score)}
-                  <CustomChip
-                    label={table.feasible ? "Feasible" : "Not Feasible"}
-                    color={
-                      table.feasible
-                        ? "bg-gradient-to-r from-green-200 to-green-300 text-green-800"
-                        : "bg-gradient-to-r from-red-200 to-red-300 text-red-800"
-                    }
-                    icon={table.feasible ? "✅" : "❌"}
-                  />
-                  <CustomChip
-                    label={table.optimal ? "Optimal" : "Not Optimal"}
-                    color={
-                      table.optimal
-                        ? "bg-gradient-to-r from-purple-200 to-purple-300 text-purple-800"
-                        : "bg-gradient-to-r from-orange-200 to-orange-300 text-orange-800"
-                    }
-                    icon={table.optimal ? "🎯" : "🔄"}
-                  />
-                </Box>
-              </div>
-              <div className="flex items-center space-x-2">
-                <IconButton
-                  color="primary"
-                  size="small"
-                  className="bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
-                >
-                  <Edit />
-                </IconButton>
-                <IconButton
-                  color="error"
-                  size="small"
-                  onClick={() => handleDelete(table.id)}
-                  className="bg-red-100 hover:bg-red-200 transition-colors duration-300"
-                >
-                  <Delete />
-                </IconButton>
-                <Button
-                  variant={table.isDefault ? "contained" : "outlined"}
-                  color="primary"
-                  startIcon={
-                    loadingDefault === table.id ? (
-                      <CircularProgress size={20} />
-                    ) : table.isDefault ? (
-                      <Star />
-                    ) : (
-                      <StarBorder />
-                    )
-                  }
-                  onClick={() => handleSetDefault(table.id)}
-                  size="small"
-                  disabled={loadingDefault !== null}
-                  className={
-                    table.isDefault
-                      ? "bg-green-500 hover:bg-green-600 text-white"
-                      : "border-green-500 text-green-500 hover:bg-green-50"
-                  }
-                >
-                  {table.isDefault ? "Default" : "Set as Default"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <SavedTimeTableCard
+            editingName={editingName}
+            editingTableId={editingTableId}
+            handleSetDefault={handleSetDefault}
+            loadingDefault={loadingDefault}
+            setDeleteTimeTableDialogOpen={setDeleteTimeTableDialogOpen}
+            setEditingName={setEditingName}
+            setEditingTableId={setEditingTableId}
+            table={table}
+            setSavedTables={setSavedTables}
+          />
         ))}
         <div className="flex flex-col items-center space-y-4">
           <RoundButton isDisabled={!is_ready_for_timetable} />
@@ -293,6 +251,13 @@ const SavedTimeTables = () => {
           />
         )}
       </div>
+
+      <DeleteConfirmationPopup
+            isOpen={deleteTimeTableDialogOpen}
+            onClose={() => setDeleteTimeTableDialogOpen(false)}
+            onConfirm={handleDelete}
+            
+          />
     </div>
   );
 };
