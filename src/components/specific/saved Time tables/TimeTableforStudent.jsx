@@ -33,27 +33,30 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(StudentTimeTable).map(([day, dayData], dayIndex) => (
-              <tr key={dayIndex} className="bg-white hover:bg-gray-50 transition-colors duration-300">
-                <td className="border-b p-4 font-bold text-gray-800">{day}</td>
-                {dayData[0].sessions.slice(0, NumberOfPeriodsInAday).map((session, sessionIndex) => (
-                  <td key={sessionIndex} className="border-b p-2">
-                    <div className={`rounded-lg p-2 h-full ${getSessionColor(session)} transition-all duration-300 hover:shadow-md`}>
-                      <p className="font-semibold text-xs mb-1 truncate">{session.subject}</p>
-                      <p className="text-xs mb-1 truncate">{session.room}</p>
-                      <p className="text-xs truncate">{session.type}</p>
-                      {session.type === 'Core' && session.teacher && (
-                        <div className="flex items-center mt-1">
-                          <img src={session.teacher.image} alt={session.teacher.name} className="w-6 h-6 rounded-full mr-2"/>
-                          <span className="text-xs truncate">{session.teacher.name}</span>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
+  {StudentTimeTable.map((dayData, dayIndex) => {
+    const [day, sessions] = Object.entries(dayData)[0];
+    return (
+      <tr key={dayIndex} className="bg-white hover:bg-gray-50 transition-colors duration-300">
+        <td className="border-b p-4 font-bold text-gray-800">{day}</td>
+        {sessions.sessions.slice(0, NumberOfPeriodsInAday).map((session, sessionIndex) => (
+          <td key={sessionIndex} className="border-b p-2">
+            <div className={`rounded-lg p-2 h-full ${getSessionColor(session)} transition-all duration-300 hover:shadow-md`}>
+              <p className="font-semibold text-xs mb-1 truncate">{session.subject}</p>
+              <p className="text-xs mb-1 truncate">{session.room}</p>
+              <p className="text-xs truncate">{session.type}</p>
+              {session.type === 'Core' && session.teacher && (
+                <div className="flex items-center mt-1">
+                  <img src={session.teacher.image} alt={session.teacher.name} className="w-6 h-6 rounded-full mr-2"/>
+                  <span className="text-xs truncate">{session.teacher.name}</span>
+                </div>
+              )}
+            </div>
+          </td>
+        ))}
+      </tr>
+    );
+  })}
+</tbody>
         </table>
       </div>
     </div>
