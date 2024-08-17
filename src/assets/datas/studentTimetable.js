@@ -1,214 +1,707 @@
-import { teacher01, teacher02, teacher03, teacher04, teacher05, teacher06 } from "../images";
-
+import { teacher01, teacher010, teacher02, teacher03, teacher04, teacher05, teacher06,teacher07,teacher08,teacher09 } from "../images";
 export const weeklyTimetablestudent = {
-  Monday: [
+  MON: [
+    {
+      classroom:{
+        standard: "1th",
+      division: "C",
+      total_students: 90,
+      room: {
+        name: "Room 101",
+        number: "101",
+        type: "Classroom",
+      },
+      },
+      sessions: [
+        {
+          name: "Mathematics",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Mathematics",
+              teacher: {
+                name: "Dr. Emily Johnson",
+                profile_image: teacher01,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 101",
+                number: "101",
+                type: "Classroom",
+              }
+            }
+          ]
+        },
+        {
+          name: "English Literature",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "English Literature",
+              teacher: {
+                name: "Prof. David Wilson",
+                profile_image: teacher04,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 301",
+                number: "301",
+                type: "Classroom",
+              }
+            }
+          ]
+        },
+        {
+          name: "Biology",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Biology",
+              teacher: {
+                name: "Dr. Sarah Thompson",
+                profile_image: teacher03,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Bio Lab",
+                number: "201",
+                type: "Laboratory",
+              }
+            }
+          ]
+        },
+        {
+          name: "World History",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "World History",
+              teacher: {
+                name: "Prof. Lisa Martinez",
+                profile_image: teacher05,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 401",
+                number: "401",
+                type: "Classroom",
+              }
+            }
+          ]
+        },
+        {
+          name: "Programming",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Programming",
+              teacher: {
+                name: "Prof. Michael Chen",
+                profile_image: teacher02,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "CS Lab",
+                number: "501",
+                type: "Laboratory",
+              }
+            }
+          ]
+        },
+        {
+          name: "Advanced Art",
+          type: "Elective",
+          class_distribution: [
+            {
+              subject: "Advanced Art",
+              teacher: {
+                name: "Ms. Jennifer Lee",
+                profile_image: null,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Art Studio",
+                number: "601",
+                type: "Studio",
+              }
+            }
+          ]
+        },
+        {
+          name: "Physical Education",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Physical Education",
+              teacher: {
+                name: "Mr. Robert Brown",
+                profile_image: teacher06,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Gym",
+                number: "701",
+                type: "Gymnasium",
+              }
+            }
+          ]
+        }
+      ]
+    },
     {
       standard: "10th",
       division: "A",
+      total_students: 90,
+      room: {
+        name: "Room 101",
+        number: "101",
+        type: "Classroom",
+      },
       sessions: [
         {
-          subject: "Mathematics",
+          name: "Mathematics",
           type: "Core",
-          room: "101",
-          teacher: {
-            name: "Dr. Emily Johnson",
-            image: teacher01,
-          }
+          class_distribution: [
+            {
+              subject: "Mathematics",
+              teacher: {
+                name: "Dr. Emily Johnson",
+                profile_image: teacher01,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 101",
+                number: "101",
+                type: "Classroom",
+              }
+            }
+          ]
         },
         {
-          subject: "English Literature",
+          name: "English Literature",
           type: "Core",
-          room: "301",
-          teacher: {
-            name: "Prof. David Wilson",
-            image: teacher04,
-          }
+          class_distribution: [
+            {
+              subject: "English Literature",
+              teacher: {
+                name: "Prof. David Wilson",
+                profile_image: teacher04,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 301",
+                number: "301",
+                type: "Classroom",
+              }
+            }
+          ]
         },
         {
-          subject: "Biology",
+          name: "Biology",
           type: "Core",
-          room: "Bio Lab",
-          teacher: {
-            name: "Dr. Sarah Thompson",
-            image: teacher03,
-          }
+          class_distribution: [
+            {
+              subject: "Biology",
+              teacher: {
+                name: "Dr. Sarah Thompson",
+                profile_image: teacher03,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Bio Lab",
+                number: "201",
+                type: "Laboratory",
+              }
+            }
+          ]
         },
         {
-          subject: "World History",
+          name: "World History",
           type: "Core",
-          room: "401",
-          teacher: {
-            name: "Prof. Lisa Martinez",
-            image: teacher05,
-          }
+          class_distribution: [
+            {
+              subject: "World History",
+              teacher: {
+                name: "Prof. Lisa Martinez",
+                profile_image: teacher05,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 401",
+                number: "401",
+                type: "Classroom",
+              }
+            }
+          ]
         },
         {
-          subject: "Programming",
+          name: "Programming",
           type: "Core",
-          room: "CS Lab",
-          teacher: {
-            name: "Prof. Michael Chen",
-            image: teacher02,
-          }
+          class_distribution: [
+            {
+              subject: "Programming",
+              teacher: {
+                name: "Prof. Michael Chen",
+                profile_image: teacher02,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "CS Lab",
+                number: "501",
+                type: "Laboratory",
+              }
+            }
+          ]
         },
         {
-          subject: "Advanced Art",
+          name: "Advanced Art",
           type: "Elective",
-          room: "Art Studio",
-          teacher: {
-            name: "Ms. Jennifer Lee",
-          }
+          class_distribution: [
+            {
+              subject: "Advanced Art",
+              teacher: {
+                name: "Ms. Jennifer Lee",
+                profile_image: null,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Art Studio",
+                number: "601",
+                type: "Studio",
+              }
+            }
+          ]
         },
         {
-          subject: "Physical Education",
+          name: "Physical Education",
           type: "Core",
-          room: "Gym",
-          teacher: {
-            name: "Mr. Robert Brown",
-            image: teacher06,
-          }
+          class_distribution: [
+            {
+              subject: "Physical Education",
+              teacher: {
+                name: "Mr. Robert Brown",
+                profile_image: teacher06,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Gym",
+                number: "701",
+                type: "Gymnasium",
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      standard: "10th",
+      division: "A",
+      total_students: 90,
+      room: {
+        name: "Room 101",
+        number: "101",
+        type: "Classroom",
+      },
+      sessions: [
+        {
+          name: "Mathematics",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Mathematics",
+              teacher: {
+                name: "Dr. Emily Johnson",
+                profile_image: teacher01,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 101",
+                number: "101",
+                type: "Classroom",
+              }
+            }
+          ]
+        },
+        {
+          name: "English Literature",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "English Literature",
+              teacher: {
+                name: "Prof. David Wilson",
+                profile_image: teacher04,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 301",
+                number: "301",
+                type: "Classroom",
+              }
+            }
+          ]
+        },
+        {
+          name: "Biology",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Biology",
+              teacher: {
+                name: "Dr. Sarah Thompson",
+                profile_image: teacher03,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Bio Lab",
+                number: "201",
+                type: "Laboratory",
+              }
+            }
+          ]
+        },
+        {
+          name: "World History",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "World History",
+              teacher: {
+                name: "Prof. Lisa Martinez",
+                profile_image: teacher05,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 401",
+                number: "401",
+                type: "Classroom",
+              }
+            }
+          ]
+        },
+        {
+          name: "Programming",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Programming",
+              teacher: {
+                name: "Prof. Michael Chen",
+                profile_image: teacher02,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "CS Lab",
+                number: "501",
+                type: "Laboratory",
+              }
+            }
+          ]
+        },
+        {
+          name: "Advanced Art",
+          type: "Elective",
+          class_distribution: [
+            {
+              subject: "Advanced Art",
+              teacher: {
+                name: "Ms. Jennifer Lee",
+                profile_image: null,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Art Studio",
+                number: "601",
+                type: "Studio",
+              }
+            }
+          ]
+        },
+        {
+          name: "Physical Education",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Physical Education",
+              teacher: {
+                name: "Mr. Robert Brown",
+                profile_image: teacher06,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Gym",
+                number: "701",
+                type: "Gymnasium",
+              }
+            }
+          ]
+        }
+      ]
+    },
+  ],
+  TUE: [
+    {
+      standard: "10th",
+      division: "A",
+      total_students: 90,
+      room: {
+        name: "Room 102",
+        number: "102",
+        type: "Classroom",
+      },
+      sessions: [
+        {
+          name: "Chemistry",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Chemistry",
+              teacher: {
+                name: "Dr. Alice Moore",
+                profile_image: teacher07,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Chem Lab",
+                number: "202",
+                type: "Laboratory",
+              }
+            }
+          ]
+        },
+        {
+          name: "Geography",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Geography",
+              teacher: {
+                name: "Prof. Samuel Green",
+                profile_image: teacher08,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 302",
+                number: "302",
+                type: "Classroom",
+              }
+            }
+          ]
+        },
+        {
+          name: "Physics",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Physics",
+              teacher: {
+                name: "Dr. Richard White",
+                profile_image: teacher09,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Physics Lab",
+                number: "203",
+                type: "Laboratory",
+              }
+            }
+          ]
+        },
+        {
+          name: "Computer Science",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Computer Science",
+              teacher: {
+                name: "Prof. Linda Davis",
+                profile_image: teacher010,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "CS Lab",
+                number: "501",
+                type: "Laboratory",
+              }
+            }
+          ]
+        },
+        {
+          name: "Music",
+          type: "Elective",
+          class_distribution: [
+            {
+              subject: "Music",
+              teacher: {
+                name: "Ms. Sophia Brown",
+                profile_image: teacher01,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Music Room",
+                number: "401",
+                type: "Studio",
+              }
+            },
+            {
+              subject: "Stiching",
+              teacher: {
+                name: "Ms. Sophia Brown",
+                profile_image: teacher01,
+              },
+              number_of_students_from_this_class: 20,
+              room: {
+                name: "Music Room",
+                number: "41",
+                type: "hall",
+              }
+            },
+          ]
+        },
+        {
+          name: "Physical Education",
+          type: "Core",
+          class_distribution: [
+            {
+              subject: "Physical Education",
+              teacher: {
+                name: "Mr. Robert Brown",
+                profile_image: teacher06,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Gym",
+                number: "701",
+                type: "Gymnasium",
+              }
+            }
+          ]
         }
       ]
     }
   ],
-  Tuesday: [
+  WED: [
     {
       standard: "10th",
       division: "A",
+      total_students: 90,
+      room: {
+        name: "Room 103",
+        number: "103",
+        type: "Classroom",
+      },
       sessions: [
         {
-          subject: "Physics",
+          name: "Mathematics",
           type: "Core",
-          room: "Lab 1",
-          teacher: {
-            name: "Dr. Emily Johnson",
-            image: teacher01,
-          }
+          class_distribution: [
+            {
+              subject: "Mathematics",
+              teacher: {
+                name: "Dr. Emily Johnson",
+                profile_image: teacher01,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 101",
+                number: "101",
+                type: "Classroom",
+              }
+            }
+          ]
         },
         {
-          subject: "Chemistry",
+          name: "History",
           type: "Core",
-          room: "Chem Lab",
-          teacher: {
-            name: "Dr. Alex Turner",
-            image: teacher06,
-          }
+          class_distribution: [
+            {
+              subject: "History",
+              teacher: {
+                name: "Prof. Lisa Martinez",
+                profile_image: teacher05,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 401",
+                number: "401",
+                type: "Classroom",
+              }
+            }
+          ]
         },
         {
-          subject: "Computer Science",
-          type: "Core",
-          room: "CS Lab",
-          teacher: {
-            name: "Prof. Michael Chen",
-            image: teacher02,
-          }
-        },
-        {
-          subject: "Geography",
-          type: "Core",
-          room: "405",
-          teacher: {
-            name: "Prof. Lisa Martinez",
-            image: teacher05,
-          }
-        },
-        {
-          subject: "Music Theory",
+          name: "Art",
           type: "Elective",
-          room: "Music Room",
-          teacher: {
-            name: "Mr. Daniel White",
-          }
+          class_distribution: [
+            {
+              subject: "Art",
+              teacher: {
+                name: "Ms. Jennifer Lee",
+                profile_image: teacher010,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Art Studio",
+                number: "601",
+                type: "Studio",
+              }
+            },
+            {
+              subject: "Art",
+              teacher: {
+                name: "Ms. Jennifer Lee",
+                profile_image: teacher010,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Art Studio",
+                number: "601",
+                type: "Studio",
+              }
+            }
+          ]
         },
         {
-          subject: "English Grammar",
+          name: "Economics",
           type: "Core",
-          room: "305",
-          teacher: {
-            name: "Prof. David Wilson",
-            image: teacher04,
-          }
+          class_distribution: [
+            {
+              subject: "Economics",
+              teacher: {
+                name: "Prof. Kevin Brown",
+                profile_image: teacher03,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Room 502",
+                number: "502",
+                type: "Classroom",
+              }
+            }
+          ]
         },
         {
-          subject: "Environmental Science",
-          type: "Elective",
-          room: "205",
-          teacher: {
-            name: "Dr. Sarah Thompson",
-          }
-        }
-      ]
-    }
-  ],
-  Wednesday: [
-    {
-      standard: "10th",
-      division: "A",
-      sessions: [
-        {
-          subject: "Mathematics",
+          name: "Physical Education",
           type: "Core",
-          room: "101",
-          teacher: {
-            name: "Dr. Emily Johnson",
-            image: teacher01,
-          }
-        },
-        {
-          subject: "Biology Lab",
-          type: "Core",
-          room: "Bio Lab",
-          teacher: {
-            name: "Dr. Sarah Thompson",
-            image: teacher03,
-          }
-        },
-        {
-          subject: "World Literature",
-          type: "Core",
-          room: "307",
-          teacher: {
-            name: "Prof. David Wilson",
-            image: teacher04,
-          }
-        },
-        {
-          subject: "Civics",
-          type: "Core",
-          room: "409",
-          teacher: {
-            name: "Prof. Lisa Martinez",
-            image: teacher05,
-          }
-        },
-        {
-          subject: "Programming",
-          type: "Core",
-          room: "CS Lab",
-          teacher: {
-            name: "Prof. Michael Chen",
-            image: teacher02,
-          }
-        },
-        {
-          subject: "Foreign Language",
-          type: "Elective",
-          room: "Language Lab",
-          teacher: {
-            name: "Ms. Sophie Garcia",
-          }
-        },
-        {
-          subject: "Physical Education",
-          type: "Core",
-          room: "Gym",
-          teacher: {
-            name: "Mr. Robert Brown",
-            image: teacher06,
-          }
+          class_distribution: [
+            {
+              subject: "Physical Education",
+              teacher: {
+                name: "Mr. Robert Brown",
+                profile_image: teacher06,
+              },
+              number_of_students_from_this_class: 15,
+              room: {
+                name: "Gym",
+                number: "701",
+                type: "Gymnasium",
+              }
+            }
+          ]
         }
       ]
     }
   ]
-  // ... You can add more days (Thursday, Friday) following the same pattern
 };
+
+

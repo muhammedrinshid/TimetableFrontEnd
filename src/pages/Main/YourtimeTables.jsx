@@ -4,29 +4,18 @@ import {
   Typography,
   Button,
 
-  Switch,
-  FormControlLabel,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
+
 } from "@mui/material";
 
-import TeacherTimeTableComponent from "../../components/specific/saved Time tables/TimeTableforTeacher";
-import {
-  weeklyTimetableTeacher,
-  weeklyTimetablestudent,
-} from "../../assets/datas";
-import TimeTableforStudentComponent from "../../components/specific/saved Time tables/TimeTableforStudent";
-import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
+
 import RoundButton from "../../components/common/RoundButton";
 import { useAuth } from "../../context/Authcontext";
 import { toast } from "react-toastify";
 import axios from "axios";
 import SavedTimeTableCard from "../../components/specific/saved Time tables/SavedTimeTableCard";
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
+import SavedTimeTableViewer from "../../components/specific/saved Time tables/SavedTimeTableViewer";
 
 
 
@@ -89,9 +78,7 @@ const SavedTimeTables = () => {
     }
   };
 
-  const [selectedDay, setSelectedDay] = useState("Monday");
   const [loadingDefault, setLoadingDefault] = useState(null);
-  const [isTeacherView, setIsTeacherView] = useState(true);
 
   const handleSetDefault = async (id) => {
     setLoadingDefault(id);
@@ -143,13 +130,7 @@ const SavedTimeTables = () => {
     }
   }
 
-  const handleDayClick = (day) => {
-    setSelectedDay(day);
-  };
-
-  const handleViewToggle = () => {
-    setIsTeacherView(!isTeacherView);
-  };
+  
 
   return (
     <div className="w-full h-full p-6 bg-gray-100 overflow-auto relative">
@@ -206,51 +187,7 @@ const SavedTimeTables = () => {
         </div>
       </div>
 
-      <div className="mt-8">
-        <div className="w-full flex justify-between items-center mb-4">
-          <Typography variant="h5" className="text-gray-800 font-bold">
-            Weekly Timetable
-          </Typography>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isTeacherView}
-                onChange={handleViewToggle}
-                color="primary"
-              />
-            }
-            label={isTeacherView ? "Teacher View" : "Student View"}
-          />
-        </div>
-
-        <div className="w-full flex justify-center mb-4">
-          {Object.keys(weeklyTimetableTeacher).map((day) => (
-            <button
-              key={day}
-              onClick={() => handleDayClick(day)}
-              className={`px-4 py-2 text-sm font-medium border ${
-                selectedDay === day
-                  ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-                  : "bg-white text-blue-700 border-blue-300 hover:bg-blue-50 hover:text-blue-800"
-              } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-500 focus:text-white
-              first:rounded-l-lg last:rounded-r-lg
-              transition-all duration-300`}
-            >
-              {day}
-            </button>
-          ))}
-        </div>
-
-        {isTeacherView ? (
-          <TeacherTimeTableComponent
-            teacherTimetable={weeklyTimetableTeacher[selectedDay]}
-          />
-        ) : (
-          <TimeTableforStudentComponent
-            StudentTimeTable={weeklyTimetablestudent[selectedDay]}
-          />
-        )}
-      </div>
+    <SavedTimeTableViewer/>
 
       <DeleteConfirmationPopup
             isOpen={deleteTimeTableDialogOpen}
