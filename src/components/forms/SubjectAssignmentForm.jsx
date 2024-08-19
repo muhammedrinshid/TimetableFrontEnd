@@ -17,6 +17,9 @@ import {
   Box,
   Typography,
   IconButton,
+  Autocomplete,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -42,8 +45,23 @@ const SubjectAssignmentForm = ({
 
   const [availableSubjects, setAvailableSubjects] = useState([]);
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(true);
+  const [selectedAdditionalRooms, setSelectedAdditionalRooms] = useState([]);
+
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [totalSelectedLessons, setTotalSelectedLessons] = useState(0);
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const fetchAvailableRooms = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/room/exclude_classrooms/`,
+        { headers }
+      );
+      setAvailableRooms(response.data);
+    } catch (err) {
+      toast.error("Failed to fetch available rooms");
+      console.error("Error fetching available rooms:", err);
+    }
+  };
 
   const fetchSubjectsWithTeachers = async () => {
     if (OpenTeacherAssingmentForm?.grade_id) {
@@ -70,6 +88,7 @@ const SubjectAssignmentForm = ({
   useEffect(() => {
     if (open) {
       fetchSubjectsWithTeachers();
+      fetchAvailableRooms();
     }
   }, [open, OpenTeacherAssingmentForm]);
 
@@ -85,10 +104,11 @@ const SubjectAssignmentForm = ({
     const newSubject = {
       id: subject.id,
       name: subject.name,
+      need_special_rooms: false,
       elective_or_core: elective_or_core,
       subjects:
         elective_or_core === "core"
-          ? [{ id: subject.id, qualifiedTeachers: [] }]
+          ? [{ id: subject.id, qualifiedTeachers: [], preferedRooms: [] }]
           : [],
       lessons_per_week: 1,
     };
@@ -117,6 +137,23 @@ const SubjectAssignmentForm = ({
 
     setSelectedSubjects(updatedSubjects);
   };
+ 
+  const handlePreferedRoomSelect = (index, newRooms) => {
+    const updatedSubjects = [...selectedSubjects];
+    
+    // Update the preferredRooms for the specific subject
+    if (updatedSubjects[index].elective_or_core === "core") {
+     
+      updatedSubjects[index].subjects[0].preferedRooms = newRooms.map(room => ({
+        id: room.id,
+        room_number: room.room_number,
+        name: room.name,
+      }));
+    }
+    console.log(updatedSubjects)
+    
+    setSelectedSubjects(updatedSubjects);
+  };
 
   const handlelessons_per_weekChange = (index, change) => {
     const updatedSubjects = [...selectedSubjects];
@@ -136,6 +173,12 @@ const SubjectAssignmentForm = ({
     setTotalSelectedLessons(total);
   };
 
+
+  const handleToggleSpecialRooms = (index) => {
+    const updatedSubjects = [...selectedSubjects];
+    updatedSubjects[index].need_special_rooms = !updatedSubjects[index].need_special_rooms;
+    setSelectedSubjects(updatedSubjects);
+  };
   const onSubmit = async (data) => {
     const formattedData = {
       selectedSubjects: selectedSubjects.map((subject) => {
@@ -250,18 +293,65 @@ const SubjectAssignmentForm = ({
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
+                  mb={3}
                 >
                   <Typography variant="h6">
                     {subject.name} ({subject.elective_or_core})
                   </Typography>
-                  <IconButton
-                    onClick={() => handleRemoveSubject(index)}
-                    size="small"
-                    color="error"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Box>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={subject.need_special_rooms}
+                          onChange={() => handleToggleSpecialRooms(index)}
+                        />
+                      }
+                      label="Need Special Rooms"
+                    />
+                    <IconButton
+                      onClick={() => handleRemoveSubject(index)}
+                      size="small"
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
+
+                {subject.need_special_rooms && (
+                  <Box mb={3}>
+                    <Typography variant="h6" gutterBottom>
+                      Special Rooms
+                    </Typography>
+                    <Autocomplete
+                      multiple
+                      options={availableRooms}
+                      getOptionLabel={(option) =>
+                        `${option.room_number} - ${option.name}`
+                      }
+                      value={subject.subjects[0].preferedRooms}
+                      onChange={(e,newValue)=>handlePreferedRoomSelect(index,newValue)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Prefered Rooms"
+                          placeholder="Choose rooms"
+                        />
+                      )}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            variant="outlined"
+                            label={`${option.room_number} - ${option.name}`}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                    />
+                  </Box>
+                )}
+
                 {subject.elective_or_core === "core" && (
                   <Box mt={1}>
                     <Typography variant="subtitle1">
@@ -295,6 +385,7 @@ const SubjectAssignmentForm = ({
                       ))}
                   </Box>
                 )}
+
                 <Box mt={1} display="flex" alignItems="center">
                   <Typography variant="subtitle1">Lessons per week:</Typography>
                   <IconButton

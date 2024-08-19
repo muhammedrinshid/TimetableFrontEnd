@@ -175,7 +175,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                                     }
                                   </p>
                                 )}
-                                {session.type === "Elective" && (
+                                {(
                                   <p className="text-gray-600">
                                     Room: {distribution.room.name} (
                                     {distribution.room.number})
