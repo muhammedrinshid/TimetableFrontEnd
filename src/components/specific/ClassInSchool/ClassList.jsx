@@ -45,7 +45,7 @@ const ClassList = ({
   const [whichGradeToDisplay, setWhichGradeToDisplay] = useState("");
 
   const options = [
-    { value: "", label: "All Grades" },
+    { value: "", label: "All Levels" },
     ...classByGrade.map((grade) => ({ value: grade.name, label: grade.name })),
   ];
 
@@ -185,7 +185,7 @@ const ClassList = ({
 
             <AddButton
               onClick={() => handleAddButtonClick(grade.id)}
-              label={"Add New Standard"}
+              label={"Add New Grade"}
             />
           </div>
         ))}
