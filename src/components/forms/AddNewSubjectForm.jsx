@@ -17,6 +17,9 @@ import {
   Box,
   Typography,
   IconButton,
+  Autocomplete,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -33,7 +36,7 @@ const AddNewSubjectForm = ({
   open,
   onClose,
   openAddNewSubjectForm,
-  refresh
+  refresh,
 }) => {
   const {
     totalperiodsInWeek: maxlessons_per_week,
@@ -44,7 +47,24 @@ const AddNewSubjectForm = ({
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(true);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [totalSelectedLessons, setTotalSelectedLessons] = useState(0);
-  const [alreadySelectedSubjects,setAlreadySelectedSubjects]=useState([])
+  const [alreadySelectedSubjects, setAlreadySelectedSubjects] = useState([]);
+  const [availableRooms, setAvailableRooms] = useState([]);
+
+
+
+  const fetchAvailableRooms = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/room/exclude_classrooms/`,
+        { headers }
+      );
+      setAvailableRooms(response.data);
+    } catch (err) {
+      toast.error("Failed to fetch available rooms");
+      console.error("Error fetching available rooms:", err);
+    }
+  };
+
   const fetchSubjectsWithTeachers = async () => {
     if (openAddNewSubjectForm?.gradeId) {
       try {
@@ -56,8 +76,9 @@ const AddNewSubjectForm = ({
         );
         setAvailableSubjects(response.data);
         setIsLoadingSubjects(false);
-        setAlreadySelectedSubjects([...openAddNewSubjectForm?.selectedSubjects])
-
+        setAlreadySelectedSubjects([
+          ...openAddNewSubjectForm?.selectedSubjects,
+        ]);
 
         if (response.data.length === 0) {
           toast.info("You have no subject. Create subjects to proceed.");
@@ -72,6 +93,8 @@ const AddNewSubjectForm = ({
   useEffect(() => {
     if (open) {
       fetchSubjectsWithTeachers();
+      fetchAvailableRooms();
+
     }
   }, [open, openAddNewSubjectForm]);
 
@@ -88,9 +111,11 @@ const AddNewSubjectForm = ({
       id: subject.id,
       name: subject.name,
       elective_or_core: elective_or_core,
+      need_special_rooms: false,
+
       subjects:
         elective_or_core === "core"
-          ? [{ id: subject.id, qualifiedTeachers: [] }]
+          ? [{ id: subject.id, qualifiedTeachers: [], preferedRooms: [] }]
           : [],
       lessons_per_week: 1,
     };
@@ -103,6 +128,27 @@ const AddNewSubjectForm = ({
     updatedSubjects.splice(index, 1);
     setSelectedSubjects(updatedSubjects);
     updateTotalSelectedLessons(updatedSubjects);
+  };
+  const handleToggleSpecialRooms = (index) => {
+    const updatedSubjects = [...selectedSubjects];
+    updatedSubjects[index].need_special_rooms = !updatedSubjects[index].need_special_rooms;
+    setSelectedSubjects(updatedSubjects);
+  };
+  const handlePreferedRoomSelect = (index, newRooms) => {
+    const updatedSubjects = [...selectedSubjects];
+    
+    // Update the preferredRooms for the specific subject
+    if (updatedSubjects[index].elective_or_core === "core") {
+     
+      updatedSubjects[index].subjects[0].preferedRooms = newRooms.map(room => ({
+        id: room.id,
+        room_number: room.room_number,
+        name: room.name,
+      }));
+    }
+    console.log(updatedSubjects)
+    
+    setSelectedSubjects(updatedSubjects);
   };
 
   const handleTeacherSelect = (subjectIndex, teacherId) => {
@@ -135,7 +181,9 @@ const AddNewSubjectForm = ({
       (sum, subject) => sum + subject.lessons_per_week,
       0
     );
-    setTotalSelectedLessons(total+openAddNewSubjectForm?.currentLessonsPerWeek);
+    setTotalSelectedLessons(
+      total + openAddNewSubjectForm?.currentLessonsPerWeek
+    );
   };
 
   const onSubmit = async (data) => {
@@ -147,12 +195,13 @@ const AddNewSubjectForm = ({
           subjects: subject.subjects.map((s) => ({
             id: s.id,
             qualifiedTeachers: s.qualifiedTeachers,
+            preferedRooms:s.preferedRooms.map(room=>room.id)||[]
+
           })),
         };
       }),
     };
 
-    
     try {
       const response = await axios.post(
         `${apiDomain}/api/class-room/assign-subjects-to-single-classroom/${openAddNewSubjectForm.classroomId}/`,
@@ -166,7 +215,7 @@ const AddNewSubjectForm = ({
         reset();
         setSelectedSubjects([]);
         setTotalSelectedLessons(0);
-        refresh()
+        refresh();
       }
     } catch (error) {
       console.error("Error assigning subjects:", error);
@@ -251,22 +300,74 @@ const AddNewSubjectForm = ({
                 borderColor="grey.300"
                 borderRadius={1}
               >
+                
                 <Box
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
+                  mb={3}
                 >
                   <Typography variant="h6">
                     {subject.name} ({subject.elective_or_core})
                   </Typography>
-                  <IconButton
-                    onClick={() => handleRemoveSubject(index)}
-                    size="small"
-                    color="error"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Box>
+                   {
+                    subject.elective_or_core=="core"&&(
+                      <FormControlLabel
+                      control={
+                        <Switch
+                          checked={subject.need_special_rooms}
+                          onChange={() => handleToggleSpecialRooms(index)}
+                        />
+                      }
+                      label="Need Special Rooms"
+                    />
+                    )
+                   }
+                    <IconButton
+                      onClick={() => handleRemoveSubject(index)}
+                      size="small"
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
+                {subject.need_special_rooms && (
+                  <Box mb={3}>
+                    <Typography variant="h6" gutterBottom>
+                      Special Rooms
+                    </Typography>
+                    <Autocomplete
+                      multiple
+                      options={availableRooms}
+                      getOptionLabel={(option) =>
+                        `${option.room_number} - ${option.name}`
+                      }
+                      value={subject.subjects[0].preferedRooms}
+                      onChange={(e, newValue) =>
+                        handlePreferedRoomSelect(index, newValue)
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Prefered Rooms"
+                          placeholder="Choose rooms"
+                        />
+                      )}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            variant="outlined"
+                            label={`${option.room_number} - ${option.name}`}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                    />
+                  </Box>
+                )}
                 {subject.elective_or_core === "core" && (
                   <Box mt={1}>
                     <Typography variant="subtitle1">

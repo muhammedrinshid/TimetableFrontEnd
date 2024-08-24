@@ -72,7 +72,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                   <Box
                     display="flex"
                     alignItems="center"
-                    bgcolor="#DFDFDF"
+                    bgcolor="#ecf3fa"
                     p={2}
                     borderRadius={2}
                   >

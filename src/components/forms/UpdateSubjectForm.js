@@ -19,9 +19,23 @@ import axios from "axios";
 const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
   const { apiDomain, headers } = useAuth();
   const [formData, setFormData] = useState(null);
+  const [availableRooms, setAvailableRooms] = useState([]);
+
   const [availableSubjectAndTeachers, setAvailableSubjectAndTeachers] =
     useState([]);
-
+    const fetchAvailableRooms = async () => {
+      try {
+        const response = await axios.get(
+          `${apiDomain}/api/room/exclude_classrooms/`,
+          { headers }
+        );
+        setAvailableRooms(response.data);
+      } catch (err) {
+        toast.error("Failed to fetch available rooms");
+        console.error("Error fetching available rooms:", err);
+      }
+    };
+  
   useEffect(() => {
     if (open && subject) {
       setFormData({
@@ -32,6 +46,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
         options: subject.options || [],
       });
       fetchAvailableSubjectAndTeachers();
+      fetchAvailableRooms()
     } else {
       setFormData(null);
       setAvailableSubjectAndTeachers([]);
@@ -70,6 +85,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
         subject: subject,
         number_of_students: 0,
         alotted_teachers: [],
+        preferred_rooms: [],
       };
     });
 
@@ -119,6 +135,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
       subject: option.subject.id,
       number_of_students: option.number_of_students,
       assigned_teachers: option.alotted_teachers.map((teacher) => teacher.id),
+      preferred_rooms:[]
      
     }))
   : [

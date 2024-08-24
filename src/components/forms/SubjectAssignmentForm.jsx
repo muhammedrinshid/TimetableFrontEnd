@@ -45,7 +45,6 @@ const SubjectAssignmentForm = ({
 
   const [availableSubjects, setAvailableSubjects] = useState([]);
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(true);
-  const [selectedAdditionalRooms, setSelectedAdditionalRooms] = useState([]);
 
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [totalSelectedLessons, setTotalSelectedLessons] = useState(0);
@@ -108,7 +107,8 @@ const SubjectAssignmentForm = ({
       elective_or_core: elective_or_core,
       subjects:
         elective_or_core === "core"
-          ? [{ id: subject.id, qualifiedTeachers: [], preferedRooms: [] }]
+          ? [{ id: subject.id, qualifiedTeachers: availableSubjects
+            .find((s) => s.id === subject.id)?.qualified_teachers.map((teacher) =>teacher.id), preferedRooms: [] }]
           : [],
       lessons_per_week: 1,
     };
@@ -188,10 +188,12 @@ const SubjectAssignmentForm = ({
           subjects: subject.subjects.map((s) => ({
             id: s.id,
             qualifiedTeachers: s.qualifiedTeachers,
+            preferedRooms:s.preferedRooms.map(room=>room.id)||[]
           })),
         };
       }),
     };
+
 
     try {
       const response = await axios.post(
@@ -299,7 +301,9 @@ const SubjectAssignmentForm = ({
                     {subject.name} ({subject.elective_or_core})
                   </Typography>
                   <Box>
-                    <FormControlLabel
+                   {
+                    subject.elective_or_core=="core"&&(
+                      <FormControlLabel
                       control={
                         <Switch
                           checked={subject.need_special_rooms}
@@ -308,6 +312,8 @@ const SubjectAssignmentForm = ({
                       }
                       label="Need Special Rooms"
                     />
+                    )
+                   }
                     <IconButton
                       onClick={() => handleRemoveSubject(index)}
                       size="small"

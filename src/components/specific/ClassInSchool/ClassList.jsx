@@ -24,6 +24,7 @@ const ClassList = ({
   refectClasssroomListdata,
   refetchClassroomList,
   openEditCalssroomForm,
+  setClassroomMap
 }) => {
   const { apiDomain, logoutUser, headers } = useAuth();
   const [isAddStandarFormOpen, setIsAddStandarFormOpen] = useState(false);
@@ -48,7 +49,18 @@ const ClassList = ({
     { value: "", label: "All Levels" },
     ...classByGrade.map((grade) => ({ value: grade.name, label: grade.name })),
   ];
-
+  function getClassroomIdsByGradeAndStandard(data) {
+    const result = {};
+    data.forEach(grade => {
+        const standards = {};
+        grade.standards.forEach(standard => {
+            const classroomIds = standard.classrooms.map(classroom => classroom.id);
+            standards[standard.id] = classroomIds;
+        });
+        result[grade.id] = standards;
+    });
+    return result;
+}
   // functjion to refetch the data
 
   useEffect(() => {
@@ -61,6 +73,8 @@ const ClassList = ({
           }
         );
         setClassByGrade(response.data);
+        const result = getClassroomIdsByGradeAndStandard(response.data);
+        setClassroomMap(result);
       } catch (error) {
         if (error.response) {
           toast.error(
@@ -168,7 +182,7 @@ const ClassList = ({
                         handleStandardDelete={handleStandardDelete}
                       />
                     </div>
-                    {standard?.classrooms?.map((division) => (
+                    {standard?.classrooms?.map((division,index) => (
                       <DivisionCard
                         division={division}
                         standard_id={standard?.id}
@@ -176,6 +190,7 @@ const ClassList = ({
                         setISelectedClassforView={setISelectedClassforView}
                         openEditCalssroomForm={openEditCalssroomForm}
                         grade={grade}
+                        index={index}
                       />
                     ))}
                   </div>

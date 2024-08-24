@@ -3,6 +3,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
 import { LabelDispalyerWithIcon, LabelDisplayer } from "../../common";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Avatar,
@@ -19,6 +21,7 @@ import { toast } from "react-toastify";
 import UpdateSubjectForm from "../../forms/UpdateSubjectForm";
 import SubjectCard from "./SubjectCard";
 import AddNewSubjectForm from "../../forms/AddNewSubjectForm";
+import ClassRoomWeeklyTimeTableComponent from "./ClassRoomWeeklyTimeTableComponent";
 
 export const row1 = [
   "Instructor",
@@ -63,22 +66,24 @@ const ClassDetails = ({
   handleAddGroup,
   refetch,
   refresh,
+  classroomMap,
 }) => {
   const { apiDomain, headers, logoutUser, totalperiodsInWeek } = useAuth();
 
   const [classroomData, setClassroomData] = useState(null);
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [classroomWeeklyTimetable, setClassroomWeeklyTimetable] = useState([]);
   const { NumberOfPeriodsInAday } = useAuth();
   const [openAddNewSubjectForm, setOpenAddNewSubjectForm] = useState({
     isOpen: false,
-   
   });
 
-  const fetchData = async () => {
+  const fetchClassroomData = async () => {
+    let idForFetch=classroomMap[selectedClassforView?.gradeId][selectedClassforView?.standard_id][selectedClassforView?.index]
     try {
       const response = await axios.get(
-        `${apiDomain}/api/class-room/classroom/${selectedClassforView.id}/`,
+        `${apiDomain}/api/class-room/classroom/${idForFetch}/`,
         {
           headers,
         }
@@ -114,10 +119,55 @@ const ClassDetails = ({
       }
     }
   };
+  const isPreviousDisabled = selectedClassforView?.index === 0;
+
+  const isNextDisabled =
+    selectedClassforView?.index + 1 ===
+    (classroomMap[selectedClassforView?.gradeId]?.[
+      selectedClassforView?.standard_id
+    ]?.length || 0);
+
+  const fetchClassroomWeekTimetable = async () => {
+    let idForFetch=classroomMap[selectedClassforView?.gradeId][selectedClassforView?.standard_id][selectedClassforView?.index]
+
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/time-table/classroom-timetable-week/${idForFetch}/`,
+        {
+          headers,
+        }
+      );
+      setClassroomWeeklyTimetable(response.data);
+    } catch (error) {
+      if (error.response) {
+        // The request was made, and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error(
+          "Server responded with an error:",
+          error.response.status,
+          error.response.data
+        );
+        toast.error(
+          `Failed to retrieve timetables: ${
+            error.response.data.message || "Server error"
+          }`
+        );
+      } else if (error.request) {
+        // The request was made, but no response was received
+        console.error("No response received:", error.request);
+        toast.error("Failed to retrieve timetables: No response from server");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error setting up request:", error.message);
+        toast.error("Failed to retrieve timetables: Network error");
+      }
+    }
+  };
 
   useEffect(() => {
     if (selectedClassforView.isOpen) {
-      fetchData();
+      fetchClassroomData();
+      fetchClassroomWeekTimetable();
     }
   }, [selectedClassforView, refetch]);
 
@@ -144,11 +194,80 @@ const ClassDetails = ({
       selectedSubjects: classroomData.subject_data.map((sub) => sub.subjectId),
       standardId: selectedClassforView?.standard_id,
       gradeId: selectedClassforView?.gradeId,
-      currentLessonsPerWeek:classroomData.lessons_assigned_subjects
+      currentLessonsPerWeek: classroomData.lessons_assigned_subjects,
     }));
+  };
+
+  const handlePrevious = () => {
+    // Logic for navigating to the previous item
+    setISelectedClassforView((prev)=>({...prev,index:prev.index-1}))
+  };
+
+  const handleNext = () => {
+    // Logic for navigating to the next item
+    setISelectedClassforView((prev)=>({...prev,index:prev.index+1}))
+    
+    console.log("Navigate to next");
   };
   return (
     <div className="w-full h-full rounded-2xl px-6 py-5">
+      <div className="absolute top-0 right-0 w-full h-full flex flex-col justify-end  items-center ">
+
+      <div className="flex flex-row items-center gap-4 sticky bottom-0">
+          <IconButton
+            className="pointer-events-auto transition-all duration-200 ease-in-out"
+            sx={{
+              backgroundColor: isPreviousDisabled
+                ? "rgba(0, 0, 0, 0.1)"
+                : "rgba(0, 0, 0, 0.3)",
+              color: isPreviousDisabled ? "rgba(255, 255, 255, 0.3)" : "white",
+              "&:hover": {
+                backgroundColor: isPreviousDisabled
+                  ? "rgba(0, 0, 0, 0.1)"
+                  : "rgba(0, 0, 0, 0.5)",
+                transform: isPreviousDisabled
+                  ? "translateX(-50%)"
+                  : "scale(1.1) translateX(-45%)",
+              },
+              transform: "translateX(-50%)",
+              width: "36px",
+              height: "36px",
+              borderRadius: "50%",
+            }}
+            onClick={handlePrevious}
+            disabled={isPreviousDisabled}
+          >
+            <ArrowBackIosNewIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+
+          {/* Next button */}
+          <IconButton
+            className="pointer-events-auto transition-all duration-200 ease-in-out"
+            sx={{
+              backgroundColor: isNextDisabled
+                ? "rgba(0, 0, 0, 0.1)"
+                : "rgba(0, 0, 0, 0.3)",
+              color: isNextDisabled ? "rgba(255, 255, 255, 0.3)" : "white",
+              "&:hover": {
+                backgroundColor: isNextDisabled
+                  ? "rgba(0, 0, 0, 0.1)"
+                  : "rgba(0, 0, 0, 0.5)",
+                transform: isNextDisabled
+                  ? "translateX(50%)"
+                  : "scale(1.1) translateX(45%)",
+              },
+              transform: "translateX(50%)",
+              width: "36px",
+              height: "36px",
+              borderRadius: "50%",
+            }}
+            onClick={handleNext}
+            disabled={isNextDisabled}
+          >
+            <ArrowForwardIosIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        </div>
+      </div>
       {/* Header Section */}
       <div className="flex flex-row justify-between border-b pb-4">
         <div className="flex flex-row items-center gap-4">
@@ -160,9 +279,10 @@ const ClassDetails = ({
             <KeyboardBackspaceIcon fontSize="small" sx={{ color: "#818181" }} />
           </IconButton>
           <h1 className="text-xl font-semibold">
-            {selectedClassforView?.name}
+            {classroomData?.standard_short_name}-{classroomData?.division}
           </h1>
         </div>
+        
         <div className="flex flex-row gap-3">
           <Button
             variant="outlined"
@@ -337,67 +457,11 @@ const ClassDetails = ({
       </Tooltip>
 
       {/* Timetable Section */}
-      {/* <div className="overflow-auto py-6">
-        <p className="text-sm font-medium text-text_2 font-Inter my-2">
-          TIME TABLE FOR A WEEK
-        </p>
-        <div className={`grid ${gridClassName}`}>
-          {row1?.slice(0, NumberOfPeriodsInAday + 1).map((ele, indx) => (
-            <div
-              key={indx}
-              className="bg-white cursor-pointer bg-opacity-70 backdrop-blur-sm shadow-bottom1 flex justify-center py-1 max-h-12 first:rounded-tl-lg last:rounded-tr-lg border border-opacity-10 border-gray-300"
-            >
-              <p className="text-xs font-medium text-text_2 m-2">{ele}</p>
-            </div>
-          ))}
-
-          {selectedClassforView?.time_table?.map((obj, dayIndex) => (
-            <React.Fragment key={dayIndex}>
-              <div className="sticky left-0 bg-white z-10 border border-gray-300 border-opacity-15 bg-opacity-70 backdrop-blur-sm flex justify-center p-2 items-center">
-                <div className="w-full h-full flex flex-col justify-center items-center gap-2 bg-light-secondary bg-opacity-20 rounded-lg p-2 shadow-custom-10">
-                  <p className="capitalize font-semibold text-slate-600 text-sm">
-                    {obj.day}
-                  </p>
-                </div>
-              </div>
-              {obj.class_slots
-                ?.slice(0, NumberOfPeriodsInAday)
-                .map((class_slot, ind) => {
-
-                  return (
-                    <div
-                      key={ind}
-                      className={`border border-gray-300 border-opacity-15 p-2 bg-white`}
-                    >
-                      <div
-                        className={`bg-white rounded-md pt-1 h-full flex flex-col justify-between overflow-hidden items-center ${
-                          class_slot == null
-                            ? "gradient_3"
-                            : class_slot?.sub == 0
-                            ? "gradient_1"
-                            : class_slot?.sub == 1
-                            ? "gradient_2"
-                            : "gradient_4"
-                        }`}
-                      >
-                        <h1 className="text-nowrap text-center justify-center inline my-1 text-base font-semibold text-opacity-80">
-                          {classRoom?.standard}
-                          {classRoom?.standard && "-"}
-                          {classRoom?.division || "Free"}
-                        </h1>
-                        <h2 className="text-xs font-semibold text-dark-accent text-opacity-90 font-Roboto text-center mb-4">
-                          {selectedClassforView?.qualified_subjects[
-                            class_slot?.sub
-                          ] || "Focus Time"}
-                        </h2>
-                      </div>
-                    </div>
-                  );
-                })}
-            </React.Fragment>
-          ))}
-        </div>
-      </div> */}
+      <div className="overflow-auto py-6">
+        <ClassRoomWeeklyTimeTableComponent
+          weeklyTimetable={classroomWeeklyTimetable}
+        />
+      </div>
       <UpdateSubjectForm
         subject={selectedSubject}
         // onUpdate={handleUpdateSubject}

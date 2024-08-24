@@ -11,6 +11,7 @@ import EditDivisionForm from "../../components/forms/EditDivisionForm";
 
 const ClassesInSchool = ({}) => {
   const { apiDomain, logoutUser, headers } = useAuth();
+  const [classroomMap, setClassroomMap] = useState({});
 
   const [refetchClassroomList, setRefetchClassroomList] = useState(false);
   const [refetchClassroomdetails, setRefetchClassroomdetails] = useState(false);
@@ -117,6 +118,7 @@ const ClassesInSchool = ({}) => {
   };
   return (
     <>
+    
       <ReactCardFlip
         containerClassName="pl-6 pr-4 pb-6   grid grid-rows-[1fr_4fr] overflow-auto   "
         isFlipped={selectedClassforView.isOpen}
@@ -129,6 +131,7 @@ const ClassesInSchool = ({}) => {
           refetchClassroomList={refetchClassroomList}
           refectClasssroomListdata={refectClasssroomListdata}
           openEditCalssroomForm={openEditCalssroomForm}
+          setClassroomMap={setClassroomMap}
         />
         <ClassDetails
           setISelectedClassforView={setISelectedClassforView}
@@ -136,6 +139,7 @@ const ClassesInSchool = ({}) => {
           handleAddGroup={handleAddGroup}
           refetch={refetchClassroomdetails}
           refresh={refreshClassDetails}
+          classroomMap={classroomMap}
 
         />
       </ReactCardFlip>

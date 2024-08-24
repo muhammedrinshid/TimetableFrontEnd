@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../../../context/Authcontext";
-import { Avatar, Chip } from "@mui/material";
 
-const TeacherTimeTableComponent = ({ teacherTimetable }) => {
+import { useAuth } from "../../../context/Authcontext";
+import { Avatar, Box, Typography, Chip } from "@mui/material";
+import { styled } from "@mui/system";
+
+const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
   const { apiDomain } = useAuth();
+  console.log(teacherWeeklyTimetable)
   const { NumberOfPeriodsInAday } = useAuth();
   const teacherRow1 = [
     "Instructor",
@@ -35,6 +37,27 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
     }
   };
 
+
+  const InfoChip = styled(Chip)(({ theme }) => ({
+    margin: theme.spacing(0.5),
+    fontWeight: "bold",
+  }));
+
+  const getAvatarColor = (dayName) => {
+    const hue = (dayName.charCodeAt(0) * 20) % 360;
+    return `hsl(${hue}, 70%, 50%)`;
+  };
+
+  const StyledAvatar = styled(Avatar)(({ theme }) => ({
+    width: 70,
+    height: 70,
+    fontSize: "1.75rem",
+    fontWeight: "bold",
+    marginRight: theme.spacing(2),
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+  }));
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
@@ -55,35 +78,47 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
             </tr>
           </thead>
           <tbody>
-            {teacherTimetable?.map((teacher, teacherIndex) => (
+            {teacherWeeklyTimetable?.map((day, dayIndex) => (
               <tr
-                key={teacherIndex}
+                key={dayIndex}
                 className="bg-white hover:bg-gray-50 transition-colors duration-300"
               >
-                <td className="border-b p-4">
-                  <div className="flex items-center space-x-3">
-                    <Avatar
-                      src={
-                        teacher?.instructor?.profile_image
-                          ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
-                          : undefined
-                      }
-                      className="w-10 h-10 rounded-full shadow-md transition-transform duration-300 hover:scale-110"
+             <td className="border-b p-4">
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    bgcolor="#ecf3fa"
+                    p={2}
+                    borderRadius={2}
+                  >
+                    <StyledAvatar
+                      sx={{
+                        bgcolor: getAvatarColor(day.day),
+                      }}
                     >
-                      {!teacher?.instructor?.profile_image &&
-                        teacher.instructor.name[0]}
-                    </Avatar>
-                    <div className="overflow-hidden">
-                      <p className="font-bold text-sm text-gray-800 truncate">
-                        {teacher.instructor.name}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {teacher.instructor.teacher_id}
-                      </p>
-                    </div>
-                  </div>
+                      {day.day.charAt(0)}
+                    </StyledAvatar>
+                    <Box>
+                      <Typography
+                        variant="h5"
+                        component="div"
+                        fontWeight="bold"
+                        gutterBottom
+                      >
+                        {day.day}
+                      </Typography>
+                      <Box mb={1}>
+                        <InfoChip
+                          label={`Timetable for the day`}
+                          color="primary"
+                          size="small"
+                          variant="outlined"
+                        />
+                      </Box>
+                    </Box>
+                  </Box>
                 </td>
-                {teacher.sessions
+                {day.sessions
                   .slice(0, NumberOfPeriodsInAday)
                   .map((session, sessionIndex) => (
                     <td key={sessionIndex} className="border-b p-2">
@@ -163,4 +198,4 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
   );
 };
 
-export default TeacherTimeTableComponent;
+export default TeacherWeeklyTimeTableComponent;
