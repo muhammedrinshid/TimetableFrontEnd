@@ -108,10 +108,6 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
     onClose();
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit Classroom</DialogTitle>

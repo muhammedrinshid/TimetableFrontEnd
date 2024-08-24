@@ -59,7 +59,7 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
   }));
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto ">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
         Teacher Timetable
       </h2>
@@ -107,14 +107,7 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                       >
                         {day.day}
                       </Typography>
-                      <Box mb={1}>
-                        <InfoChip
-                          label={`Timetable for the day`}
-                          color="primary"
-                          size="small"
-                          variant="outlined"
-                        />
-                      </Box>
+        
                     </Box>
                   </Box>
                 </td>
@@ -135,7 +128,7 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                         {session.subject ? (
                           <div className="session-card flex flex-col h-full">
                             <div className="flex justify-between items-start mb-3">
-                              <h3 className="font-bold text-xl text-gray-800 leading-tight">
+                              <h3 className="font-bold text-sm text-gray-800 leading-tight">
                                 {session.subject ||
                                   session.elective_subject_name}
                               </h3>
@@ -144,12 +137,13 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                                   session.type === "Core"
                                     ? "bg-blue-100 text-blue-700"
                                     : "bg-pink-100 text-pink-700"
-                                } text-xs font-semibold uppercase px-2 py-1 rounded-full tracking-wider`}
+                                } text-vs font-semibold uppercase  rounded-full tracking-wider`}
                               >
-                                {session.type}
+                                {session.type.charAt(0)}
                               </div>
                             </div>
-                            <p className="room text-sm mb-3 flex justify-between items-center text-gray-600">
+                            
+                            <p className="room text-xs mb-3 flex justify-between items-center text-gray-600">
                               <span className="font-medium">
                                 Room {session?.room?.room_number}
                               </span>
@@ -161,14 +155,14 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                                     key={index}
                                     className="class-info flex justify-between items-center mb-2 bg-white bg-opacity-50 rounded-md p-2"
                                   >
-                                    <span className="class-name font-semibold text-gray-700">
+                                    <span className="class-name font-semibold text-gray-700 text-sm text-nowrap">
                                       {classDetail.standard}{" "}
                                       {classDetail.division}
                                     </span>
                                     {session.type === "Elective" && (
-                                      <span className="student-count text-gray-500 text-xs">
+                                      <span className="student-count text-gray-500 text-vs text-nowrap justify-self-end">
                                         {classDetail.number_of_students}{" "}
-                                        students
+                                        cadet
                                       </span>
                                     )}
                                   </div>

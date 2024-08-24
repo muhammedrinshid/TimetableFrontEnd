@@ -6,11 +6,7 @@ import {
   timeSlots,
 } from "../../assets/datas";
 import { CiSearch } from "../../assets/icons";
-import {
-  
-  ToggleButton,
-} from "../../components/common";
-
+import { ToggleButton } from "../../components/common";
 
 import TeacherAttendanceStatus from "../../components/specific/Dashboard/TeacherAttendanceStatus";
 import FreeTeacherOnaSession from "../../components/specific/Dashboard/FreeTeacherOnaSession";
@@ -19,8 +15,37 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import StudentrViewOneDayTt from "../../components/specific/Dashboard/StudentrViewOneDayTt";
 import SwapTeacherPopus from "../../components/specific/Dashboard/SwapTeacherPopus";
 import CustomDatePicker from "../../components/Mui components/StyledDatePicker";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/Authcontext";
 
 const Dashboard = () => {
+  const { apiDomain, headers } = useAuth();
+
+  const [teacherWeekTimetable, setTeacherWeekTimetable] = useState([]);
+  const [studentWeekTimetable, setStudentWeekTimetable] = useState([]);
+
+  useEffect(() => {
+    const fetchTeacherWeekTimetable = async () => {
+      try {
+        const response = await axios.get(
+          `${apiDomain}/api/time-table/teacher-view-day/MON/`,
+          {
+            headers,
+          }
+        );
+        setTeacherWeekTimetable(response.data);
+      } catch (error) {
+        console.error(`Error fetching teacher timetable:`, error);
+        toast.error(
+          `Failed to load teacher timetable. Please try again.`
+        );
+      }
+    };
+
+    fetchTeacherWeekTimetable();
+    // fetchTimetable("student-view-week", setStudentWeekTimetable);
+  }, []);
   const [whoWantSwap, setWhoWantSwap] = useState({
     subject: "",
     session: 0,
@@ -52,24 +77,23 @@ const Dashboard = () => {
 
   // function to change the present status of a teacher for a entair day
   const toggleFullDayLeaveorPresent = (teacher_id, present_or_leave) => {
-    if (present_or_leave == "present") {
-      setTeachers((prevTeachers) =>
-        prevTeachers.map((teacher) =>
-          teacher.teacher_id === teacher_id
-            ? { ...teacher, present: teacher.present.map((pre) => true) }
-            : teacher
-        )
-      );
-    }
-    if (present_or_leave == "leave") {
-      setTeachers((prevTeachers) =>
-        prevTeachers.map((teacher) =>
-          teacher.teacher_id === teacher_id
-            ? { ...teacher, present: teacher.present.map((pre) => false) }
-            : teacher
-        )
-      );
-    }
+    console.log(teacher_id, present_or_leave);
+    
+    setTeacherWeekTimetable((prevTeachers) => 
+      prevTeachers.map((teacher) => 
+        teacher.instructor.teacher_id === teacher_id 
+          ? { 
+              ...teacher, 
+              instructor: {
+                ...teacher.instructor,
+                present: teacher.instructor.present.map(() => 
+                  present_or_leave === "present"
+                )
+              } 
+            } 
+          : teacher
+      )
+    );
   };
 
   // change theacher on specifc sesson
@@ -161,9 +185,7 @@ const Dashboard = () => {
         </div>
       </div>
       {/* date selector */}
-      <div className="col-start-2 col-end-3 row-start-1 row-end-2 shadow_box flex flex-row justify-be items-center ">
-            
-      </div>
+      <div className="col-start-2 col-end-3 row-start-1 row-end-2 shadow_box flex flex-row justify-be items-center "></div>
       {/* thecher present status of the day  */}
       <div className="col-start-3 col-end-4 row-start-1 row-end-3 shadow_box flex flex-col overflow-hidden">
         <TeacherAttendanceStatus
@@ -182,15 +204,17 @@ const Dashboard = () => {
             <div className="absolute inset-0 w-full h-full">
               {viewType ? (
                 <TeacherViewOneDayTt
-                  changeTecherStatus={changeTecherStatus}
-                  findClassById={findClassById}
-                  row1={row1}
-                  setSelectedSession={setSelectedSession}
-                  teachers={teachers}
-                  times={times}
+                  teacherTimetable={teacherWeekTimetable}
+
+                  // changeTecherStatus={changeTecherStatus}
+                  // findClassById={findClassById}
+                  // row1={row1}
+                  // setSelectedSession={setSelectedSession}
+                  // teachers={teachers}
+                  // times={times}
                   toggleDrawer={toggleDrawer}
                   toggleFullDayLeaveorPresent={toggleFullDayLeaveorPresent}
-                  whoWantSwap={whoWantSwap}
+                  // whoWantSwap={whoWantSwap}
                 />
               ) : (
                 <StudentrViewOneDayTt

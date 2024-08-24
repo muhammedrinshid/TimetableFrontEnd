@@ -75,12 +75,16 @@ const ClassDetails = ({
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [classroomWeeklyTimetable, setClassroomWeeklyTimetable] = useState([]);
   const { NumberOfPeriodsInAday } = useAuth();
+  const [isAnimating, setIsAnimating] = useState(false);
   const [openAddNewSubjectForm, setOpenAddNewSubjectForm] = useState({
     isOpen: false,
   });
 
   const fetchClassroomData = async () => {
-    let idForFetch=classroomMap[selectedClassforView?.gradeId][selectedClassforView?.standard_id][selectedClassforView?.index]
+    let idForFetch =
+      classroomMap[selectedClassforView?.gradeId][
+        selectedClassforView?.standard_id
+      ][selectedClassforView?.index];
     try {
       const response = await axios.get(
         `${apiDomain}/api/class-room/classroom/${idForFetch}/`,
@@ -128,7 +132,10 @@ const ClassDetails = ({
     ]?.length || 0);
 
   const fetchClassroomWeekTimetable = async () => {
-    let idForFetch=classroomMap[selectedClassforView?.gradeId][selectedClassforView?.standard_id][selectedClassforView?.index]
+    let idForFetch =
+      classroomMap[selectedClassforView?.gradeId][
+        selectedClassforView?.standard_id
+      ][selectedClassforView?.index];
 
     try {
       const response = await axios.get(
@@ -178,7 +185,6 @@ const ClassDetails = ({
     console.log(`Reassign group for ${subjectName} - ${optionSubject}`);
   };
 
-  const handleDeleteSubject = () => {};
 
   const handleSubjectEditButton = (subject) => {
     let newData = { ...subject, gradeId: selectedClassforView.gradeId };
@@ -199,21 +205,30 @@ const ClassDetails = ({
   };
 
   const handlePrevious = () => {
-    // Logic for navigating to the previous item
-    setISelectedClassforView((prev)=>({...prev,index:prev.index-1}))
+    if (isPreviousDisabled) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setISelectedClassforView((prev) => ({...prev, index: prev.index - 1}));
+      setIsAnimating(false);
+    }, 300); // Match this with your CSS transition duration
   };
-
+  
   const handleNext = () => {
-    // Logic for navigating to the next item
-    setISelectedClassforView((prev)=>({...prev,index:prev.index+1}))
-    
-    console.log("Navigate to next");
+    if (isNextDisabled) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setISelectedClassforView((prev) => ({...prev, index: prev.index + 1}));
+      setIsAnimating(false);
+    }, 300);
   };
   return (
-    <div className="w-full h-full rounded-2xl px-6 py-5">
+    <div
+      className={`w-full h-full rounded-2xl px-6 py-5 transition-opacity duration-300 ${
+        isAnimating ? "opacity-0" : "opacity-100"
+      }`}
+    >
       <div className="absolute top-0 right-0 w-full h-full flex flex-col justify-end  items-center ">
-
-      <div className="flex flex-row items-center gap-4 sticky bottom-0">
+        <div className="flex flex-row items-center gap-4 sticky bottom-0">
           <IconButton
             className="pointer-events-auto transition-all duration-200 ease-in-out"
             sx={{
@@ -282,7 +297,7 @@ const ClassDetails = ({
             {classroomData?.standard_short_name}-{classroomData?.division}
           </h1>
         </div>
-        
+
         <div className="flex flex-row gap-3">
           <Button
             variant="outlined"
