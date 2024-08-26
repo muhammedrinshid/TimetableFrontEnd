@@ -7,6 +7,15 @@ import {
 
 import { Avatar, Chip } from "@mui/material";
 
+import { IoTimeOutline } from "../../../assets/icons";
+import { formatDuration } from "../../../assets/converts";
+import Tooltip from "@mui/material/Tooltip";
+import { IconButton } from "@mui/material";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import CopyAllIcon from "@mui/icons-material/CopyAll";
+import CheckIcon from "@mui/icons-material/Check";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import { grey } from "@mui/material/colors";
 import { useAuth } from "../../../context/Authcontext";
 
 const getGridClassName = (NumberOfPeriodsInAday) => {
@@ -33,8 +42,9 @@ const getGridClassName = (NumberOfPeriodsInAday) => {
 
 const TeacherViewOneDayTt = ({
   teacherTimetable,
-
+  changeTecherStatus,
   toggleDrawer,
+  setSelectedSession,
 
   toggleFullDayLeaveorPresent,
 }) => {
@@ -48,16 +58,34 @@ const TeacherViewOneDayTt = ({
       .map((_, i) => `Session${i + 1}`),
   ];
 
-  const getSessionColor = (session) => {
-    if (!session.subject) return "bg-green-100 text-green-800"; // Free period
-    switch (session.type) {
-      case "Core":
-        return "bg-blue-100 text-blue-800";
-      case "Elective":
-        return "bg-purple-100 text-purple-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+  const getSessionColor = (session, teacher, index) => {
+    let colorClass = "";
+
+    if (!session.subject) {
+      colorClass = "bg-green-100 text-green-800 "; // Free period
+    } else {
+      switch (session.type) {
+        case "Core":
+          colorClass = "bg-blue-100 text-blue-800";
+          break;
+        case "Elective":
+          colorClass = "bg-purple-100 text-purple-800";
+          break;
+        default:
+          colorClass = "bg-gray-100 text-gray-800";
+          break;
+      }
     }
+
+    // Add blinking-top-border class if the condition is met
+    if (
+      teacher?.instructor?.present[index] === false &&
+      teacher?.sessions[index]?.subject !== null
+    ) {
+      colorClass += " blinking-top-border leave__card";
+    }
+
+    return colorClass;
   };
 
   const getSessionBorderColor = (session) => {
@@ -80,7 +108,7 @@ const TeacherViewOneDayTt = ({
               {teacherRow1[0]}
             </th>
             {teacherRow1.slice(1).map((header, index) => (
-              <th key={index} className="w-1/12 p-4 text-left font-semibold">
+              <th key={index} className="w-1/12 p-4 text-left font-semibold cursor-pointer" onClick={()=>setSelectedSession(index)}>
                 {header}
               </th>
             ))}
@@ -88,34 +116,16 @@ const TeacherViewOneDayTt = ({
         </thead>
         <tbody>
           {teacherTimetable?.map((teacher, teacherIndex) => {
-            const fullDayPresent = teacher.instructor.present.every((condition) => condition);
+            const fullDayPresent = teacher.instructor.present.every(
+              (condition) => condition
+            );
             return (
               <tr
                 key={teacherIndex}
                 className="bg-white hover:bg-gray-50 transition-colors duration-300"
               >
                 <td className="border-b px-4">
-                  {/* <div className="flex items-center space-x-3">
-        <Avatar
-          src={
-            teacher?.instructor?.profile_image
-              ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
-              : undefined
-          }
-          className="w-10 h-10 rounded-full shadow-md transition-transform duration-300 hover:scale-110"
-        >
-          {!teacher?.instructor?.profile_image &&
-            teacher.instructor.name[0]}
-        </Avatar>
-        <div className="overflow-hidden">
-          <p className="font-bold text-sm text-gray-800 truncate">
-            {teacher.instructor.name}
-          </p>
-          <p className="text-xs text-gray-500 truncate">
-            {teacher.instructor.teacher_id}
-          </p>
-        </div>
-      </div> */}
+      
                   <TeacherListDashboard
                     teacher={teacher.instructor}
                     toggleFullDayLeaveorPresent={toggleFullDayLeaveorPresent}
@@ -128,8 +138,10 @@ const TeacherViewOneDayTt = ({
                   .map((session, sessionIndex) => (
                     <td key={sessionIndex} className="border-b p-2">
                       <div
-                        className={`rounded-lg p-4 h-full ${getSessionColor(
-                          session
+                        className={`rounded-lg  h-full ${getSessionColor(
+                          session,
+                          teacher,
+                          sessionIndex
                         )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden`}
                         style={{
                           borderTop: `4px solid ${getSessionBorderColor(
@@ -138,7 +150,7 @@ const TeacherViewOneDayTt = ({
                         }}
                       >
                         {session.subject ? (
-                          <div className="session-card flex flex-col h-full">
+                          <div className="session-card flex flex-col h-full p-3">
                             <div className="flex justify-between items-start mb-3">
                               <h3 className="font-bold text-sm text-gray-800 leading-tight">
                                 {session.subject ||
@@ -191,6 +203,87 @@ const TeacherViewOneDayTt = ({
                             </p>
                           </div>
                         )}
+                        <div className=" w-full flex flex-row justify-around  self-end mt-2">
+                          {/* <FaUserSlash />
+                        <FiUserCheck /> */}
+                          <div className="basis-1/3 flex justify-center items-center p-1 border-t border-r border-black border-opacity-10 text-opacity-40 text-black cursor-pointer transform transition duration-200 hover:scale-95 hover:text-light-primary">
+                            {teacher.instructor.present[sessionIndex] === false ? (
+                              <Tooltip title=" present  this period">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => {
+                                    toggleDrawer("noToggle");
+                                    changeTecherStatus(teacher.instructor.teacher_id, sessionIndex);
+                                  }}
+                                >
+                                  <CheckIcon
+                                    fontSize="small"
+                                    sx={{ color: "#90EE90" }}
+                                  />
+                                </IconButton>
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="Absent this period">
+                                <IconButton
+                                  size="small"
+                                  onClick={() =>
+                                    changeTecherStatus(teacher.instructor.teacher_id, sessionIndex)
+                                  }
+                                >
+                                  <CancelPresentationIcon
+                                    fontSize="small"
+                                    sx={{ color: "#FFB6C1" }}
+                                  />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                          </div>
+                          <div
+                            className={`basis-1/3 flex justify-center items-center border-t border-black border-opacity-10 text-opacity-40 text-black cursor-pointer transform transition duration-200 hover:scale-95 hover:text-light-primary ${
+                              teacher.instructor.present[sessionIndex] == true && "cursor-not-allowed "
+                            }`}
+                          >
+                            <Tooltip title="Assign a free teacher">
+                              <IconButton
+                                size="small"
+                                onClick={() =>
+                                  toggleDrawer(
+                                    "toggle",
+                                    sessionIndex,
+                                    teacher.sessions[sessionIndex].subject,
+                                    teacher.instructor.teacher_id,
+                                    session?.room
+                                  )
+                                }
+                                disabled={
+                                  teacher.instructor.present[sessionIndex] ||
+                                  teacher.sessions.subject === null
+                                }
+                                sx={{
+                                  "& svg": {
+                                    color:
+                                      !teacher.instructor.present[sessionIndex] &&
+                                      teacher.sessions[sessionIndex] !== null
+                                        ? "#009ee3"
+                                        : grey[500], // Change color of the icon based on disabled state
+                                  },
+                                }}
+                              >
+                                <ChangeCircleIcon
+                                  fontSize="small"
+                                  sx={{ color: "#009ee3" }}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                          </div>
+                          <div className="basis-1/3 flex justify-center items-center border-t border-l text-opacity-40 text-black border-black border-opacity-10  cursor-pointer transform transition duration-200 hover:scale-95 hover:text-light-primary">
+                            <Tooltip title="copy data">
+                              <IconButton size="small">
+                                <CopyAllIcon fontSize="small" color="inherit" />
+                              </IconButton>
+                            </Tooltip>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   ))}

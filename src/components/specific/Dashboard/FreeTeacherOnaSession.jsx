@@ -2,6 +2,7 @@ import React from "react";
 import { CustomChip, StyledBadge } from "../../Mui components";
 import { Avatar, IconButton } from "@mui/material";
 import { RiSwap2Line } from "react-icons/ri";
+import { useAuth } from "../../../context/Authcontext";
 
 const FreeTeacherOnaSession = ({
   findClassById,
@@ -13,6 +14,7 @@ const FreeTeacherOnaSession = ({
   setWhichOnSwap,
   findTaecherById,
 }) => {
+  const { apiDomain } = useAuth();
   const openSwapConfirmation = (teacher_id) => {
     // const teacher2=findTaecherById(teacher_id)
     // const teacher1=findTaecherById(whoWantSwap.teacher_id)
@@ -35,10 +37,10 @@ const FreeTeacherOnaSession = ({
       {/* assingment of each teachers in a specific session */}
       <div className="overflow-x-auto w-full px-4">
         {teachers.map((teacher) => {
-          const isEngaged = teacher.class_slot[selectedSession];
-          const isLeave = !teacher.present[selectedSession];
+          const isEngaged = teacher.sessions[selectedSession].subject;
+          const isLeave = !teacher.instructor.present[selectedSession];
           const status = isLeave ? "leave" : isEngaged ? "engaged" : "free";
-          const classRoom = findClassById(teacher.class_slot[selectedSession]);
+          const classRoom = teacher.sessions[selectedSession].room;
 
           return (
             <div className="w-full  mb-2  b grid grid-cols-[2fr_1fr] gap-1">
@@ -51,22 +53,25 @@ const FreeTeacherOnaSession = ({
                 >
                   <Avatar
                     sx={{
-                      height: "100%",
                       border: "0.1px solid lightgray",
                     }}
-                    src={teacher.image}
+                    src={
+                      teacher?.instructor?.profile_image
+                        ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
+                        : undefined
+                    }
                     variant=""
                   >
-                    {teacher.name.charAt(0)}
+                    {teacher.instructor.name.charAt(0)}
                   </Avatar>
                 </StyledBadge>
 
                 <div className="pl-2 border-l">
                   <h2 className="text-base font-medium font-Inter">
-                    {teacher.name} {teacher.surname}
+                    {teacher.instructor.name} {teacher.instructor.surname}
                   </h2>
                   <p className="text-vs font-Inter text-text_2">
-                    {teacher.teacher_id}
+                    {teacher.instructor.teacher_id}
                   </p>
                 </div>
               </div>
@@ -79,16 +84,14 @@ const FreeTeacherOnaSession = ({
                 />
                 {/* <h4 className={`text-sm font-semibold ${status === 'free' ? 'text-lightGreen' : status === 'leave' ? 'text-text_1' : '#0000FF'}`}>Engaged in</h4> */}
                 <h1 className="text-sm mt-1 font-semibold text-dark-accent">
-                  {classRoom?.standard}
-                  {classRoom?.standard && "-"}
-                  {classRoom?.division || "No class"}
+                  {classRoom?.room_number || "No class"}
                 </h1>
-                <h3 className="text-sm font-light text-black">
+                {/* <h3 className="text-sm font-light text-black">
                   {" "}
-                  {teacher.qualified_subjects[
+                  {teacher.instructor.qualified_subjects[
                     teacher.class_subject[selectedSession]
                   ] || "   "}
-                </h3>
+                </h3> */}
               </div>
             </div>
           );
@@ -107,24 +110,24 @@ const FreeTeacherOnaSession = ({
           className="w-8 h-3 rounded-md bg-slate-300 cursor-pointer"
         ></div>
         <p className=" rel text-dark-accent font-normal my-2">
-          Teachers are not in session-{whoWantSwap.session}
+          Teachers are not in session-{whoWantSwap?.session}
         </p>
         <div className="overflow-y-auto w-full">
           {teachers
-            .filter(
+            ?.filter(
               (teacher) =>
-                teacher.class_slot[whoWantSwap.session] === null &&
-                teacher.present[whoWantSwap.session]
+                teacher?.sessions[whoWantSwap.index]?.subject === null &&
+                teacher?.instructor.present[whoWantSwap.index]
             )
 
-            .sort((a, b) => {
+            ?.sort((a, b) => {
               const aPriority = a.qualified_subjects.includes(
-                whoWantSwap.subject
+                whoWantSwap?.subject
               )
                 ? 0
                 : 1;
               const bPriority = b.qualified_subjects.includes(
-                whoWantSwap.subject
+                whoWantSwap?.subject
               )
                 ? 0
                 : 1;
@@ -139,12 +142,12 @@ const FreeTeacherOnaSession = ({
               }
               return 0;
             })
-            .map((teacher) => {
-              const isEngaged = teacher.class_slot[whoWantSwap?.session];
-              const isLeave = !teacher.present[whoWantSwap?.session];
+            ?.map((teacher) => {
+              const isEngaged = teacher.sessions[whoWantSwap?.session];
+              const isLeave = !teacher.instructor.present[whoWantSwap?.session];
               const status = isLeave ? "leave" : isEngaged ? "engaged" : "free";
               const classRoom = findClassById(
-                teacher.class_slot[selectedSession]
+                teacher?.sessions[selectedSession]
               );
 
               return (
@@ -164,7 +167,11 @@ const FreeTeacherOnaSession = ({
                           height: "100%",
                           border: "0.1px solid lightgray",
                         }}
-                        src={teacher.image}
+                        src={
+                          teacher?.instructor?.profile_image
+                            ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
+                            : undefined
+                        }
                         variant=""
                       >
                         {teacher.name.charAt(0)}

@@ -98,32 +98,36 @@ const Dashboard = () => {
 
   // change theacher on specifc sesson
   const changeTecherStatus = (id, periodIndex) => {
-    setTeachers((prevTeachers) =>
-      prevTeachers.map((teacher) =>
-        teacher.teacher_id === id
+    setTeacherWeekTimetable((prevTeachers) =>
+      prevTeachers?.map((teacher) =>
+        teacher.instructor.teacher_id === id
           ? {
               ...teacher,
-              present: teacher.present.map((pre, index) =>
-                index === periodIndex ? !pre : pre
-              ),
+              instructor: {
+                ...teacher.instructor,
+                present: teacher.instructor.present.map((pre, index) =>
+                  index === periodIndex ? !pre : pre
+                ),
+              },
             }
           : teacher
       )
     );
   };
+  
 
   // functon to get the statu of teacher with three values present absent half leave
   const getTeacherStatus = (booleanList) => {
-    if (booleanList.every((value) => value === true)) {
+    if (booleanList?.every((value) => value === true)) {
       return "present";
-    } else if (booleanList.every((value) => value === false)) {
+    } else if (booleanList?.every((value) => value === false)) {
       return "absent";
     } else {
       return "half leave";
     }
   };
 
-  const toggleDrawer = (typ, indx, sub, teacher_id, class_id) => {
+  const toggleDrawer = (typ, indx, sub, teacher_id, room) => {
     if (typ === "toggle") {
       if (whoWantSwap.isOpen) {
         setWhoWantSwap(() => ({
@@ -131,7 +135,7 @@ const Dashboard = () => {
           session: 0,
           teacher_id: "",
           isOpen: false,
-          class_id: "",
+          room: "",
         }));
       } else {
         setWhoWantSwap(() => ({
@@ -139,7 +143,7 @@ const Dashboard = () => {
           session: indx,
           teacher_id: teacher_id,
           isOpen: true,
-          class_id: class_id,
+          room: room,
         }));
       }
     } else {
@@ -148,9 +152,10 @@ const Dashboard = () => {
         session: 0,
         teacher_id: "",
         isOpen: false,
-        class_id: "",
+        room: "",
       }));
     }
+    console.log(whoWantSwap)
   };
 
   // function to count the number of teachers are present in specific day
@@ -191,7 +196,7 @@ const Dashboard = () => {
         <TeacherAttendanceStatus
           countPresentTeachers={countPresentTeachers}
           getTeacherStatus={getTeacherStatus}
-          teachers={teachers}
+          teacherWeekTimetable={teacherWeekTimetable}
           toggleDrawer={toggleDrawer}
           toggleFullDayLeaveorPresent={toggleFullDayLeaveorPresent}
         />
@@ -206,10 +211,10 @@ const Dashboard = () => {
                 <TeacherViewOneDayTt
                   teacherTimetable={teacherWeekTimetable}
 
-                  // changeTecherStatus={changeTecherStatus}
+                  changeTecherStatus={changeTecherStatus}
                   // findClassById={findClassById}
                   // row1={row1}
-                  // setSelectedSession={setSelectedSession}
+                  setSelectedSession={setSelectedSession}
                   // teachers={teachers}
                   // times={times}
                   toggleDrawer={toggleDrawer}
@@ -239,7 +244,7 @@ const Dashboard = () => {
         findClassById={findClassById}
         toggleDrawer={toggleDrawer}
         selectedSession={selectedSession}
-        teachers={teachers}
+        teachers={teacherWeekTimetable}
         whoWantSwap={whoWantSwap}
         findTaecherById={findTaecherById}
         setSwapPopup={setSwapPopup}

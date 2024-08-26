@@ -14,7 +14,7 @@ import UserConfiguration from "./pages/Main/UserConfiguration";
 import SchoolProfileDashboard from "./pages/Main/SchoolProfileDashboard";
 function App() {
   return (
-    <div className="w-full min-h-screen bg-light-background flex items-center justify-center font-Roboto">
+    <div className="w-full min-h-screen bg-[#F8F7FC] flex items-center justify-center font-Roboto">
 <ToastContainer
   position="bottom-right"
   autoClose={4000}
@@ -30,7 +30,7 @@ function App() {
   limit={3}
   transition={Flip}
 />
-      <div className="w-full wide:max-w-8xl  h-screen  wide:max-h-128   wide:rounded-md   shadow-custom-2 overflow-clip bg-slate-50">
+      <div className="w-full wide:max-w-8xl  h-screen  wide:max-h-128   wide:rounded-md   shadow-custom-2 overflow-clip">
         <BrowserRouter>
           <AuthProvider>
             <Routes>
