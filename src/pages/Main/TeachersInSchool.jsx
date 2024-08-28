@@ -23,7 +23,6 @@ const TeachersInSchool = () => {
   const {apiDomain,headers,logoutUser}=useAuth()
   const [isDeleteTeacherPopupOpen,setIsDeleteTeacherPopupOpen]=useState(null)
 
-  const [gradeType, setGradeType] = useState("");
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [grades, setGrades] = useState([]);
@@ -121,9 +120,7 @@ const TeachersInSchool = () => {
 
 
 
-  const handleGradeChange = (event) => {
-    setGradeType(event.target.value);
-  };
+  
 
   const handleCreateTeacherOpen = () => {
     console.log("hi");
@@ -185,12 +182,11 @@ const TeachersInSchool = () => {
       {/* teachers list placed */}
 
       <TeachersTeacherList
-        gradeType={gradeType}
-        handleChange={handleGradeChange}
         teachers={teachers}
         setIsDeleteTeacherPopupOpen={setIsDeleteTeacherPopupOpen}
         setSelectedTeacherForUpdation={setSelectedTeacherForUpdation}
         setRefetch={setRefetch}
+        grades={grades}
       />
 
       {/* overall details */}

@@ -18,10 +18,10 @@ import TeachersList from "./TeachersList";
 
 const TeachersTeacherList = ({
   teachers,
-  gradeType,
   handleChange,
   setSelectedTeacherForUpdation,
-  setIsDeleteTeacherPopupOpen
+  setIsDeleteTeacherPopupOpen,
+  grades
 }) => {
   const [selectedTeacher, setISelectedTeacher] = useState({
     isopen: false,
@@ -34,13 +34,13 @@ const TeachersTeacherList = ({
       flipDirection="vertical"
     >
       <TeachersList
-        gradeType={gradeType}
         selectedTeacher={selectedTeacher}
         setISelectedTeacher={setISelectedTeacher}
         teachers={teachers}
         handleChange={handleChange}
         setSelectedTeacherForUpdation={setSelectedTeacherForUpdation}
         setIsDeleteTeacherPopupOpen={setIsDeleteTeacherPopupOpen}
+        grades={grades}
 
       />
       <TeacherDetails

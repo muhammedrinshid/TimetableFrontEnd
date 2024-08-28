@@ -7,7 +7,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 
-const SortMenu = () => {
+const SortMenu = ({setSortType}) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -18,8 +18,9 @@ const SortMenu = () => {
     setAnchorEl(null);
   };
 
-  const handleSort = (sortType) => {
-    console.log(`Sorting by ${sortType}`);
+  const handleSort = (value) => {
+    setSortType(value)
+
     handleClose();
   };
 
