@@ -269,18 +269,18 @@ function TeacherForm({
             render={({ field }) => (
               <OutlinedInput
                 fullWidth
-                error={!!errors?.minPeriods}
+                error={!!errors?.min_lessons_per_week}
                 helperText={
-                  errors?.minPeriods ? errors?.minPeriods?.message : ""
+                  errors?.min_lessons_per_week ? errors?.min_lessons_per_week?.message : "fdaf"
                 }
-                placeholder="max period per week"
+                placeholder="Min period per week"
                 size="small"
                 {...field}
                 type="number"
               />
             )}
           />
-          <FormHelperText error>{errors?.minPeriods?.message}</FormHelperText>
+          <FormHelperText error>{errors?.min_lessons_per_week?.message}</FormHelperText>
         </div>
         <div className="basis-1/2">
           {" "}
@@ -294,15 +294,15 @@ function TeacherForm({
                 fullWidth
                 size="small"
                 type="number"
-                error={!!errors?.maxPeriods}
-                placeholder="max period per week"
+                error={!!errors?.max_lessons_per_week}
+                placeholder="Max period per week"
                 helperText={
-                  errors?.maxPeriods ? errors?.maxPeriods?.message : ""
+                  errors?.max_lessons_per_week ? errors?.max_lessons_per_week?.message : ""
                 }
               />
             )}
           />
-          <FormHelperText error>{errors?.maxPeriods?.message}</FormHelperText>
+          <FormHelperText error>{errors?.max_lessons_per_week?.message}</FormHelperText>
         </div>
       </div>
 

@@ -46,6 +46,7 @@ const TeachersTeacherList = ({
       <TeacherDetails
         selectedTeacher={selectedTeacher}
         setISelectedTeacher={setISelectedTeacher}
+        setIsDeleteTeacherPopupOpen={setIsDeleteTeacherPopupOpen}
       />
     </ReactCardFlip>
   );

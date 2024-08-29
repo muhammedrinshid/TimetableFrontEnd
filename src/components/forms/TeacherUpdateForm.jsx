@@ -26,8 +26,7 @@ function TeacherUpdateForm({
   grades,
   setRefetch,
 }) {
-
-  const {apiDomain,logoutUser,headers}=useAuth()
+  const { apiDomain, logoutUser, headers } = useAuth();
   const {
     formState: { errors },
     handleSubmit,
@@ -37,11 +36,12 @@ function TeacherUpdateForm({
   });
   const [image, setImage] = useState(teacherData.image || null);
   const [preview, setPreview] = useState(teacherData.image || null);
-
+  const [disableSaveImage, setdDsableSaveImage] = useState(false);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setImage(file);
+    setdDsableSaveImage(false);
     setPreview(URL.createObjectURL(file));
   };
 
@@ -49,82 +49,79 @@ function TeacherUpdateForm({
     setPreview(URL.createObjectURL(image));
   };
   const onSubmit = async (formData) => {
-
     try {
-      const form = new FormData();
+      let updatedData = {};
       let hasChanges = false;
-  
-      // Helper function to check and append changes
-      const appendIfChanged = (key, newValue, oldValue) => {
+
+      // Helper function to check and update changes
+      const updateIfChanged = (key, newValue, oldValue) => {
         if (newValue !== oldValue) {
-          form.append(key, newValue);
+          updatedData[key] = newValue;
           hasChanges = true;
         }
       };
-  
-      // Check and append basic fields
-      appendIfChanged("name", formData.name, teacherData.name);
-      appendIfChanged("surname", formData.surname, teacherData.surname);
-      appendIfChanged("email", formData.email, teacherData.email);
-      appendIfChanged("phone", formData.phone, teacherData.phone);
-      appendIfChanged("min_lessons_per_week", formData.min_lessons_per_week, teacherData.min_lessons_per_week);
-      appendIfChanged("max_lessons_per_week", formData.max_lessons_per_week, teacherData.max_lessons_per_week);
-      hasChanges&&console.log("change in fgx")
+
+      // Check and update basic fields
+      updateIfChanged("name", formData.name, teacherData.name);
+      updateIfChanged("surname", formData.surname, teacherData.surname);
+      updateIfChanged("email", formData.email, teacherData.email);
+      updateIfChanged("phone", formData.phone, teacherData.phone);
+      updateIfChanged(
+        "min_lessons_per_week",
+        formData.min_lessons_per_week,
+        teacherData.min_lessons_per_week
+      );
+      updateIfChanged(
+        "max_lessons_per_week",
+        formData.max_lessons_per_week,
+        teacherData.max_lessons_per_week
+      );
 
       // Handle qualified subjects
-      const oldSubjects = new Set(teacherData.qualified_subjects_display.map(s => s.name));
-      const newSubjects = new Set(formData.qualified_subjects.map(s => s.name));
-      console.log(oldSubjects,newSubjects)
-      if (JSON.stringify([...oldSubjects]) !== JSON.stringify([...newSubjects])) {
-        formData.qualified_subjects.forEach((subject, index) => {
-          form.append(`qualified_subjects[${index}]`, subject.name);
-        });
+      const oldSubjects = teacherData.qualified_subjects_display.map(
+        (s) => s.name
+      );
+      const newSubjects = formData.qualified_subjects.map((s) => s.name);
+      if (
+        JSON.stringify(oldSubjects.sort()) !==
+        JSON.stringify(newSubjects.sort())
+      ) {
+        updatedData.qualified_subjects = newSubjects;
         hasChanges = true;
-        hasChanges&&console.log("change in sub")
-
       }
-  
+
       // Handle grades
-      const oldGrades = new Set(teacherData.grades_display.map(g => g.id));
-      const newGrades = new Set(formData.grades.map(g => g.id));
-      if (JSON.stringify([...oldGrades]) !== JSON.stringify([...newGrades])) {
-        formData.grades.forEach((grade, index) => {
-          form.append(`grades[${index}]`, grade.id);
-        });
-        hasChanges = true;
-
-      }
-  
-      // Handle image
-      if (image instanceof File && image !== teacherData.profile_image) {
-        form.append("profile_image", image);
+      const oldGrades = teacherData.grades_display.map((g) => g.id);
+      const newGrades = formData.grades.map((g) => g.id);
+      if (
+        JSON.stringify(oldGrades.sort()) !== JSON.stringify(newGrades.sort())
+      ) {
+        updatedData.grades = newGrades;
         hasChanges = true;
       }
-    
 
       // Only send request if there are changes
       if (!hasChanges) {
         toast.info("No changes detected");
         return;
       }
-  
+
       const response = await axios.put(
         `${apiDomain}/api/teacher/teacher/${teacherData.id}/`,
-        form,
+        updatedData,
         {
           headers: {
             ...headers,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
-  
+
       // Handle success
       toast.success("Teacher updated successfully");
       setRefetch((prev) => !prev);
       handleUpdateTeacherClose();
       console.log("Teacher updated successfully:", response.data);
-  
     } catch (error) {
       // Error handling (same as before)
       if (error.response) {
@@ -147,6 +144,34 @@ function TeacherUpdateForm({
     }
   };
 
+  const handleImageSave = async () => {
+    if (!image) return;
+
+    const formData = new FormData();
+    formData.append("profile_image", image);
+
+    try {
+      const response = await axios.put(
+        `${apiDomain}/api/teacher/update-profile-image/${teacherData.id}/`,
+        formData,
+        {
+          headers: {
+            ...headers,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      toast.success("Teacher image updated successfully");
+      setdDsableSaveImage(true);
+      setRefetch((prev) => !prev);
+      console.log("Teacher image updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error updating profile image:", error);
+      toast.error("Failed to update profile image");
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex justify-center items-center">
@@ -156,7 +181,7 @@ function TeacherUpdateForm({
             height: 65,
             border: "0.9px solid lightgray",
           }}
-          src={preview||`${apiDomain}${teacherData.profile_image}`}
+          src={preview || `${apiDomain}${teacherData.profile_image}`}
         ></Avatar>
       </div>
       <div className="flex flex-row py-4 gap-2">
@@ -340,34 +365,37 @@ function TeacherUpdateForm({
       </div>
 
       <div className="flex flex-row py-4 gap-2 justify-center items-center">
-        <Controller
-          name="image"
-          control={control}
-          defaultValue={null}
-          render={({ field }) => (
-            <Button variant="outlined" component="label">
-              Upload Image
-              <input
-                hidden
-                accept="image/*"
-                {...field}
-                type="file"
-                onChange={handleImageChange}
-              />
-            </Button>
-          )}
-        />
+        <label htmlFor="raised-button-file">
+          <input
+            accept="image/*"
+            id="raised-button-file"
+            type="file"
+            style={{ display: "none" }}
+            onChange={handleImageChange}
+          />
+          <Button variant="outlined" component="span" sx={{ mt: 2 }}>
+            Change Image
+          </Button>
+        </label>
+
+        {preview && (
+          <Button
+            variant="contained" // Change to contained to give a solid background
+            color="primary" // Primary color to make it stand out
+            sx={{ mt: 2 }} // Keep the existing margin
+            onClick={handleImageSave}
+            disabled={disableSaveImage}
+          >
+            Save Image
+          </Button>
+        )}
       </div>
       <div className="flex flex-row gap-3 w-full justify-end mt-8">
         <Button variant="outlined" onClick={handleUpdateTeacherClose}>
           Cancel
         </Button>
 
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-        >
+        <Button variant="contained" color="primary" type="submit">
           Submit
         </Button>
       </div>

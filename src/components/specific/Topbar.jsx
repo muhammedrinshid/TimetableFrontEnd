@@ -1,12 +1,13 @@
 import React from 'react'
 import { FaLongArrowAltRight } from 'react-icons/fa'
 import { topMenu } from '../../assets/datas'
+import BreadcrumbsComponent from './BreadcrumbsComponent'
 
 const Topbar = () => {
   return (
     <div class=" flex flex-row justify-between p-4 ">
     <h2 className="text-base font-semibold">
-      Pricing List <FaLongArrowAltRight className="inline font-thin text-base" />{" "} Teacher
+      <BreadcrumbsComponent/>
     </h2>
     <div className="flex flex-row justify-center gap-2  border-t border-white border-opacity-70 bgre">
     {topMenu.map((ele) => (

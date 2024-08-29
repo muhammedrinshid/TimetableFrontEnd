@@ -8,6 +8,7 @@ import { class_data } from "../../../assets/datas";
 import { toast } from "react-toastify";
 import axios from "axios";
 import TeacherWeeklyTimeTableComponent from "./TeacherWeeklyTimeTableComponent";
+import { RandomColorChip } from "../../Mui components";
 
 export const row1 = [
   "Instructor",
@@ -47,13 +48,15 @@ const getGridClassName = (NumberOfPeriodsInAday) => {
   );
 };
 
-const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
+const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeacherPopupOpen}) => {
   const [classsRomms, setClassRooms] = useState(class_data);
+  const [teacherDetails, setTeacherDetails] = useState({});
 
   const { NumberOfPeriodsInAday } = useAuth();
   const [teacherWeeklyTimetable, setTeacherWeeklyTimetable] = useState([]);
 
   const { apiDomain, headers, logoutUser, totalperiodsInWeek } = useAuth();
+
 
   const fetchTeacherWeekTimetable = async () => {
     try {
@@ -63,7 +66,7 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
           headers,
         }
       );
-      setTeacherWeeklyTimetable(response.data)
+      setTeacherWeeklyTimetable(response.data);
     } catch (error) {
       if (error.response) {
         console.error(
@@ -71,11 +74,18 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
           error.response.status,
           error.response.data
         );
-        toast.error(
-          `Failed to retrieve timetables: ${
-            error.response.data.message || "Server error"
-          }`
-        );
+
+        if (error.response.status === 422) {
+          toast.info(
+            "This teacher has not been included in the default timetable optimization"
+          );
+        } else {
+          toast.error(
+            `Failed to retrieve timetables: ${
+              error.response.data.message || "Server error"
+            }`
+          );
+        }
       } else if (error.request) {
         console.error("No response received:", error.request);
         toast.error("Failed to retrieve timetables: No response from server");
@@ -88,15 +98,15 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
 
   useEffect(() => {
     if (selectedTeacher.isopen) {
-      fetchTeacherWeekTimetable()
+      fetchTeacherWeekTimetable();
     }
   }, [selectedTeacher]);
 
-  const findClassById = (id) => {
-    return classsRomms.find((cls) => cls.class_id === id) || null;
-  };
-
   const gridClassName = getGridClassName(NumberOfPeriodsInAday);
+  const handleDeleteTeacher =()=>{
+    setIsDeleteTeacherPopupOpen(selectedTeacher?.id)
+   
+  }
   return (
     <div className="w-full h-full rounded-2xl px-6 py-5">
       <div className="flex flex-row justify-between border-b pb-4">
@@ -107,16 +117,21 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
               sx={{
                 color: "#818181",
               }}
-              onClick={() =>
-                setISelectedTeacher((prev) => ({ ...prev, isopen: false }))
-              }
+              onClick={() => {
+                setISelectedTeacher((prev) => ({ ...prev, isopen: false }));
+                setTeacherWeeklyTimetable([]);
+              }}
             />
           </IconButton>
           <Avatar
             sx={{
               boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
             }}
-            src={selectedTeacher?.image}
+            src={
+              selectedTeacher?.profile_image
+                ? `${apiDomain}/${selectedTeacher?.profile_image}`
+                : undefined
+            }
           >
             {selectedTeacher?.name}
           </Avatar>
@@ -144,6 +159,7 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
                 borderColor: "#d32f2f",
               },
             }}
+            onClick={()=>handleDeleteTeacher()}
           >
             Delete
           </Button>
@@ -154,10 +170,19 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
           <p className="text-[11px] font-medium text-text_2 font-Inter my-2">
             PROFILE IMAGE
           </p>
-          <img
-            src={selectedTeacher.image}
-            className="shadow-custom-2 rounded-lg "
-            width={160}
+          <Avatar
+            src={
+              selectedTeacher?.profile_image
+                ? `${apiDomain}/${selectedTeacher?.profile_image}`
+                : undefined
+            }
+            sx={{
+              width: 160,
+              height: 160,
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              borderRadius: "8px",
+              objectFit: "cover",
+            }}
             alt=""
           />
           <p className="text-[11px] font-medium text-text_2 font-Inter mt-6">
@@ -182,9 +207,9 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
             QUALIFIED SUBJECTS
           </p>
           <div className="flex gap-2 flex-wrap">
-            {selectedTeacher?.qualified_subjects?.map((subject) => (
+            {selectedTeacher?.qualified_subjects_display?.map((subject) => (
               <p className="text-[10px] p-[2px] w-fit px-2 text-nowrap font-semibold  bg-pale_orange bg-opacity-60 text-white first:bg-purple-500 last:bg-blue-500  font-sans rounded-lg">
-                {subject}
+                {subject.name}
               </p>
             ))}
           </div>
@@ -197,21 +222,32 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher }) => {
           <p className="text-[11px] font-medium text-text_2 font-Inter my-2 ">
             ACADEMIC DETAILS
           </p>
+         
+            <p className="text-[11px] font-medium text-text_2 font-Inter my-2 mt-8">
+            QUALIFIED GRADES
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            {selectedTeacher?.grades_display?.map((grade) => (
+              // <p className="text-[10px] p-[2px] w-fit px-2 text-nowrap font-semibold  bg-pale_orange bg-opacity-60 text-white first:bg-purple-500 last:bg-blue-500  font-sans rounded-lg">
+              //   {grade.name}
+              // </p>
+                            <RandomColorChip subject={grade.name} />
+
+            ))}
+          </div>
           <LabelDisplayer
-            data={selectedTeacher?.grade ? selectedTeacher.grade : "no greade"}
-            label={"Grade"}
-          />
-          <LabelDisplayer
-            data={selectedTeacher?.minimum_number_periods_per_week}
+            data={selectedTeacher?.min_lessons_per_week}
             label={"Min number of period"}
           />
           <LabelDisplayer
-            data={selectedTeacher?.maximum_number_periods_per_week}
+            data={selectedTeacher?.max_lessons_per_week}
             label={"Max number of period"}
           />
         </div>
       </div>
-      <TeacherWeeklyTimeTableComponent teacherWeeklyTimetable={teacherWeeklyTimetable} />
+      <TeacherWeeklyTimeTableComponent
+        teacherWeeklyTimetable={teacherWeeklyTimetable}
+      />
     </div>
   );
 };

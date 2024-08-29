@@ -48,7 +48,7 @@ const CustomSelect = ({ value, onChange, options }) => {
         fullWidth={true}
       >
         <MenuItem value="">
-          <em>None</em>
+          <em>All</em>
         </MenuItem>
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>

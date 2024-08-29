@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar, Box, Typography, Chip } from "@mui/material";
 import { styled } from "@mui/system";
 import { useAuth } from "../../../context/Authcontext";
+import ClassroomNotIncludedInTimetable from "../../empty state management components/ClassroomNotIncludedInTimetable";
 
 const ClassRoomWeeklyTimeTableComponent = ({ weeklyTimetable }) => {
 
@@ -47,6 +48,14 @@ const ClassRoomWeeklyTimeTableComponent = ({ weeklyTimetable }) => {
     boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
     background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
   }));
+
+if (!weeklyTimetable || weeklyTimetable.length === 0) {
+  return (
+    <ClassroomNotIncludedInTimetable/>
+  )
+  
+}
+
 
   return (
     <div className="container mx-auto p-4">

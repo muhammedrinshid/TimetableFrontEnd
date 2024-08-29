@@ -15,8 +15,18 @@ import { useAuth } from "../../../context/Authcontext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const getRandomLightColor = () => {
-  const hue = Math.floor(Math.random() * 360);
+
+const getLightColorFromString = (input) => {
+  // Hash the input string to get a consistent number
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = input.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Use the hash to generate a hue (0-360)
+  const hue = hash % 360;
+
+  // Return a light color with fixed saturation and lightness
   return `hsl(${hue}, 70%, 80%)`;
 };
 
@@ -28,7 +38,7 @@ const ClassCard = ({
   handleStandardDelete,
 }) => {
   const avatarLetter = standard.short_name;
-  const avatarColor = getRandomLightColor();
+  const avatarColor = getLightColorFromString(standard?.name);
   const { apiDomain, headers } = useAuth();
   const onClickAddNewDivision = async (standard_id) => {
     console.log(standard_id);

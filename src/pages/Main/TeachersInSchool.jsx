@@ -234,7 +234,7 @@ const TeachersInSchool = () => {
 
       {/* Create new teacher pop up */}
       <Dialog open={createTeacherFormOpen} onClose={handleCreateTeacherClose}>
-        <DialogTitle>Create New Teacher</DialogTitle>
+        <DialogTitle>Add  Teacher</DialogTitle>
         <DialogContent>
           <CreateTeacherForm
             handleCreateTeacherClose={handleCreateTeacherClose}

@@ -91,11 +91,7 @@ const TeachersList = ({
 
         <div className="bg-white rounded-3xl p-2 px-4 shadow-custom-8">
           <StyledAvatarGroup max={4}>
-            {teachers
-              ?.filter((teacher) =>
-                teacher.grades_display.some((grade) => grade.id === gradeType)
-              )
-              .map((teacher) => (
+            {sortedTeachers.map((teacher) => (
                 <Avatar
                   alt={teacher?.name}
                   sx={{ width: 30, height: 30, fontSize: 20 }}
@@ -128,7 +124,7 @@ const TeachersList = ({
             {sortedTeachers?.map(teacher => {
 
             return (
-              <div className="shadow-custom-8 rounded-2xl bg-white p-3  flex flex-col items-center ">
+              <div className="shadow-custom-8 rounded-2xl bg-white p-3  flex flex-col items-center justify-between ">
                 <div className="flex flex-row justify-end w-full">
                   <div className="py-1 px-2 w-fit bg-gray-200 text-gray-500 text-vs rounded-lg ">
                     {teacher?.teacher_id}

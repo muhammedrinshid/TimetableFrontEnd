@@ -154,11 +154,17 @@ const ClassDetails = ({
           error.response.status,
           error.response.data
         );
-        toast.error(
-          `Failed to retrieve timetables: ${
-            error.response.data.message || "Server error"
-          }`
-        );
+        if (error.response.status === 422) {
+          toast.info(
+            "            This classrooom has not been included in the default timetable optimization"
+          );
+        } else {
+          toast.error(
+            `Failed to retrieve timetables: ${
+              error.response.data.message || "Server error"
+            }`
+          );
+        }
       } else if (error.request) {
         // The request was made, but no response was received
         console.error("No response received:", error.request);
@@ -185,7 +191,6 @@ const ClassDetails = ({
     console.log(`Reassign group for ${subjectName} - ${optionSubject}`);
   };
 
-
   const handleSubjectEditButton = (subject) => {
     let newData = { ...subject, gradeId: selectedClassforView.gradeId };
     setSelectedSubject(newData);
@@ -207,17 +212,20 @@ const ClassDetails = ({
   const handlePrevious = () => {
     if (isPreviousDisabled) return;
     setIsAnimating(true);
+    setClassroomWeeklyTimetable([]);
     setTimeout(() => {
-      setISelectedClassforView((prev) => ({...prev, index: prev.index - 1}));
+      setISelectedClassforView((prev) => ({ ...prev, index: prev.index - 1 }));
       setIsAnimating(false);
     }, 300); // Match this with your CSS transition duration
   };
-  
+
   const handleNext = () => {
     if (isNextDisabled) return;
     setIsAnimating(true);
+    setClassroomWeeklyTimetable([]);
+
     setTimeout(() => {
-      setISelectedClassforView((prev) => ({...prev, index: prev.index + 1}));
+      setISelectedClassforView((prev) => ({ ...prev, index: prev.index + 1 }));
       setIsAnimating(false);
     }, 300);
   };
@@ -287,9 +295,10 @@ const ClassDetails = ({
       <div className="flex flex-row justify-between border-b pb-4">
         <div className="flex flex-row items-center gap-4">
           <IconButton
-            onClick={() =>
-              setISelectedClassforView((prev) => ({ ...prev, isOpen: false }))
-            }
+            onClick={() => {
+              setClassroomWeeklyTimetable([]);
+              setISelectedClassforView((prev) => ({ ...prev, isOpen: false }));
+            }}
           >
             <KeyboardBackspaceIcon fontSize="small" sx={{ color: "#818181" }} />
           </IconButton>

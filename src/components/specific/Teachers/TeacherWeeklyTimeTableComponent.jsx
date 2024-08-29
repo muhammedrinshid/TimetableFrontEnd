@@ -2,6 +2,7 @@
 import { useAuth } from "../../../context/Authcontext";
 import { Avatar, Box, Typography, Chip } from "@mui/material";
 import { styled } from "@mui/system";
+import TeacherNotIncludedInTimetable from "../../empty state management components/TeacherNotIncludedInTimetable";
 
 const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
   const { apiDomain } = useAuth();
@@ -58,6 +59,11 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
     background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
   }));
 
+  if (!teacherWeeklyTimetable || teacherWeeklyTimetable.length === 0) {
+
+    return (<TeacherNotIncludedInTimetable/>)
+  }
+  
   return (
     <div className="container mx-auto ">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
