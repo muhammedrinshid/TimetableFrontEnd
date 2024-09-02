@@ -16,6 +16,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { useAuth } from "../../../context/Authcontext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -30,11 +31,16 @@ const SwapTeacherPopus = ({
   setClassRooms,
   setTeachers,
   class_rooms,
-  teachers
+  teachers,
+  selectedDate,
 }) => {
-  const teacher1 = findTaecherById(whoWantSwap?.teacher_id);
-  const teacher2 = findTaecherById(whichOnSwap?.teacher_id);
-  const classdeatails = findClassById(whoWantSwap?.class_id);
+  const { apiDomain } = useAuth();
+  const teacher1 = whoWantSwap?.teacherDetails;
+  const teacher2 = whichOnSwap?.teacherDetails;
+  const classdeatails =
+    whoWantSwap?.teacherDetails?.sessions[whoWantSwap?.session]
+      ?.class_details[0];
+
   const [seconTeacherSubject, setseconTeacherSubject] = useState(-1);
 
   useEffect(() => {}, [whoWantSwap, whichOnSwap]);
@@ -43,13 +49,11 @@ const SwapTeacherPopus = ({
     setseconTeacherSubject(event.target.value);
   };
 
-  const onSwapSubmit = ( ) => {
+  const onSwapSubmit = () => {
     // Create a copy of the current state to apply changes temporarily
     const newClassRooms = [...class_rooms];
     const newTeachers = [...teachers];
 
-
-  
     // Find the class room and update its periods
     const updatedClassRooms = newClassRooms.map((class_room) =>
       class_room.class_id === whoWantSwap.class_id
@@ -66,12 +70,11 @@ const SwapTeacherPopus = ({
           }
         : class_room
     );
-  
+
     // Update teacher1's class_slot and class_subject
     const updatedTeachersForTeacher1 = newTeachers.map((teacher) =>
       teacher.teacher_id === teacher1.teacher_id
         ? {
-            
             ...teacher,
             class_slot: teacher.class_slot.map((slot, ind) =>
               ind === whoWantSwap.session ? null : slot
@@ -82,30 +85,31 @@ const SwapTeacherPopus = ({
           }
         : teacher
     );
-  
+
     // Update teacher2's class_slot and class_subject
-    const updatedTeachersForTeacher2 = updatedTeachersForTeacher1.map((teacher) =>
-      teacher.teacher_id === teacher2.teacher_id
-        ? {
-            ...teacher,
-            class_slot: teacher.class_slot.map((slot, ind) =>
-              ind === whoWantSwap.session  ? whoWantSwap.class_id  : slot
-            ),
-            class_subject: teacher.class_subject.map((sub, ind) =>
-              ind === whoWantSwap.session  ? seconTeacherSubject : sub
-            ),
-          }
-        : teacher
+    const updatedTeachersForTeacher2 = updatedTeachersForTeacher1.map(
+      (teacher) =>
+        teacher.teacher_id === teacher2.teacher_id
+          ? {
+              ...teacher,
+              class_slot: teacher.class_slot.map((slot, ind) =>
+                ind === whoWantSwap.session ? whoWantSwap.class_id : slot
+              ),
+              class_subject: teacher.class_subject.map((sub, ind) =>
+                ind === whoWantSwap.session ? seconTeacherSubject : sub
+              ),
+            }
+          : teacher
     );
 
     // Now apply all the updates if they are successful
     setClassRooms(updatedClassRooms);
     setTeachers(updatedTeachersForTeacher2);
-  
+
     // Close the swap popup
     setSwapPopup(false);
   };
-  
+
   return (
     <Dialog
       open={swapPopup}
@@ -116,7 +120,7 @@ const SwapTeacherPopus = ({
     >
       <DialogTitle>
         {"Move " +
-          teacher1?.name +
+          teacher1?.instructor?.name +
           " from Session-" +
           (whoWantSwap.session + 1) +
           " of Class " +
@@ -141,23 +145,27 @@ const SwapTeacherPopus = ({
                   width: 56,
                   height: 56,
                 }}
-                src={teacher1?.image}
+                src={
+                  teacher1?.instructor?.profile_image
+                    ? `${apiDomain}/media/${teacher1?.instructor?.profile_image}`
+                    : undefined
+                }
                 variant=""
               >
-                {teacher1?.name.charAt(0)}
+                {teacher1?.instructor?.name?.charAt(0)}
               </Avatar>
             </StyledBadge>
             <p className="text-vs font-bold text-text_2 mt-2">
-              {teacher1?.teacher_id}
+              {teacher1?.instructor?.teacher_id}
             </p>
 
             <h1
               className={` text-nowrap text-center justify-center inline my-1 text-base font-semibold  text-opacity-80         `}
             >
-              {teacher1?.name}
+              {teacher1?.instructor?.name}
             </h1>
             <h2 className="text-xs font-bold text-dark-secondary text-opacity-90 font-Roboto text-center">
-              {whoWantSwap.subject}
+              {whoWantSwap?.subject}
             </h2>
           </div>
           <div className="w-1/12 text-center">
@@ -182,20 +190,24 @@ const SwapTeacherPopus = ({
                   width: 56,
                   height: 56,
                 }}
-                src={teacher2?.image}
+                src={
+                  teacher2?.instructor?.profile_image
+                    ? `${apiDomain}/media/${teacher2?.instructor?.profile_image}`
+                    : undefined
+                }
                 variant=""
               >
-                {teacher2?.name.charAt(0)}
+                {teacher2?.instructor?.name.charAt(0)}
               </Avatar>
             </StyledBadge>
             <p className="text-vs font-bold text-text_2 mt-2">
-              {teacher2?.teacher_id}
+              {teacher2?.instructor?.teacher_id}
             </p>
 
             <h1
               className={` text-nowrap text-center justify-center inline my-1 text-base font-semibold  text-opacity-80         `}
             >
-              {teacher2?.name}
+              {teacher2?.instructor?.name}
             </h1>
 
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -211,8 +223,8 @@ const SwapTeacherPopus = ({
                 <MenuItem value={-1}>
                   <em>None</em>
                 </MenuItem>
-                {teacher2?.qualified_subjects?.map((sub, ind) => (
-                  <MenuItem value={ind}>{sub}</MenuItem>
+                {teacher2?.instructor.qualified_subjects?.map((sub, ind) => (
+                  <MenuItem value={ind}>{sub?.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -222,17 +234,23 @@ const SwapTeacherPopus = ({
           Do you really want to change the {classdeatails?.standard}
           {"-"}
           {classdeatails?.division} standard session- {whoWantSwap?.session + 1}{" "}
-          on the 27th from {whoWantSwap?.subject} with {teacher1?.name} to{" "}
-          {seconTeacherSubject} with {teacher2?.name}?
+          on {selectedDate?.getDate()}{" "}
+          {selectedDate?.toLocaleString("default", { month: "long" })}{" "}
+          from {whoWantSwap?.subject} with {teacher1?.instructor?.name} to{" "}
+          {seconTeacherSubject} with {teacher2?.instructor?.name}?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setSwapPopup(false)}>Cancel</Button>
         <Button
-          disabled={seconTeacherSubject === -1? true : false}
-          onClick={() => onSwapSubmit({class_id:whoWantSwap.class_id,session:whoWantSwap.session,subject_ind:seconTeacherSubject
-
-          })}
+          disabled={seconTeacherSubject === -1 ? true : false}
+          onClick={() =>
+            onSwapSubmit({
+              class_id: whoWantSwap.class_id,
+              session: whoWantSwap.session,
+              subject_ind: seconTeacherSubject,
+            })
+          }
         >
           Swap
         </Button>

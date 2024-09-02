@@ -251,8 +251,7 @@ const TeacherViewOneDayTt = ({
                                     "toggle",
                                     sessionIndex,
                                     teacher.sessions[sessionIndex].subject,
-                                    teacher.instructor.teacher_id,
-                                    session?.room
+                                    teacher,
                                   )
                                 }
                                 disabled={

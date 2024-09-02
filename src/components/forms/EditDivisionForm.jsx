@@ -110,7 +110,7 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Classroom</DialogTitle>
+      <DialogTitle>Edit Classroom {editClassroomForm?.name} </DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
           <Autocomplete

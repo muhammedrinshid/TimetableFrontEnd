@@ -15,10 +15,10 @@ const FreeTeacherOnaSession = ({
   findTaecherById,
 }) => {
   const { apiDomain } = useAuth();
-  const openSwapConfirmation = (teacher_id) => {
+  const openSwapConfirmation = (teacherDetails) => {
     // const teacher2=findTaecherById(teacher_id)
     // const teacher1=findTaecherById(whoWantSwap.teacher_id)
-    setWhichOnSwap((prev) => ({ ...prev, teacher_id: teacher_id }));
+    setWhichOnSwap((prev) => ({...prev,teacherDetails:teacherDetails}));
     setSwapPopup(true);
   };
 
@@ -100,7 +100,7 @@ const FreeTeacherOnaSession = ({
       <div></div>
 
       {/* freee teacher picking or swapping for a leave teacher appear here */}
-      <div
+     {whoWantSwap?.isOpen&&( <div
         className={`absolute  p-2 rounded-lg shadow-custom-1 flex flex-col items-center bottom-0 left-0 w-full bg-white  transition-all duration-500 z-10 ${
           whoWantSwap.isOpen ? "h-full" : "-z-10 h-0"
         }`}
@@ -114,19 +114,18 @@ const FreeTeacherOnaSession = ({
         </p>
         <div className="overflow-y-auto w-full">
           {teachers
-            ?.filter(
-              (teacher) =>
-                teacher?.sessions[whoWantSwap.index]?.subject === null &&
-                teacher?.instructor.present[whoWantSwap.index]
-            )
+            ?.filter((teacher) => 
+                teacher?.sessions[whoWantSwap.session]?.subject === null &&
+                teacher?.instructor.present[whoWantSwap.session]
+              )
 
             ?.sort((a, b) => {
-              const aPriority = a.qualified_subjects.includes(
+              const aPriority = a?.qualified_subjects?.includes(
                 whoWantSwap?.subject
               )
                 ? 0
                 : 1;
-              const bPriority = b.qualified_subjects.includes(
+              const bPriority = b?.qualified_subjects?.includes(
                 whoWantSwap?.subject
               )
                 ? 0
@@ -146,9 +145,6 @@ const FreeTeacherOnaSession = ({
               const isEngaged = teacher.sessions[whoWantSwap?.session];
               const isLeave = !teacher.instructor.present[whoWantSwap?.session];
               const status = isLeave ? "leave" : isEngaged ? "engaged" : "free";
-              const classRoom = findClassById(
-                teacher?.sessions[selectedSession]
-              );
 
               return (
                 <div className="w-full  mb-2  flex flex-row ">
@@ -174,16 +170,16 @@ const FreeTeacherOnaSession = ({
                         }
                         variant=""
                       >
-                        {teacher.name.charAt(0)}
+                  {    teacher?.instructor?.name?.charAt(0)}
                       </Avatar>
                     </StyledBadge>
 
                     <div className="pl-2 border-l">
                       <h2 className="text-base font-medium font-Inter">
-                        {teacher.name} {teacher.surname}
+                        {  teacher?.instructor?.name} { teacher?.instructor?.surname}
                       </h2>
                       <div className="flex flex-wrap flex-row gap-2   items-end ">
-                        {teacher.qualified_subjects.map((sub) => (
+                        { teacher?.instructor?.qualified_subjects.map((sub) => (
                           <p
                             className={`${
                               sub === whoWantSwap.subject
@@ -191,7 +187,7 @@ const FreeTeacherOnaSession = ({
                                 : "bg-gray-500"
                             } text-[10px] p-[2px] w-fit px-2 text-nowrap  font-semibold   bg-opacity-60 text-white  font-sans rounded-lg`}
                           >
-                            {sub}
+                            {sub?.name}
                           </p>
                         ))}
                       </div>
@@ -202,7 +198,7 @@ const FreeTeacherOnaSession = ({
                         <RiSwap2Line
                           color="#007AFF"
                           onClick={() =>
-                            openSwapConfirmation(teacher.teacher_id)
+                            openSwapConfirmation( teacher)
                           }
                         />
                       </IconButton>
@@ -227,7 +223,7 @@ const FreeTeacherOnaSession = ({
               );
             })}
         </div>
-      </div>
+      </div>)}
     </div>
   );
 };

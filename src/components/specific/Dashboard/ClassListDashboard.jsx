@@ -1,25 +1,25 @@
-import { Avatar } from '@mui/material'
-import React from 'react'
-import { stringAvatar } from '../../Mui components'
+import { Avatar } from "@mui/material";
+import React from "react";
+import { stringAvatar } from "../../Mui components";
 
-const ClassListDashboard = ({ele}) => {
+const ClassListDashboard = ({ ele }) => {
   return (
-    <div className='sticky left-0  bg-white  z-10  border border-gray-300 border-opacity-15  bg-opacity-70 backdrop-blur-sm flex justify-center p-2 items-center'>
-         <div className="w-full h-full flex flex-col justify-center items-center gap-2 bg-light-secondary bg-opacity-20 rounded-lg p-2 shadow-custom-10 ">
-         
-         <Avatar       sx={{
-                        //   height: "100%",
-                          border: "0.1px solid lightgray",
-                        }}
-                        variant=""
-                        {...stringAvatar(ele.standard+" "+ele.standard+"df")}
-                      >
-                        {ele.standard}{ele.division}
-                        
-                      </Avatar>
-          <p className="text-vs font-bold text-text_2">C00{ele.class_id}</p>
-          <div>
-            {/* {!fullDayPresent ? (
+    <div className="sticky left-0  bg-white  z-10  border border-gray-300 border-opacity-15  bg-opacity-70 backdrop-blur-sm flex justify-center p-2 items-center">
+      <div className="w-full h-full flex flex-col justify-center items-center gap-2 bg-light-secondary bg-opacity-20 rounded-lg p-2 shadow-custom-10 ">
+        <Avatar
+          sx={{
+            //   height: "100%",
+            border: "0.1px solid lightgray",
+          }}
+          variant=""
+          {...stringAvatar(ele.standard + " " + ele.standard + "df")}
+        >
+          {ele.standard}
+          {ele.division}
+        </Avatar>
+        <p className="text-vs font-bold text-text_2">C00{ele.class_id}</p>
+        <div>
+          {/* {!fullDayPresent ? (
               <Tooltip title="Mark as present">
                 <IconButton
                   size="small"
@@ -48,12 +48,10 @@ const ClassListDashboard = ({ele}) => {
                 </IconButton>
               </Tooltip>
             )} */}
-          </div>
-       
-         </div>
-      
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default ClassListDashboard
+export default ClassListDashboard;

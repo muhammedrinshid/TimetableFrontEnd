@@ -135,6 +135,7 @@ const ClassCard = ({
                 grade_id: grade.id,
                 standard_id: standard?.id,
                 type: "all",
+                standard:standard?.name
               })
             }
           >

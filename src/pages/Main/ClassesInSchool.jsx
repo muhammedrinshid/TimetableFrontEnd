@@ -107,12 +107,14 @@ const ClassesInSchool = ({}) => {
       toast.error("error occured");
     }
   };
-  const openEditCalssroomForm = ({gradeId, classroomId, }) => {
+  const openEditCalssroomForm = ({gradeId, classroomId,name}) => {
     setEditClassroomForm((prev) => ({
       ...prev,
       isOpen: true,
       gradeId:gradeId,
-      classroomId:classroomId
+      classroomId:classroomId,
+      name:name
+     
       
     }));
   };
@@ -140,6 +142,8 @@ const ClassesInSchool = ({}) => {
           refetch={refetchClassroomdetails}
           refresh={refreshClassDetails}
           classroomMap={classroomMap}
+
+          openEditCalssroomForm={openEditCalssroomForm}
 
         />
       </ReactCardFlip>

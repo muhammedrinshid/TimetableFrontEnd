@@ -20,6 +20,7 @@ import {
   Autocomplete,
   FormControlLabel,
   Switch,
+  Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -220,7 +221,7 @@ const SubjectAssignmentForm = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        Add Subjects
+        Assign Subjects to All Division of {OpenTeacherAssingmentForm?.standard}
         <Typography
           variant="subtitle1"
           color={isSubmitDisabled ? "error" : "textSecondary"}
@@ -228,6 +229,10 @@ const SubjectAssignmentForm = ({
           Total Lessons: {totalSelectedLessons} / {maxlessons_per_week}
         </Typography>
       </DialogTitle>
+      <Alert severity="warning" sx={{ mt: 2 }}>
+    This action will replace all existing subjects for every class in this grade. 
+    Please make sure to select the appropriate classroom assignments.
+  </Alert>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Controller

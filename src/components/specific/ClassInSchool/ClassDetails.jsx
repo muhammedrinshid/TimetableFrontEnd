@@ -67,6 +67,7 @@ const ClassDetails = ({
   refetch,
   refresh,
   classroomMap,
+  openEditCalssroomForm
 }) => {
   const { apiDomain, headers, logoutUser, totalperiodsInWeek } = useAuth();
 
@@ -325,6 +326,13 @@ const ClassDetails = ({
                 borderColor: "#1976d2",
               },
             }}
+            onClick={() =>
+              openEditCalssroomForm({
+                gradeId: selectedClassforView?.gradeId,
+                classroomId: classroomData?.id,
+                type: "all",
+              })
+            }
           >
             Update
           </Button>

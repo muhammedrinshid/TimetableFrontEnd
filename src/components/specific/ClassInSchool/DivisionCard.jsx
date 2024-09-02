@@ -34,6 +34,7 @@ const DivisionCard = ({
   handleClassroomDelete,
   standard_id,
   openEditCalssroomForm,
+  classroom_name,
   grade,
   index,
 }) => {
@@ -112,6 +113,7 @@ const DivisionCard = ({
                 gradeId: grade?.id,
                 classroomId: division?.id,
                 type: "all",
+                name:classroom_name||""
               })
             }
           >

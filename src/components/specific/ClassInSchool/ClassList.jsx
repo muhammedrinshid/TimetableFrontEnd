@@ -134,7 +134,7 @@ const ClassList = ({
   // temprary function mock the add new divison
 
   // function to open the assign teacher form
-  const openAssignTeacherForm = ({ grade_id, division, standard_id, type }) => {
+  const openAssignTeacherForm = ({ grade_id, division, standard_id, type,standard }) => {
     setOpenTeacherAssingmentForm((prev) => ({
       ...prev,
       isOpen: true,
@@ -142,6 +142,7 @@ const ClassList = ({
       division: division,
       standard_id: standard_id,
       type: type,
+      standard:standard||""
     }));
   };
 
@@ -243,6 +244,7 @@ const ClassList = ({
                         {standard?.classrooms?.map((division, index) => (
                           <DivisionCard
                             division={division}
+                            classroom_name={standard?.short_name+" "+division?.division}
                             standard_id={standard?.id}
                             handleClassroomDelete={handleClassroomDelete}
                             setISelectedClassforView={setISelectedClassforView}

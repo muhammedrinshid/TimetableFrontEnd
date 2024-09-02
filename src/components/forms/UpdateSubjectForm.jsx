@@ -143,6 +143,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
         subject: subject?.subjectId,
         assigned_teachers: formData?.teacher?.map((teacher) => teacher.id) || [],
         number_of_students:0,
+        preferred_rooms:[]
       },
     ]
 

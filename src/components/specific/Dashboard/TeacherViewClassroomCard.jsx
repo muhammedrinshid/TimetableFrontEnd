@@ -117,8 +117,7 @@ const TeacherViewClassroomCard
                     "toggle",
                     ind,
                     ele.qualified_subjects[ele.class_subject[ind]],
-                    ele.teacher_id,
-                    ele.class_slot[ind]
+                    ele
                   )
                 }
                 disabled={ele.present[ind] || ele.class_slot[ind] === null}

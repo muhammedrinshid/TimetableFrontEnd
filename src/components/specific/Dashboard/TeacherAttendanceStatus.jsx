@@ -104,7 +104,7 @@ const TeacherAttendanceStatus = ({
                       onClick={() => {
                         toggleDrawer("noToggle");
                         toggleFullDayLeaveorPresent(
-                          teacher.instructor.teacher_id,
+                          teacher,
                           "present"
                         );
                       }}
