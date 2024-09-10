@@ -15,6 +15,7 @@ import { defaultAvatarImage } from "../../../assets/images";
 import axios from "axios";
 import { toast } from "react-toastify";
 import DeleteConfirmationPopup from "../../common/DeleteConfirmationPopup";
+import RandomColorChip2 from "../../Mui components/RandomColorChip2";
 
 const TeachersList = ({
   teachers,
@@ -59,7 +60,10 @@ const TeachersList = ({
       teacher.name.toLowerCase().includes(searchTerm) ||
       teacher.surname.toLowerCase().includes(searchTerm) ||
       teacher.email.toLowerCase().includes(searchTerm) ||
-      teacher.teacher_id.toLowerCase().includes(searchTerm)
+      teacher.teacher_id.toLowerCase().includes(searchTerm)||
+      teacher.qualified_subjects_display.some(subject =>
+        subject.name.toLowerCase().includes(searchTerm)
+      )
     );
     const sortedTeachers = filteredTeachers.sort((a, b) => {
       switch (sortType) {
@@ -149,6 +153,11 @@ const TeachersList = ({
                 <div className="flex flex-row gap-1 flex-wrap mt-2">
                   {teacher.qualified_subjects_display?.map((subject) => (
                     <RandomColorChip subject={subject.name} />
+                  ))}
+                </div>
+                <div className="flex flex-row gap-1 flex-wrap mt-2">
+                  {teacher.grades_display?.map((grade) => (
+                    <RandomColorChip2 subject={grade.short_name} />
                   ))}
                 </div>
                 <div className="flex flex-row mt-8 justify-between gap-5">

@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-
-  Typography,
-  Button,
-
-  Chip,
-
-} from "@mui/material";
-
+import { Typography, Button, Chip } from "@mui/material";
 
 import RoundButton from "../../components/common/RoundButton";
 import { useAuth } from "../../context/Authcontext";
@@ -17,15 +9,17 @@ import SavedTimeTableCard from "../../components/specific/saved Time tables/Save
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
 import SavedTimeTableViewer from "../../components/specific/saved Time tables/SavedTimeTableViewer";
 
-
-
 const SavedTimeTables = () => {
   const { is_ready_for_timetable, apiDomain, headers } = useAuth();
   const [savedTables, setSavedTables] = useState([]);
   const [scheduleErrorList, setScheduleErrorList] = useState([]);
   const [editingTableId, setEditingTableId] = useState(null);
   const [editingName, setEditingName] = useState("");
-  const [deleteTimeTableDialogOpen, setDeleteTimeTableDialogOpen] = useState(false);
+  const [deleteTimeTableDialogOpen, setDeleteTimeTableDialogOpen] =
+    useState(false);
+  
+
+    
   const fetchTimetables = async () => {
     try {
       const response = await axios.get(
@@ -102,35 +96,52 @@ const SavedTimeTables = () => {
     }
   };
 
-  const handleDelete = async() => {
-
-
-    let timetable=savedTables.find((table)=>table.id==deleteTimeTableDialogOpen)
-    console.log(timetable)
-    if (timetable?.is_default){
-      toast.info("change the default")
-
-    }else{
+  const handleDelete = async () => {
+    let timetable = savedTables.find(
+      (table) => table.id == deleteTimeTableDialogOpen
+    );
+    console.log(timetable);
+    if (timetable?.is_default) {
+      toast.info("change the default");
+    } else {
       try {
         // Call the API to delete the timetable
-        await axios.delete(`${apiDomain}/api/time-table/timetables/${deleteTimeTableDialogOpen}/`, { headers });
-    
+        await axios.delete(
+          `${apiDomain}/api/time-table/timetables/${deleteTimeTableDialogOpen}/`,
+          { headers }
+        );
+
         // Remove the timetable from the list in the state
         setSavedTables((prevTables) =>
           prevTables.filter((table) => table.id !== deleteTimeTableDialogOpen)
         );
-    
-        setDeleteTimeTableDialogOpen(false)
-        toast.success('Timetable deleted successfully');
-      } catch (error) {
-        console.error('Error deleting timetable:', error);
-        toast.error('Failed to delete timetable');
-      
-    };
-    }
-  }
 
-  
+        setDeleteTimeTableDialogOpen(false);
+        toast.success("Timetable deleted successfully");
+      } catch (error) {
+        console.error("Error deleting timetable:", error);
+        toast.error("Failed to delete timetable");
+      }
+    }
+  };
+
+  const onSubmitEdit = async (id, name) => {
+    try {
+      const response = await axios.put(
+        `${apiDomain}/api/time-table/timetables/${id}/`,
+        { name },
+        { headers }
+      );
+
+      console.log("Timetable updated successfully:", response.data);
+      fetchTimetables()
+      // You can add additional logic here, such as updating the UI or state
+    } catch (error) {
+      console.error("Error updating timetable:", error);
+      // Handle the error appropriately (e.g., show an error message to the user)
+      throw error;
+    }
+  };
 
   return (
     <div className="w-full h-full p-6 bg-gray-100 overflow-auto relative">
@@ -144,12 +155,13 @@ const SavedTimeTables = () => {
             editingName={editingName}
             editingTableId={editingTableId}
             handleSetDefault={handleSetDefault}
-            loadingDefault={loadingDefault}
+            isLoadingDefault={loadingDefault}
             setDeleteTimeTableDialogOpen={setDeleteTimeTableDialogOpen}
             setEditingName={setEditingName}
             setEditingTableId={setEditingTableId}
             table={table}
             setSavedTables={setSavedTables}
+            onSubmitEdit={onSubmitEdit}
           />
         ))}
         <div className="flex flex-col items-center space-y-4">
@@ -187,14 +199,13 @@ const SavedTimeTables = () => {
         </div>
       </div>
 
-    <SavedTimeTableViewer/>
+      <SavedTimeTableViewer />
 
       <DeleteConfirmationPopup
-            isOpen={deleteTimeTableDialogOpen}
-            onClose={() => setDeleteTimeTableDialogOpen(false)}
-            onConfirm={handleDelete}
-            
-          />
+        isOpen={deleteTimeTableDialogOpen}
+        onClose={() => setDeleteTimeTableDialogOpen(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

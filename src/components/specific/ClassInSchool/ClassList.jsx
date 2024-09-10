@@ -108,8 +108,31 @@ const ClassList = ({
         console.error("Error fetching data:", error);
       }
     };
+    const fetcGradeSubjecthData = async () => {
+      try {
+        const response = await axios.get(
+          `${apiDomain}/api/class-room/grade-subjects/`,
+          {
+            headers: headers,
+          }
+        );
+        console.log(response.data)
+      } catch (error) {
+        if (error.response) {
+          toast.error(
+            `Error: ${error.response.data.detail || "An error occurred"}`
+          );
+        } else if (error.request) {
+          toast.error("No response received from server");
+        } else {
+          toast.error("Error in setting up the request");
+        }
+        console.error("Error fetching data:", error);
+      }
+    };
 
     fetchData();
+    fetcGradeSubjecthData();
   }, [refetchClassroomList]);
 
   // handle the function of add button click on classCard

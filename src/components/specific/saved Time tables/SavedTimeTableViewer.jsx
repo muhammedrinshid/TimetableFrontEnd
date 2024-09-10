@@ -2,21 +2,14 @@ import React, { useEffect, useState } from "react";
 import TeacherTimeTableComponent from "./TimeTableforTeacher";
 
 import { toast } from "react-toastify";
-import {
-
-    Typography,
-  
-    Switch,
-    FormControlLabel,
- 
-  } from "@mui/material";
+import { Typography, Switch, FormControlLabel } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import axios from "axios";
 import StudentTimeTableComponent from "./TimeTableforStudent";
 import { weeklyTimetablestudent } from "../../../assets/datas/studentTimetable";
-  
+
 const SavedTimeTableViewer = ({}) => {
-    const {headers,apiDomain}=useAuth()
+  const { headers, apiDomain } = useAuth();
 
   const [selectedDay, setSelectedDay] = useState("MON");
   const [isTeacherView, setIsTeacherView] = useState(true);
@@ -30,22 +23,54 @@ const SavedTimeTableViewer = ({}) => {
   const handleViewToggle = () => {
     setIsTeacherView(!isTeacherView);
   };
-  useEffect(() => {
-    const fetchTimetable = async (view, setTimetable) => {
-      try {
-        const response = await axios.get(`${apiDomain}/api/time-table/${view}/`, {
+  const fetchTeacherTimetable = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/time-table/teacher-view-week/`,
+        {
           headers,
-        });
-        setTimetable(response.data);
-      } catch (error) {
-        console.error(`Error fetching ${view}:`, error);
-        toast.error(`Failed to load ${view.replace('-', ' ')}. Please try again.`);
-      }
-    };
-  
-    fetchTimetable("teacher-view-week", setTeacherWeekTimetable);
-    fetchTimetable("student-view-week", setStudentWeekTimetable);
+        }
+      );
+      setTeacherWeekTimetable(response.data);
+    } catch (error) {
+      console.error(
+        `Error fetching teacher timetable: ${
+          error.response?.status || "Network error"
+        }. ${error.message}`
+      );
+      toast.error(`Failed to load teacher timetable. Please try again.`);
+    }
+  };
+
+  const fetchStudentTimetable = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/time-table/student-view-week/`,
+        {
+          headers,
+        }
+      );
+      setStudentWeekTimetable(response.data);
+      
+      
+    } catch (error) {
+      console.error(
+        `Error fetching student timetable: ${
+          error.response?.status || "Network error"
+        }. ${error.message}`
+      );
+      toast.error(`Failed to load student timetable. Please try again.`);
+    }
+  };
+
+  // Usage in a React component
+  useEffect(() => {
+    fetchTeacherTimetable();
+    fetchStudentTimetable();
   }, []);
+
+
+ 
   return (
     <div className="mt-8">
       <div className="w-full flex justify-between items-center mb-4">
@@ -90,7 +115,6 @@ const SavedTimeTableViewer = ({}) => {
         <StudentTimeTableComponent
           StudentTimeTable={studentWeekTimetable[selectedDay]}
         />
-        
       )}
     </div>
   );

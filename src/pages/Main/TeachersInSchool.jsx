@@ -197,7 +197,7 @@ const TeachersInSchool = () => {
               <h3 className="text-base text-slate-300 font-medium mb-1">
                 Registred Teachers
               </h3>
-              <h1 className="text-2xl font-semibold text-slate-100">124</h1>
+              <h1 className="text-2xl font-semibold text-slate-100">{teachers?.length}</h1>
             </div>
             <AccountCircleRoundedIcon
               fontSize="large"

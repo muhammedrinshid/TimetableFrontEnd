@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Edit, Delete, Star, AccessTime, CheckCircle, Error } from '@mui/icons-material';
 import { Alert, AlertTitle, Tooltip } from '@mui/material';
 
-const SavedTimeTableCard = ({ table, onEdit, setDeleteTimeTableDialogOpen, handleSetDefault, isLoadingDefault }) => {
+const SavedTimeTableCard = ({ table, onSubmitEdit, setDeleteTimeTableDialogOpen, handleSetDefault, isLoadingDefault }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(table.name);
 
   const handleEdit = () => {
     if (isEditing) {
-      onEdit(table.id, editedName);
+      onSubmitEdit(table.id, editedName);
       setIsEditing(false);
     } else {
       setIsEditing(true);
