@@ -2,17 +2,14 @@ import React, { useEffect, useState } from "react";
 import {
   Teacher_data,
   class_data,
-  teacherRow1,
-  timeSlots,
+
 } from "../../assets/datas";
 import { CiSearch } from "../../assets/icons";
 import { ToggleButton } from "../../components/common";
 import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
 import TeacherAttendanceStatus from "../../components/specific/Dashboard/TeacherAttendanceStatus";
 import FreeTeacherOnaSession from "../../components/specific/Dashboard/FreeTeacherOnaSession";
 import TeacherViewOneDayTt from "../../components/specific/Dashboard/TeacherViewOneDayTt";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
 import StudentrViewOneDayTt from "../../components/specific/Dashboard/StudentrViewOneDayTt";
 import SwapTeacherPopus from "../../components/specific/Dashboard/SwapTeacherPopus";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
@@ -33,8 +30,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState(""); // New state for search query
   const [teachers, setTeachers] = useState(Teacher_data);
   const [classsRomms, setClassRooms] = useState(class_data);
-  const [row1, setRow1] = useState(teacherRow1);
-  const [times, setTimes] = useState(timeSlots);
+
   const [viewType, setViewType] = useState(true);
 
   const [selectedDate, setSelectedDate] = useState(today);
@@ -295,11 +291,11 @@ const Dashboard = () => {
 
       {/* teacher view and student view */}
       <div className=" relative col-start-1 overflow-auto col-end-3 row-start-2 row-end-4  shadow-custom-10 rounded-lg border  bg-white">
-        <div className="relative w-full h-full flex items-center justify-center">
+        <div className="relative w-full h-full flex items-center justify-center  overflow-x-auto">
           {loading ? (
             <CircularProgress />
           ) : (
-            <div className="absolute inset-0 w-full h-full">
+            <div className="absolute inset-0 w-full h-full ">
               {viewType ? (
                 <TeacherViewOneDayTt
                   teacherTimetable={filteredTeacherData}

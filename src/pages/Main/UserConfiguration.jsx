@@ -89,7 +89,7 @@ const DAYS_OF_WEEK = [
   { label: "Sunday", value: "SUN" },
 ];
 
-const UserConfiguration = ({ setIsSchoolDetailsOpen }) => {
+const UserConfiguration = ({  }) => {
   // context datas
   const { apiDomain, headers, logoutUser, fileUploadHeaders } = useAuth();
   const [schoolData, setSchoolData] = useState({});
@@ -473,12 +473,7 @@ const UserConfiguration = ({ setIsSchoolDetailsOpen }) => {
       <div className="w-full h-full rounded-2xl px-6 py-5  shadow-lg overflow-auto">
         <div className="flex flex-row justify-between border-b pb-4">
           <div className="flex flex-row items-center gap-4">
-            <IconButton onClick={() => setIsSchoolDetailsOpen(false)}>
-              <KeyboardBackspaceIcon
-                fontSize="small"
-                sx={{ color: "#818181" }}
-              />
-            </IconButton>
+           
             <h1 className="text-xl font-semibold">School Details</h1>
           </div>
           <div className="flex flex-row gap-3">

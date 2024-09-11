@@ -1,69 +1,66 @@
-import React from 'react';
-import { Box, Card, CardContent, Typography, Avatar, Divider } from '@mui/material';
-import { Group as GroupIcon, Room as RoomIcon } from '@mui/icons-material';
+import React from "react";
+import { Avatar } from "@mui/material";
+import { Group as GroupIcon, Room as RoomIcon } from "@mui/icons-material";
 
 const ClassroomInfoCard = ({ classData }) => {
   const { classroom } = classData;
 
   const getAvatarColor = (standard, division) => {
-    const hue = (standard?.charCodeAt(0) * 20 + division.charCodeAt(0) * 5) % 360;
+    const hue =
+      (standard?.charCodeAt(0) * 44 + division.charCodeAt(0) * 5) % 360;
     return `hsl(${hue}, 70%, 80%)`;
   };
 
   return (
-    <Card
-      sx={{
-        maxWidth: 340,
-        boxShadow: '0 6px 18px rgba(0,0,0,0.1)',
-        backgroundColor: '#ecf3fa',
-        borderRadius: 3,
-        transition: 'transform 0.3s ease-in-out',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-        },
-      }}
-    >
-      <CardContent sx={{ padding: '24px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+    <div className="max-w-sm bg-light-secondary  bg-opacity-20 shadow-md rounded-2xl transition-transform transform hover:-translate-y-1">
+      <div className="p-6">
+        <div className="flex items-center mb-4">
           <Avatar
             sx={{
               bgcolor: getAvatarColor(classroom.standard, classroom.division),
               width: 56,
               height: 56,
-              fontSize: 20,
-              marginRight: '16px',
+              fontSize: "1.5rem",
+              marginRight: "16px",
+              color: "white",
             }}
           >
-            {`${classroom.standard}${classroom.division}`}
+            {`${classroom.standard}${classroom.division}`.substring(0, 4)}
           </Avatar>
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              {classroom.class_id}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {`${classroom.room.name} (Room ${classroom.room.room_number})`}
-            </Typography>
-          </Box>
-        </Box>
-        
-        <Divider sx={{ marginBottom: '16px' }} />
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <GroupIcon sx={{ marginRight: '8px', color: 'text.secondary', fontSize: 20 }} />
-            <Typography variant="body2" color="text.secondary">
+          <div>
+            <h3 className="font-bold text-sm ">{classroom.class_id}</h3>
+            <p className="text-xs  text-slate-400 text-nowrap">
+              {`${classroom.room.name}  `}{" "}
+            </p>
+            <p className="text-slate-500 mt-2 font-bold text-sm text-nowrap">{`(Room No: ${classroom.room.room_number})`}</p>
+          </div>
+        </div>
+
+        <hr className="mb-4 border-slate-300" />
+
+        <div className="flex justify-center  gap-3">
+          <div className="flex flex-col justify-center items-center gap-1">
+            <GroupIcon
+              className="text-light-primary"
+              style={{ fontSize: "1.25rem" }}
+            />
+            <p className="text-xs font-Roboto text-slate-500 font-medium">
               {classroom.total_students} Students
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <RoomIcon sx={{ marginRight: '8px', color: 'text.secondary', fontSize: 20 }} />
-            <Typography variant="body2" color="text.secondary">
-              {classroom.room.room_type}
-            </Typography>
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
+            </p>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-1 ">
+            <RoomIcon
+              className=" text-light-primary"
+              style={{ fontSize: "1.25rem" }}
+            />
+            <p className="text-xs text-slate-500 font-medium capitalize">
+              {classroom.room.room_type.toLowerCase()}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

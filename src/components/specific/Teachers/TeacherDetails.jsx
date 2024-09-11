@@ -26,27 +26,7 @@ export const row1 = [
   "Session12",
 ];
 
-const getGridClassName = (NumberOfPeriodsInAday) => {
-  const gridClasses = {
-    1: "grid-cols-[minmax(70px,_1.5fr)_repeat(1,_minmax(50px,_1fr))]",
-    2: "grid-cols-[minmax(70px,_1.5fr)_repeat(2,_minmax(50px,_1fr))]",
-    3: "grid-cols-[minmax(70px,_1.5fr)_repeat(3,_minmax(50px,_1fr))]",
-    4: "grid-cols-[minmax(70px,_1.5fr)_repeat(4,_minmax(50px,_1fr))]",
-    5: "grid-cols-[minmax(70px,_1.5fr)_repeat(5,_minmax(50px,_1fr))]",
-    6: "grid-cols-[minmax(70px,_1.5fr)_repeat(6,_minmax(50px,_1fr))]",
-    7: "grid-cols-[minmax(70px,_1.5fr)_repeat(7,_minmax(50px,_1fr))]",
-    8: "grid-cols-[minmax(70px,_1.5fr)_repeat(8,_minmax(50px,_1fr))]",
-    9: "grid-cols-[minmax(70px,_1.5fr)_repeat(9,_minmax(50px,_1fr))]",
-    10: "grid-cols-[minmax(70px,_1.5fr)_repeat(10,_minmax(50px,_1fr))]",
-    11: "grid-cols-[minmax(70px,_1.5fr)_repeat(11,_minmax(50px,_1fr))]",
-    12: "grid-cols-[minmax(70px,_1.5fr)_repeat(12,_minmax(50px,_1fr))]",
-  };
 
-  return (
-    gridClasses[NumberOfPeriodsInAday] ||
-    "grid-cols-[minmax(70px,_1.5fr)_repeat(1,_minmax(50px,_1fr))]"
-  );
-};
 
 const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeacherPopupOpen}) => {
   const [classsRomms, setClassRooms] = useState(class_data);
@@ -102,7 +82,6 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
     }
   }, [selectedTeacher]);
 
-  const gridClassName = getGridClassName(NumberOfPeriodsInAday);
   const handleDeleteTeacher =()=>{
     setIsDeleteTeacherPopupOpen(selectedTeacher?.id)
    
