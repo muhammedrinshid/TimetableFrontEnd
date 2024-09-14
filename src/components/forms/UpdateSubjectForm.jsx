@@ -84,7 +84,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
       return {
         subject: subject,
         number_of_students: 0,
-        alotted_teachers: [],
+        allotted_teachers: [],
         preferred_rooms: [],
       };
     });
@@ -99,7 +99,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
   };
 
   const handleTeacherChange = (index, teacherId, subjectId) => {
-    let currentData = formData.options[index].alotted_teachers || [];
+    let currentData = formData.options[index].allotted_teachers || [];
 
     let newData = currentData.some((t) => t.id === teacherId)
       ? currentData.filter((t) => t.id !== teacherId)
@@ -111,7 +111,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
         ].filter((t) => t !== undefined); // Ensure no undefined values
 
     let updatedFormData = { ...formData };
-    updatedFormData.options[index].alotted_teachers = newData;
+    updatedFormData.options[index].allotted_teachers = newData;
     setFormData(updatedFormData);
   };
 
@@ -134,7 +134,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
   ? formData.options.map((option) => ({
       subject: option.subject.id,
       number_of_students: option.number_of_students,
-      assigned_teachers: option.alotted_teachers.map((teacher) => teacher.id),
+      assigned_teachers: option.allotted_teachers.map((teacher) => teacher.id),
       preferred_rooms:[]
      
     }))
@@ -311,7 +311,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
                       handleTeacherChange(index, teacher.id, option.subject.id)
                     }
                     color={
-                      formData.options[index].alotted_teachers?.some(
+                      formData.options[index].allotted_teachers?.some(
                         (t) => t.id === teacher.id
                       )
                         ? "primary"
@@ -323,12 +323,12 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
                 {/* <Select
                   multiple
                   fullWidth
-                  value={option.alotted_teachers.map((t) => t.id) || []}
+                  value={option.allotted_teachers.map((t) => t.id) || []}
                   onChange={(e) => handleTeacherChange(index, e.target.value,option.subject.id)}
                   renderValue={(selected) => (
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                       {selected?.map((teacherId) => {
-                        const teacher = option.subject.alotted_teachers?.find(
+                        const teacher = option.subject.allotted_teachers?.find(
                           (t) => t?.id === teacherId
                         );
                         return (

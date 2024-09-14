@@ -71,7 +71,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
           {!subject.is_elective && (
             <div className="mt-3">
               <div className="flex flex-wrap mb-2">
-                {subject.teacher.map((teacher, index) => (
+                {subject?.teacher?.map((teacher, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -97,7 +97,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
                 <div className="mt-2">
                   <span className="text-sm font-medium text-gray-600">Special Rooms:</span>
                   <div className="flex flex-wrap">
-                    {subject.special_rooms.map((room, roomIndex) => (
+                    {subject?.special_rooms?.map((room, roomIndex) => (
                       <span key={roomIndex} className="text-xs bg-gray-200 rounded px-2 py-1 mr-2 mt-1">
                         {room.name} ({room.room_number})
                       </span>
@@ -139,7 +139,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
                 )}
               </div>
               <div className="grid grid-cols-1 gap-3">
-                {subject.options.map((option, optionIndex) => (
+                {subject?.options?.map((option, optionIndex) => (
                   <motion.div
                     key={optionIndex}
                     initial={{ opacity: 0, x: -20 }}
@@ -157,7 +157,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
                       />
                     </div>
                     <div className="flex flex-wrap mb-2">
-                      {option.alotted_teachers.map((teacher, teacherIndex) => (
+                      {option?.allotted_teachers?.map((teacher, teacherIndex) => (
                         <motion.div
                           key={teacherIndex}
                           initial={{ opacity: 0, scale: 0.8 }}

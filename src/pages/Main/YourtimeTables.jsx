@@ -144,7 +144,7 @@ const SavedTimeTables = () => {
   };
 
   return (
-    <div className="w-full h-full p-6 bg-gray-100 overflow-auto relative">
+    <div className="w-full h-full p-6  overflow-auto relative">
       <Typography variant="h4" className="mb-6 text-gray-800 font-bold">
         Saved Timetables
       </Typography>
