@@ -99,30 +99,64 @@ const SubjectAssignmentForm = ({
       electiveSubject: "",
     },
   });
+// Assume these state variables and functions already exist:
+// selectedSubjects, setSelectedSubjects, updateTotalSelectedLessons
 
-  const handleAddSubject = (subject, elective_or_core) => {
+const handleAddNewElectiveSubject = (newSubject) => {
+  if (newSubject.name.trim()) {
+    const subjectToAdd = {
+      id: newSubject.id,
+      name: newSubject.name.trim(),
+      need_special_rooms: false,
+      elective_or_core: "elective",
+      subjects: [],
+      lessons_per_week: 1,
+    };
+    const updatedSubjects = [...selectedSubjects, subjectToAdd];
+    setSelectedSubjects(updatedSubjects);
+    updateTotalSelectedLessons(updatedSubjects);
+  }
+};
+
+const handleAddSubject = (subject, elective_or_core) => {
+  const existingSubjectIndex = selectedSubjects.findIndex(
+    (s) => s.id === subject.id
+  );
+
+  let updatedSubjects;
+
+  if (existingSubjectIndex !== -1) {
+    // Remove the subject if it already exists
+    updatedSubjects = selectedSubjects.filter((s) => s.id !== subject.id);
+  } else {
+    // Add the subject if it doesn't exist
     const newSubject = {
       id: subject.id,
       name: subject.name,
       need_special_rooms: false,
       elective_or_core: elective_or_core,
-      subjects:
-        elective_or_core === "core"
-          ? [{ id: subject.id, qualifiedTeachers: availableSubjects
-            .find((s) => s.id === subject.id)?.qualified_teachers.map((teacher) =>teacher.id), preferedRooms: [] }]
-          : [],
+      subjects: elective_or_core === "core"
+        ? [{
+            id: subject.id,
+            qualifiedTeachers: availableSubjects
+              .find((s) => s.id === subject.id)?.qualified_teachers.map((teacher) => teacher.id),
+            preferedRooms: []
+          }]
+        : [],
       lessons_per_week: 1,
     };
-    setSelectedSubjects([...selectedSubjects, newSubject]);
-    updateTotalSelectedLessons([...selectedSubjects, newSubject]);
-  };
+    updatedSubjects = [...selectedSubjects, newSubject];
+  }
 
-  const handleRemoveSubject = (index) => {
-    const updatedSubjects = [...selectedSubjects];
-    updatedSubjects.splice(index, 1);
-    setSelectedSubjects(updatedSubjects);
-    updateTotalSelectedLessons(updatedSubjects);
-  };
+  setSelectedSubjects(updatedSubjects);
+  updateTotalSelectedLessons(updatedSubjects);
+};
+const handleRemoveSubject = (index) => {
+  const updatedSubjects = selectedSubjects.filter((_, i) => i !== index);
+  setSelectedSubjects(updatedSubjects);
+  updateTotalSelectedLessons(updatedSubjects);
+};
+  
 
   const handleTeacherSelect = (subjectIndex, teacherId) => {
     const updatedSubjects = [...selectedSubjects];
@@ -265,27 +299,26 @@ const SubjectAssignmentForm = ({
             )}
           />
           <Controller
-            name="electiveSubject"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                margin="normal"
-                label="Add Elective Subject"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddSubject(
-                      { id: Date.now(), name: e.target.value },
-                      "elective"
-                    );
-                    field.onChange("");
-                  }
-                }}
-              />
-            )}
-          />
+  name="electiveSubject"
+  control={control}
+  render={({ field }) => (
+    <TextField
+      {...field}
+      fullWidth
+      margin="normal"
+      label="Add Elective Subject"
+      onKeyPress={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleAddNewElectiveSubject(
+            { id: Date.now(), name: e.target.value }
+          );
+          field.onChange("");
+        }
+      }}
+    />
+  )}
+/>
           <Box mt={2}>
             {selectedSubjects.map((subject, index) => (
               <Box
