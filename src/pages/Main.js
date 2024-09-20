@@ -1,16 +1,18 @@
 import React, { useContext } from "react";
-import { userAvatar } from "../assets/images";
+import { defaultAvatarImage, userAvatar } from "../assets/images";
 import classNames from "classnames";
 import { Sidebar, Topbar } from "../components/specific";
 import { useAuth } from "../context/Authcontext";
 import { Outlet } from "react-router-dom";
+import { Avatar } from "@mui/material";
+import { User } from "lucide-react";
 
 
 
 
 
 const Main = () => {
-  const { fullMenu } = useAuth();
+  const { fullMenu,apiDomain,user } = useAuth();
 
   return (
 
@@ -23,12 +25,15 @@ const Main = () => {
     >
       {/* grind item one */}
       <div class="bg-light-primary opacity-90 border-b border-white border-opacity-70 flex justify-center items-center ">
-        <img
-          src={userAvatar}
-          className="rounded-full opacity-80"
-          width={40}
-          alt=""
-        />
+        <Avatar
+              src={
+                (user.profile_image
+                  ? `${apiDomain}/${user.profile_image}`
+                  : defaultAvatarImage)
+              }
+              sx={{ width: 40, height: 40, boxShadow: 3 }}
+              alt={user?.school_name}
+            />
       </div>
 
       {/* grid item two top bar*/}
