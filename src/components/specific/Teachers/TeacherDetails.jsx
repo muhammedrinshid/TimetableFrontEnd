@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { LabelDispalyerWithIcon, LabelDisplayer } from "../../common";
+import { LabelDispalyerWithIcon, LabelDisplayer, MeterGaugeChart, PieChartStatsDisplayer, StatsPairDisplayer } from "../../common";
 import { Avatar, Button, IconButton } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import { class_data } from "../../../assets/datas";
@@ -9,7 +9,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import TeacherWeeklyTimeTableComponent from "./TeacherWeeklyTimeTableComponent";
 import { RandomColorChip } from "../../Mui components";
-
+import { CheckCircle, ErrorOutline, WarningAmber } from "@mui/icons-material";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 export const row1 = [
   "Instructor",
   "Session1",
@@ -28,16 +30,73 @@ export const row1 = [
 
 
 
-const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeacherPopupOpen}) => {
-  const [classsRomms, setClassRooms] = useState(class_data);
-  const [teacherDetails, setTeacherDetails] = useState({});
-
-  const { NumberOfPeriodsInAday } = useAuth();
+const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeacherPopupOpen,teachersMap}) => {
+  const [scheduledLessons,setScheduledLessons]=useState({free:0,engaged:0})
+  const [isAnimating, setIsAnimating] = useState(false);
   const [teacherWeeklyTimetable, setTeacherWeeklyTimetable] = useState([]);
 
-  const { apiDomain, headers, logoutUser, totalperiodsInWeek } = useAuth();
+  const { apiDomain, headers, } = useAuth();
 
+const calculateScheduledLessons = (timetableData) => {
+  let free = 0;
+  let engaged = 0;
 
+  timetableData.forEach((day) => {
+    day.sessions.forEach((session) => {
+      if (session.subject === null) {
+        free++;
+      } else {
+        engaged++;
+      }
+    });
+  });
+
+  return { free, engaged };
+};
+
+const getStatusDetails = (
+  minLessonsPerWeek,
+  maxLessonsPerWeek,
+  freeLessonsPerWeek,
+  engagedLessonsPerWeek
+) => {
+  const averageLessons = (minLessonsPerWeek + maxLessonsPerWeek) / 2;
+  let icon = <ErrorOutline style={{ color: "grey" }} />;
+  let text = "Unknown";
+
+  // Ensure values are numbers and non-negative
+  if (isNaN(minLessonsPerWeek) || isNaN(maxLessonsPerWeek) || isNaN(freeLessonsPerWeek) || isNaN(engagedLessonsPerWeek)) {
+    return { status: "error", icon: <ErrorOutline style={{ color: "red" }} />, text: "Invalid values" };
+  }
+
+  if (minLessonsPerWeek > maxLessonsPerWeek) {
+    return { status: "error", icon: <ErrorOutline style={{ color: "red" }} />, text: "Check ranges" };
+  }
+
+  if (engagedLessonsPerWeek < minLessonsPerWeek) {
+    icon = <ErrorOutline style={{ color: "red" }} />;
+    text = "Below Min";
+  } else if (engagedLessonsPerWeek > maxLessonsPerWeek) {
+    icon = <WarningAmber style={{ color: "orange" }} />;
+    text = "Above Max";
+  } else if (engagedLessonsPerWeek === minLessonsPerWeek) {
+    icon = <CheckCircle style={{ color: "green" }} />;
+    text = "At Min";
+  } else if (engagedLessonsPerWeek === maxLessonsPerWeek) {
+    icon = <CheckCircle style={{ color: "blue" }} />;
+    text = "At Max";
+  } else if (engagedLessonsPerWeek === averageLessons) {
+    icon = <CheckCircle style={{ color: "purple" }} />;
+    text = "At Avg";
+  } else if (engagedLessonsPerWeek > minLessonsPerWeek && engagedLessonsPerWeek < maxLessonsPerWeek) {
+    icon = <CheckCircle style={{ color: "green" }} />;
+    text = "Optimal";
+  } else {
+    text = "Unclear";
+  }
+
+  return { status: text.replace(/ /g, ""), icon, text };
+};
   const fetchTeacherWeekTimetable = async () => {
     try {
       const response = await axios.get(
@@ -47,6 +106,10 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
         }
       );
       setTeacherWeeklyTimetable(response.data);
+      const scheduledLessons = calculateScheduledLessons(response.data);
+
+      setScheduledLessons(scheduledLessons);
+
     } catch (error) {
       if (error.response) {
         console.error(
@@ -75,7 +138,12 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
       }
     }
   };
-
+const data = [
+  { name: "Group A", value: 400, color: "#0088FE" },
+  { name: "Group B", value: 300, color: "#00C49F" },
+  { name: "Group C", value: 300, color: "#FFBB28" },
+  { name: "Group D", value: 200, color: "#FF8042" },
+];
   useEffect(() => {
     if (selectedTeacher.isopen) {
       fetchTeacherWeekTimetable();
@@ -86,10 +154,97 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
     setIsDeleteTeacherPopupOpen(selectedTeacher?.id)
    
   }
+
+    const { icon: iconForAsignedLessonEvaluate,text: textForAsignedLessonEvaluate } =
+      getStatusDetails(
+        selectedTeacher?.min_lessons_per_week,
+        selectedTeacher?.max_lessons_per_week,
+        scheduledLessons.free,
+        scheduledLessons.engaged,
+      );
+const isPreviousDisabled =  selectedTeacher.index === 0;
+const isNextDisabled = 
+  selectedTeacher.index === teachersMap.length - 1;
+console.log(isPreviousDisabled,isNextDisabled)
+const handleTeacherPrevious = (
+  currentIndex,
+) => {
+  // Check if previous is disabled (if current index is 0)
+  if (currentIndex === 0) return;
+
+  // Start the animation and reset the timetable
+  setIsAnimating(true);
+  setTeacherWeeklyTimetable([]);
+
+  // After a delay, update the selected teacher
+  setTimeout(() => {
+    const newIndex = currentIndex - 1;
+    const teacher_obj = teachersMap[newIndex];
+
+    // Set the selected teacher with the updated index and open the teacher view
+    setISelectedTeacher({
+      ...teacher_obj,
+      index: newIndex,
+      isopen: true,
+    });
+
+    setIsAnimating(false);
+  }, 300);
+};
+
+const handleTeacherNext = (
+  currentIndex,
+) => {
+  // Check if next is disabled (if current index is the last in the array)
+  if (currentIndex === teachersMap.length - 1) return;
+
+  // Start the animation and reset the timetable
+  setIsAnimating(true);
+  setTeacherWeeklyTimetable([]);
+
+  // After a delay, update the selected teacher
+  setTimeout(() => {
+    const newIndex = currentIndex + 1;
+    const teacher_obj = teachersMap[newIndex];
+
+    // Set the selected teacher with the updated index and open the teacher view
+    setISelectedTeacher({
+      ...teacher_obj,
+      index: newIndex,
+      isopen: true,
+    });
+
+    setIsAnimating(false);
+  }, 300);
+};
+
+
+  const pieChartComponent = (
+    <PieChartStatsDisplayer
+      title="Sample Data Distribution"
+      data={[
+        {
+          name: "Free / Week",
+          value: scheduledLessons.free,
+          color: "#00C49F",
+        },
+        {
+          name: "Engaged / Week",
+          value: scheduledLessons.engaged,
+          color: "#0088FE",
+        },
+      ]}
+      size="small"
+    />
+  );
   return (
-    <div className="w-full h-full rounded-2xl px-6 py-5">
-      <div className="flex flex-row justify-between border-b pb-4">
-        <div className="flex flex-row items-center gap-4">
+    <div
+      className={`w-full h-full relative px-6 py-5  rounded-2xl transition-opacity duration-300 ${
+        isAnimating ? "opacity-0" : "opacity-100"
+      }`}
+    >
+      <div className="flex flex-row justify-between border-b pb-4 sticky top-0 backdrop-blur-lg bg-dark-background1 z-10">
+        <div className="flex flex-row items-center gap-4 ">
           <IconButton>
             <KeyboardBackspaceIcon
               fontSize="small"
@@ -116,6 +271,72 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
           </Avatar>
           <h1 className="text-base font-semibold ">{selectedTeacher?.name}</h1>
         </div>
+        <div className="flex flex-row items-center justify-center gap-2">
+          {/* Previous Button */}
+          <IconButton
+            className="pointer-events-auto transition-all duration-200 ease-in-out"
+            sx={{
+              backgroundColor: isPreviousDisabled
+                ? "rgba(0, 0, 0, 0.05)"
+                : "rgba(25, 118, 210, 0.1)", // Light background with primary color's very low opacity
+              "&:hover": {
+                backgroundColor: isPreviousDisabled
+                  ? "rgba(0, 0, 0, 0.05)"
+                  : "rgba(25, 118, 210, 0.2)", // Slightly stronger background on hover
+                transform: isPreviousDisabled
+                  ? "translateX(-50%)"
+                  : "scale(1.05) translateX(-35%)",
+              },
+              transform: "translateX(-40%)",
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+            disabled={isPreviousDisabled}
+            onClick={()=>handleTeacherPrevious(selectedTeacher.index)}
+          >
+            <ArrowBackIosNewIcon
+              sx={{
+                fontSize: 14,
+                color: (theme) => theme.palette.primary.main,
+              }} // Primary color for icon
+            />
+          </IconButton>
+
+          {/* Next Button */}
+          <IconButton
+            className="pointer-events-auto transition-all duration-200 ease-in-out"
+            sx={{
+              backgroundColor: isNextDisabled
+                ? "rgba(0, 0, 0, 0.05)"
+                : "rgba(25, 118, 210, 0.1)", // Light background with primary color's low opacity
+              "&:hover": {
+                backgroundColor: isNextDisabled
+                  ? "rgba(0, 0, 0, 0.05)"
+                  : "rgba(25, 118, 210, 0.2)", // Slightly stronger background on hover
+                transform: isNextDisabled
+                  ? "translateX(50%)"
+                  : "scale(1.05) translateX(35%)",
+              },
+              transform: "translateX(40%)",
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+            disabled={isNextDisabled}
+            onClick={()=>handleTeacherNext(selectedTeacher.index)}
+          >
+            <ArrowForwardIosIcon
+              sx={{
+                fontSize: 14,
+                color: (theme) => theme.palette.primary.main,
+              }} // Primary color for icon
+            />
+          </IconButton>
+        </div>
+
         <div className=" flex flex-row items-center gap-2">
           <p className="text-[10px] text-text_2 font-light mr-4">
             created on 22-06-2026
@@ -138,7 +359,7 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
                 borderColor: "#d32f2f",
               },
             }}
-            onClick={()=>handleDeleteTeacher()}
+            onClick={() => handleDeleteTeacher()}
           >
             Delete
           </Button>
@@ -201,8 +422,7 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
           <p className="text-[11px] font-medium text-text_2 font-Inter my-2 ">
             ACADEMIC DETAILS
           </p>
-         
-            <p className="text-[11px] font-medium text-text_2 font-Inter my-2 mt-8">
+          <p className="text-[11px] font-medium text-text_2 font-Inter my-2 mt-8">
             QUALIFIED GRADES
           </p>
           <div className="flex gap-2 flex-wrap">
@@ -210,18 +430,33 @@ const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeach
               // <p className="text-[10px] p-[2px] w-fit px-2 text-nowrap font-semibold  bg-pale_orange bg-opacity-60 text-white first:bg-purple-500 last:bg-blue-500  font-sans rounded-lg">
               //   {grade.name}
               // </p>
-                            <RandomColorChip subject={grade.name} />
-
+              <RandomColorChip subject={grade.name} />
             ))}
           </div>
-          <LabelDisplayer
-            data={selectedTeacher?.min_lessons_per_week}
-            label={"Min number of period"}
-          />
-          <LabelDisplayer
-            data={selectedTeacher?.max_lessons_per_week}
-            label={"Max number of period"}
-          />
+          <StatsPairDisplayer
+            leftLabel="Min Lesson / Week"
+            rightLabel="Max Lesson / Week"
+            leftValue={selectedTeacher?.min_lessons_per_week}
+            rightValue={selectedTeacher?.max_lessons_per_week}
+            rightColor={"text-red-600"}
+            leftColor={"text-green-600"}
+            size="small"
+          />{" "}
+          <p className="text-[11px] font-medium text-text_2 font-Inter my-2 ">
+            LESSON ASSIGNEMTN
+          </p>
+          <StatsPairDisplayer
+            leftLabel="Free/week"
+            rightLabel="Engaged/week"
+            leftValue={scheduledLessons.free}
+            rightValue={scheduledLessons.engaged}
+            rightColor={"text-[#0088FE]"}
+            leftColor={"text-[#00C49F]"}
+            text={textForAsignedLessonEvaluate}
+            icon={iconForAsignedLessonEvaluate}
+            size="small"
+            specialComponents={pieChartComponent}
+          />{" "}
         </div>
       </div>
       <TeacherWeeklyTimeTableComponent

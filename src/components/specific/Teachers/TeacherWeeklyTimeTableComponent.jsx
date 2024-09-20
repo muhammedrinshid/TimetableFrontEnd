@@ -66,9 +66,9 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
   
   return (
     <div className="container mx-auto ">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
+      {/* <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
         Teacher Timetable
-      </h2>
+      </h2> */}
       <div className="overflow-x-auto shadow-xl rounded-lg">
         <table className="w-full table-fixed">
           <thead>

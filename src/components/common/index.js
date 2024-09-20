@@ -6,6 +6,10 @@ import ToggleButton from "../specific/Dashboard/ToggleButton";
 import TeacherViewClassroomCard from "../specific/Dashboard/TeacherViewClassroomCard";
 import LabelDisplayer from "./LabelDisplayer";
 import LabelDispalyerWithIcon from "./LabelDispalyerWithIcon";
+import StatsPairDisplayer from "./StatsPairDisplayer";
+import PieChartStatsDisplayer from "./PieChartStatsDisplayer";
+import MeterGaugeChart from "./MeterGaugeChart";
+
 
 export {
   ToggleButton,
@@ -15,5 +19,7 @@ export {
   ClassListDashboard,
   LabelDisplayer,
   LabelDispalyerWithIcon,
-  
+  StatsPairDisplayer,
+  PieChartStatsDisplayer,
+  MeterGaugeChart,
 };
