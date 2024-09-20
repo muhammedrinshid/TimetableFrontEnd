@@ -26,7 +26,7 @@ const SavedTimeTableViewer = ({}) => {
   const fetchTeacherTimetable = async () => {
     try {
       const response = await axios.get(
-        `${apiDomain}/api/time-table/teacher-view-week/`,
+        `${apiDomain}/api/time-table/default-teacher-view-week/`,
         {
           headers,
         }
@@ -45,7 +45,7 @@ const SavedTimeTableViewer = ({}) => {
   const fetchStudentTimetable = async () => {
     try {
       const response = await axios.get(
-        `${apiDomain}/api/time-table/student-view-week/`,
+        `${apiDomain}/api/time-table/default-student-view-week/`,
         {
           headers,
         }

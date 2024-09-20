@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import UserConfiguration from "./pages/Main/UserConfiguration";
 import SchoolProfileDashboard from "./pages/Main/SchoolProfileDashboard";
 import DirectivesConfiguration from "./pages/Main/DirectivesConfiguration";
+import BuildSchedule from "./pages/Main/BuildSchedule";
 function App() {
   return (
     <div className="w-full min-h-screen bg-[#F8F7FC] flex items-center justify-center font-Roboto">
@@ -55,6 +56,10 @@ function App() {
                   <Route
                     path="directives-configuration"
                     element={<DirectivesConfiguration />}
+                  />
+                  <Route
+                    path="build-schedule"
+                    element={<BuildSchedule />}
                   />
                 </Route>
               </Route>
