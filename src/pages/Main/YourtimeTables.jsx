@@ -59,18 +59,7 @@ const SavedTimeTables = () => {
     fetchTimetables();
   }, []);
 
-  const handleWhyDisabled = async () => {
-    try {
-      const response = await axios.get(
-        `${apiDomain}/api/time-table/check-class-subjects/`,
-        { headers }
-      );
-      setScheduleErrorList(response.data.reasons);
-      toast.success("Schedule retrieved successfully");
-    } catch (error) {
-      toast.error("Failed to retrieve schedule");
-    }
-  };
+
 
   const [loadingDefault, setLoadingDefault] = useState(null);
 
@@ -165,18 +154,7 @@ const SavedTimeTables = () => {
           />
         ))}
         <div className="flex flex-col items-center space-y-4">
-          <RoundButton isDisabled={!is_ready_for_timetable} />
-
-          {!is_ready_for_timetable && (
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleWhyDisabled}
-              className="mt-2"
-            >
-              Why can't I schedule my table?
-            </Button>
-          )}
+          
 
           {scheduleErrorList.length > 0 && (
             <div className="mt-4">

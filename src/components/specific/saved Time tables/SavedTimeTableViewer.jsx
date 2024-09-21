@@ -6,7 +6,6 @@ import { Typography, Switch, FormControlLabel } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import axios from "axios";
 import StudentTimeTableComponent from "./TimeTableforStudent";
-import { weeklyTimetablestudent } from "../../../assets/datas/studentTimetable";
 
 const SavedTimeTableViewer = ({}) => {
   const { headers, apiDomain } = useAuth();
@@ -75,7 +74,7 @@ const SavedTimeTableViewer = ({}) => {
     <div className="mt-8">
       <div className="w-full flex justify-between items-center mb-4">
         <Typography variant="h5" className="text-gray-800 font-bold">
-          Weekly Timetable
+         Default Weekly Timetable
         </Typography>
         <FormControlLabel
           control={

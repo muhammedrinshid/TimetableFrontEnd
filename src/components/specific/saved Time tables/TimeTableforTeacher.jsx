@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/Authcontext";
 import { Avatar, Chip } from "@mui/material";
 
-const TeacherTimeTableComponent = ({ teacherTimetable }) => {
-  const { apiDomain } = useAuth();
-  const { NumberOfPeriodsInAday } = useAuth();
+const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
+  const { apiDomain, NumberOfPeriodsInAday } = useAuth();
+  const [filteredTimetable, setFilteredTimetable] = useState(teacherTimetable);
+
   const teacherRow1 = [
     "Instructor",
     ...Array(NumberOfPeriodsInAday)
@@ -12,9 +13,38 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
       .map((_, i) => `Session${i + 1}`),
   ];
 
+  useEffect(() => {
+    if (searchTerm) {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = teacherTimetable.filter((teacher) => {
+        const nameMatch = teacher.instructor.name
+          .toLowerCase()
+          .includes(lowercasedSearch);
+        const sessionMatch = teacher.sessions.some((session) => {
+          const subjectMatch = (
+            session?.subject ||
+            session?.elective_subject_name ||
+            ""
+          )
+            .toLowerCase()
+            .includes(lowercasedSearch);
+          const roomMatch = session?.room?.room_number
+            ?.toString()
+            .toLowerCase()
+            .includes(lowercasedSearch);
+          return subjectMatch || roomMatch;
+        });
+        return nameMatch || sessionMatch;
+      });
+      setFilteredTimetable(filtered);
+    } else {
+      setFilteredTimetable(teacherTimetable);
+    }
+  }, [searchTerm, teacherTimetable]);
+
   const getSessionColor = (session) => {
-    if (!session.subject) return "bg-green-100 text-green-800"; // Free period
-    switch (session.type) {
+    if (!session?.subject) return "bg-green-100 text-green-800";
+    switch (session?.type) {
       case "Core":
         return "bg-blue-100 text-blue-800";
       case "Elective":
@@ -25,13 +55,13 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
   };
 
   const getSessionBorderColor = (session) => {
-    switch (session.type) {
+    switch (session?.type) {
       case "Core":
-        return "#1976d2"; // MUI primary color
+        return "#1976d2";
       case "Elective":
-        return "#9c27b0"; // MUI secondary color
+        return "#9c27b0";
       default:
-        return "#f0f0f0"; // Light gray for free periods
+        return "#f0f0f0";
     }
   };
 
@@ -55,7 +85,7 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
             </tr>
           </thead>
           <tbody>
-            {teacherTimetable?.map((teacher, teacherIndex) => (
+            {filteredTimetable.map((teacher, teacherIndex) => (
               <tr
                 key={teacherIndex}
                 className="bg-white hover:bg-gray-50 transition-colors duration-300"
@@ -71,24 +101,24 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
                       className="w-10 h-10 rounded-full shadow-md transition-transform duration-300 hover:scale-110"
                     >
                       {!teacher?.instructor?.profile_image &&
-                        teacher.instructor.name[0]}
+                        teacher?.instructor?.name?.[0]}
                     </Avatar>
                     <div className="overflow-hidden">
                       <p className="font-bold text-sm text-gray-800 truncate">
-                        {teacher.instructor.name}
+                        {teacher?.instructor?.name}
                       </p>
                       <p className="text-xs text-gray-500 truncate">
-                        {teacher.instructor.teacher_id}
+                        {teacher?.instructor?.teacher_id}
                       </p>
                     </div>
                   </div>
                 </td>
-                {teacher.sessions
-                  .slice(0, NumberOfPeriodsInAday)
+                {teacher?.sessions
+                  ?.slice(0, NumberOfPeriodsInAday)
                   .map((session, sessionIndex) => (
                     <td key={sessionIndex} className="border-b p-2">
                       <div
-                        className={`rounded-lg p-4 h-full ${getSessionColor(
+                        className={`rounded-lg p-3 h-full ${getSessionColor(
                           session
                         )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden`}
                         style={{
@@ -97,42 +127,42 @@ const TeacherTimeTableComponent = ({ teacherTimetable }) => {
                           )}`,
                         }}
                       >
-                        {session.subject ? (
-                          <div className="session-card flex flex-col h-full">
-                            <div className="flex justify-between items-start mb-3">
-                              <h3 className="font-bold text-xl text-gray-800 leading-tight">
-                                {session.subject ||
-                                  session.elective_subject_name}
-                              </h3>
+                        {session?.subject ? (
+                          <div className="session-card flex flex-col jus h-full">
+                            <div className="flex flex-col justify-between items-start mb-3">
                               <div
                                 className={`${
-                                  session.type === "Core"
-                                    ? "bg-blue-100 text-blue-700"
+                                  session?.type === "Core"
+                                    ? "bg-blue-200 text-blue-700"
                                     : "bg-pink-100 text-pink-700"
-                                } text-xs font-semibold uppercase px-2 py-1 rounded-full tracking-wider`}
+                                } text-xs font-normal capitalize px-1 py-1 rounded-full tracking-wider mb-2`}
                               >
-                                {session.type}
+                                {session?.type}
                               </div>
+                              <h3 className="font-semibold text-base text-gray-800 leading-tight">
+                                {session?.subject ||
+                                  session?.elective_subject_name}
+                              </h3>
                             </div>
-                            <p className="room text-sm mb-3 flex justify-between items-center text-gray-600">
+                            <p className="room text-xs mb-2 flex justify-between items-center text-gray-600">
                               <span className="font-medium">
                                 Room {session?.room?.room_number}
                               </span>
                             </p>
                             <div className="class-details text-sm flex-grow">
-                              {session.class_details.map(
+                              {session?.class_details?.map(
                                 (classDetail, index) => (
                                   <div
                                     key={index}
                                     className="class-info flex justify-between items-center mb-2 bg-white bg-opacity-50 rounded-md p-2"
                                   >
-                                    <span className="class-name font-semibold text-gray-700">
-                                      {classDetail.standard}{" "}
-                                      {classDetail.division}
+                                    <span className="class-name text-xs font-semibold text-gray-700">
+                                      {classDetail?.standard}{" "}
+                                      {classDetail?.division}
                                     </span>
-                                    {session.type === "Elective" && (
-                                      <span className="student-count text-gray-500 text-xs">
-                                        {classDetail.number_of_students}{" "}
+                                    {session?.type === "Elective" && (
+                                      <span className="student-count text-gray-500 text-vs">
+                                        {classDetail?.number_of_students}{" "}
                                         students
                                       </span>
                                     )}

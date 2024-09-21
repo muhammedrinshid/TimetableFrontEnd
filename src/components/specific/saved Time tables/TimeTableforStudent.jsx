@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/Authcontext";
 import { Avatar, Box, Typography, Chip } from "@mui/material";
 import { styled } from "@mui/system";
 
-const StudentTimeTableComponent = ({ StudentTimeTable }) => {
-  const { apiDomain } = useAuth();
-
-  const { NumberOfPeriodsInAday } = useAuth();
+const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
+  const { apiDomain, NumberOfPeriodsInAday } = useAuth();
+  const [filteredTimetable, setFilteredTimetable] = useState(StudentTimeTable);
 
   const studentRow = [
     "Time",
@@ -15,8 +14,41 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
       .map((_, i) => `Session${i + 1}`),
   ];
 
+  useEffect(() => {
+    if (searchTerm) {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = StudentTimeTable.filter((classData) => {
+        const classMatch =
+          `${classData?.classroom?.standard}${classData?.classroom?.division}`
+            .toLowerCase()
+            .includes(lowercasedSearch);
+        const roomMatch =
+          `${classData?.classroom?.room?.name} (Room ${classData?.classroom?.room?.room_number})`
+            .toLowerCase()
+            .includes(lowercasedSearch);
+        const sessionMatch = classData?.sessions?.some(
+          (session) =>
+            session?.name?.toLowerCase().includes(lowercasedSearch) ||
+            session?.class_distribution?.some(
+              (distribution) =>
+                distribution?.subject
+                  ?.toLowerCase()
+                  .includes(lowercasedSearch) ||
+                distribution?.teacher?.name
+                  ?.toLowerCase()
+                  .includes(lowercasedSearch)
+            )
+        );
+        return classMatch || roomMatch || sessionMatch;
+      });
+      setFilteredTimetable(filtered);
+    } else {
+      setFilteredTimetable(StudentTimeTable);
+    }
+  }, [searchTerm, StudentTimeTable]);
+
   const getSessionColor = (session) => {
-    switch (session.type) {
+    switch (session?.type) {
       case "Core":
         return "bg-blue-100 text-blue-800";
       case "Elective":
@@ -25,15 +57,20 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
         return "bg-gray-100 text-gray-800";
     }
   };
+
   const InfoChip = styled(Chip)(({ theme }) => ({
     margin: theme.spacing(0.5),
     fontWeight: "bold",
   }));
+
   const getAvatarColor = (standard, division) => {
     const hue =
-      (standard?.charCodeAt(0) * 20 + division.charCodeAt(0) * 5) % 360;
+      ((standard?.charCodeAt(0) ?? 0) * 20 +
+        (division?.charCodeAt(0) ?? 0) * 5) %
+      360;
     return `hsl(${hue}, 70%, 50%)`;
   };
+
   const StyledAvatar = styled(Avatar)(({ theme }) => ({
     width: 70,
     height: 70,
@@ -43,6 +80,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
     boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
     background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
   }));
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
@@ -63,7 +101,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
             </tr>
           </thead>
           <tbody>
-            {StudentTimeTable?.map((classData, classIndex) => (
+            {filteredTimetable?.map((classData, classIndex) => (
               <tr
                 key={classIndex}
                 className="bg-white hover:bg-gray-50 transition-colors duration-300"
@@ -79,12 +117,12 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                     <StyledAvatar
                       sx={{
                         bgcolor: getAvatarColor(
-                          classData?.classroom.standard,
-                          classData?.classroom.division
+                          classData?.classroom?.standard,
+                          classData?.classroom?.division
                         ),
                       }}
                     >
-                      {`${classData?.classroom.standard}${classData?.classroom.division}`}
+                      {`${classData?.classroom?.standard}${classData?.classroom?.division}`}
                     </StyledAvatar>
                     <Box>
                       <Typography
@@ -93,7 +131,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                         fontWeight="bold"
                         gutterBottom
                       >
-                        {`${classData?.classroom.standard} ${classData?.classroom.division}`}
+                        {`${classData?.classroom?.standard} ${classData?.classroom?.division}`}
                       </Typography>
                       <Box mb={1}>
                         <InfoChip
@@ -115,7 +153,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                     </Box>
                   </Box>
                 </td>
-                {classData.sessions
+                {classData?.sessions
                   ?.slice(0, NumberOfPeriodsInAday)
                   ?.map((session, sessionIndex) => (
                     <td key={sessionIndex} className="border-b p-2">
@@ -126,7 +164,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                       >
                         <div className="flex justify-between items-start mb-2">
                           <p className="font-semibold text-sm truncate flex-grow">
-                            {session.name}
+                            {session?.name}
                           </p>
                           <span
                             className={`text-xs px-2 py-1 rounded-full ${
@@ -138,7 +176,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                             {session?.type}
                           </span>
                         </div>
-                        {session.class_distribution.map(
+                        {session?.class_distribution?.map(
                           (distribution, distributionIndex) => (
                             <div
                               key={distributionIndex}
@@ -146,41 +184,39 @@ const StudentTimeTableComponent = ({ StudentTimeTable }) => {
                             >
                               <div className="flex items-center mb-1">
                                 <Avatar
-                                  alt={distribution.teacher.name}
+                                  alt={distribution?.teacher?.name}
                                   src={
-                                    distribution.teacher.profile_image
-                                      ? `${apiDomain}/${distribution.teacher.profile_image}`
+                                    distribution?.teacher?.profile_image
+                                      ? `${apiDomain}/${distribution?.teacher?.profile_image}`
                                       : undefined
                                   }
                                   className="w-8 h-8 rounded-full mr-2 border-2 border-white"
                                 >
-                                  {!distribution.teacher.profile_image &&
-                                    distribution.teacher.name.charAt(0)}
+                                  {!distribution?.teacher?.profile_image &&
+                                    distribution?.teacher?.name?.charAt(0)}
                                 </Avatar>
                                 <div>
                                   <p className="text-xs font-medium">
-                                    {distribution.teacher.name}
+                                    {distribution?.teacher?.name}
                                   </p>
                                   <p className="text-xs text-gray-500">
-                                    {distribution.subject}
+                                    {distribution?.subject}
                                   </p>
                                 </div>
                               </div>
                               <div className="text-xs">
-                                {session?.type == "Elective" && (
+                                {session?.type === "Elective" && (
                                   <p className="text-gray-600">
                                     Students:{" "}
                                     {
-                                      distribution.number_of_students_from_this_class
+                                      distribution?.number_of_students_from_this_class
                                     }
                                   </p>
                                 )}
-                                {(
-                                  <p className="text-gray-600">
-                                    Room: {distribution.room.name} (
-                                    {distribution.room.number})
-                                  </p>
-                                )}
+                                <p className="text-gray-600">
+                                  Room: {distribution?.room?.name} (
+                                  {distribution?.room?.number})
+                                </p>
                               </div>
                             </div>
                           )
