@@ -16,6 +16,7 @@ import {
   Chip,
   Alert,
 } from "@mui/material";
+import { ScheduleLoading } from "../../components/common";
 
 const BuildSchedule = () => {
   const { apiDomain, logoutUser, headers } = useAuth();
@@ -140,7 +141,7 @@ const BuildSchedule = () => {
 
   return (
     <div className=" p-4 overflow-y-auto h-full ">
-      <div className="flex flex-col justify-between max-w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden h-full ">
+      <div className="flex flex-col justify-between max-w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden min-h-full flex-grow">
         <div className="p-6 sm:p-10">
           <h1 className="text-4xl font-bold mb-8 text-gray-800 text-center">
             Build Your Schedule
@@ -226,6 +227,7 @@ const BuildSchedule = () => {
                   {Math.round(loadingProgress)}%
                 </span>
               </div>
+              <ScheduleLoading/>
               <LinearProgress
                 variant="determinate"
                 value={loadingProgress}

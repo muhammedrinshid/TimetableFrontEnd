@@ -5,7 +5,7 @@ import {
 
 } from "../../assets/datas";
 import { CiSearch } from "../../assets/icons";
-import { ToggleButton } from "../../components/common";
+import { Lodings, ScheduleLoading, ToggleButton } from "../../components/common";
 import CircularProgress from "@mui/material/CircularProgress";
 import TeacherAttendanceStatus from "../../components/specific/Dashboard/TeacherAttendanceStatus";
 import FreeTeacherOnaSession from "../../components/specific/Dashboard/FreeTeacherOnaSession";
@@ -236,15 +236,15 @@ const Dashboard = () => {
   return (
     <div className=" grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4  ">
       {/* contorle panel */}
-      <div className="col-start-1  col-end-2  row-start-1 row-end-2  flex flex-row items-center shadow_box   border-light-primary">
+      <div className="col-start-1  col-end-2  row-start-1 row-end-2  flex flex-row items-center   ">
         {/*  */}
         {/* view controler tacher and student */}
-        <div className="flex flex-row  w-full h-full basis-2/3 rounded-lg mr-2">
+        <div className="flex flex-row   h-full basis-1/2 flex-shrink-0 flex-grow rounded-lg mr-2">
           <ToggleButton onChange={setViewType} value={viewType} />
         </div>
 
         {/* Search place */}
-        <div className=" flex items-center justify-between">
+        <div className=" flex items-center justify-around  px-2 shadow_box bg-white rounded-lg h-full flex-shrink-0">
           <CiSearch className="text-xl " />
 
           <input
@@ -293,7 +293,7 @@ const Dashboard = () => {
       <div className=" relative col-start-1 overflow-auto col-end-3 row-start-2 row-end-4  shadow-custom-10 rounded-lg border  bg-white">
         <div className="relative w-full h-full flex items-center justify-center  overflow-x-auto">
           {loading ? (
-            <CircularProgress />
+            <Lodings.ThemedMiniLoader />
           ) : (
             <div className="absolute inset-0 w-full h-full ">
               {viewType ? (
