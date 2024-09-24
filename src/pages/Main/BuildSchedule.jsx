@@ -219,25 +219,9 @@ const BuildSchedule = () => {
 
           {loading && (
             <div className="mb-8">
-              <div className="flex justify-between mb-2">
-                <span className="text-lg font-semibold text-blue-600">
-                  Loading...
-                </span>
-                <span className="text-lg font-semibold text-blue-600">
-                  {Math.round(loadingProgress)}%
-                </span>
-              </div>
-              <ScheduleLoading/>
-              <LinearProgress
-                variant="determinate"
-                value={loadingProgress}
-                className="h-2 rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)",
-                  height: "8px",
-                }}
-              />
+             
+              <ScheduleLoading minDuration={generatingTime}/>
+            
             </div>
           )}
 

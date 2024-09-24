@@ -27,6 +27,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { toast } from "react-toastify";
+import MultiBlockLessonsInput from "./subjectAssignmentForm/MultiBlockLessonsInput";
 
 const schema = yup.object().shape({
   coreSubjects: yup.array().of(yup.string()),
@@ -99,64 +100,71 @@ const SubjectAssignmentForm = ({
       electiveSubject: "",
     },
   });
-// Assume these state variables and functions already exist:
-// selectedSubjects, setSelectedSubjects, updateTotalSelectedLessons
+  // Assume these state variables and functions already exist:
+  // selectedSubjects, setSelectedSubjects, updateTotalSelectedLessons
 
-const handleAddNewElectiveSubject = (newSubject) => {
-  if (newSubject.name.trim()) {
-    const subjectToAdd = {
-      id: newSubject.id,
-      name: newSubject.name.trim(),
-      need_special_rooms: false,
-      elective_or_core: "elective",
-      subjects: [],
-      lessons_per_week: 1,
-    };
-    const updatedSubjects = [...selectedSubjects, subjectToAdd];
+  const handleAddNewElectiveSubject = (newSubject) => {
+    if (newSubject.name.trim()) {
+      const subjectToAdd = {
+        id: newSubject.id,
+        name: newSubject.name.trim(),
+        need_special_rooms: false,
+        need_multi_block_lessons: false,
+        multi_block_lessons: 1,
+        elective_or_core: "elective",
+        subjects: [],
+        lessons_per_week: 1,
+      };
+      const updatedSubjects = [...selectedSubjects, subjectToAdd];
+      setSelectedSubjects(updatedSubjects);
+      updateTotalSelectedLessons(updatedSubjects);
+    }
+  };
+
+  const handleAddSubject = (subject, elective_or_core) => {
+    const existingSubjectIndex = selectedSubjects.findIndex(
+      (s) => s.id === subject.id
+    );
+
+    let updatedSubjects;
+
+    if (existingSubjectIndex !== -1) {
+      // Remove the subject if it already exists
+      updatedSubjects = selectedSubjects.filter((s) => s.id !== subject.id);
+    } else {
+      // Add the subject if it doesn't exist
+      const newSubject = {
+        id: subject.id,
+        name: subject.name,
+        need_special_rooms: false,
+        need_multi_block_lessons: false,
+        elective_or_core: elective_or_core,
+        multi_block_lessons: 1,
+        subjects:
+          elective_or_core === "core"
+            ? [
+                {
+                  id: subject.id,
+                  qualifiedTeachers: availableSubjects
+                    .find((s) => s.id === subject.id)
+                    ?.qualified_teachers.map((teacher) => teacher.id),
+                  preferedRooms: [],
+                },
+              ]
+            : [],
+        lessons_per_week: 1,
+      };
+      updatedSubjects = [...selectedSubjects, newSubject];
+    }
+
     setSelectedSubjects(updatedSubjects);
     updateTotalSelectedLessons(updatedSubjects);
-  }
-};
-
-const handleAddSubject = (subject, elective_or_core) => {
-  const existingSubjectIndex = selectedSubjects.findIndex(
-    (s) => s.id === subject.id
-  );
-
-  let updatedSubjects;
-
-  if (existingSubjectIndex !== -1) {
-    // Remove the subject if it already exists
-    updatedSubjects = selectedSubjects.filter((s) => s.id !== subject.id);
-  } else {
-    // Add the subject if it doesn't exist
-    const newSubject = {
-      id: subject.id,
-      name: subject.name,
-      need_special_rooms: false,
-      elective_or_core: elective_or_core,
-      subjects: elective_or_core === "core"
-        ? [{
-            id: subject.id,
-            qualifiedTeachers: availableSubjects
-              .find((s) => s.id === subject.id)?.qualified_teachers.map((teacher) => teacher.id),
-            preferedRooms: []
-          }]
-        : [],
-      lessons_per_week: 1,
-    };
-    updatedSubjects = [...selectedSubjects, newSubject];
-  }
-
-  setSelectedSubjects(updatedSubjects);
-  updateTotalSelectedLessons(updatedSubjects);
-};
-const handleRemoveSubject = (index) => {
-  const updatedSubjects = selectedSubjects.filter((_, i) => i !== index);
-  setSelectedSubjects(updatedSubjects);
-  updateTotalSelectedLessons(updatedSubjects);
-};
-  
+  };
+  const handleRemoveSubject = (index) => {
+    const updatedSubjects = selectedSubjects.filter((_, i) => i !== index);
+    setSelectedSubjects(updatedSubjects);
+    updateTotalSelectedLessons(updatedSubjects);
+  };
 
   const handleTeacherSelect = (subjectIndex, teacherId) => {
     const updatedSubjects = [...selectedSubjects];
@@ -172,21 +180,22 @@ const handleRemoveSubject = (index) => {
 
     setSelectedSubjects(updatedSubjects);
   };
- 
+
   const handlePreferedRoomSelect = (index, newRooms) => {
     const updatedSubjects = [...selectedSubjects];
-    
+
     // Update the preferredRooms for the specific subject
     if (updatedSubjects[index].elective_or_core === "core") {
-     
-      updatedSubjects[index].subjects[0].preferedRooms = newRooms.map(room => ({
-        id: room.id,
-        room_number: room.room_number,
-        name: room.name,
-      }));
+      updatedSubjects[index].subjects[0].preferedRooms = newRooms.map(
+        (room) => ({
+          id: room.id,
+          room_number: room.room_number,
+          name: room.name,
+        })
+      );
     }
-    console.log(updatedSubjects)
-    
+    console.log(updatedSubjects);
+
     setSelectedSubjects(updatedSubjects);
   };
 
@@ -208,10 +217,18 @@ const handleRemoveSubject = (index) => {
     setTotalSelectedLessons(total);
   };
 
-
   const handleToggleSpecialRooms = (index) => {
     const updatedSubjects = [...selectedSubjects];
-    updatedSubjects[index].need_special_rooms = !updatedSubjects[index].need_special_rooms;
+    updatedSubjects[index].need_special_rooms =
+      !updatedSubjects[index].need_special_rooms;
+    setSelectedSubjects(updatedSubjects);
+  };
+  const handleToggleneedMultiBlockLessons = (index) => {
+    const updatedSubjects = [...selectedSubjects];
+    updatedSubjects[index].need_multi_block_lessons =
+      !updatedSubjects[index].need_multi_block_lessons;
+      updatedSubjects[index].multi_block_lessons=parseInt(1)
+      updatedSubjects[index].multi_block_lessons_error=""
     setSelectedSubjects(updatedSubjects);
   };
   const onSubmit = async (data) => {
@@ -223,12 +240,11 @@ const handleRemoveSubject = (index) => {
           subjects: subject.subjects.map((s) => ({
             id: s.id,
             qualifiedTeachers: s.qualifiedTeachers,
-            preferedRooms:s.preferedRooms.map(room=>room.id)||[]
+            preferedRooms: s.preferedRooms.map((room) => room.id) || [],
           })),
         };
       }),
     };
-
 
     try {
       const response = await axios.post(
@@ -250,8 +266,9 @@ const handleRemoveSubject = (index) => {
     }
   };
 
-  const isSubmitDisabled = totalSelectedLessons > maxlessons_per_week;
-
+const isSubmitDisabled =
+  totalSelectedLessons > maxlessons_per_week ||
+  selectedSubjects.some((subject) => subject.multi_block_lessons_error);
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
@@ -264,9 +281,9 @@ const handleRemoveSubject = (index) => {
         </Typography>
       </DialogTitle>
       <Alert severity="warning" sx={{ mt: 2 }}>
-    This action will replace all existing subjects for every class in this grade. 
-    Please make sure to select the appropriate classroom assignments.
-  </Alert>
+        This action will replace all existing subjects for every class in this
+        grade. Please make sure to select the appropriate classroom assignments.
+      </Alert>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Controller
@@ -299,26 +316,27 @@ const handleRemoveSubject = (index) => {
             )}
           />
           <Controller
-  name="electiveSubject"
-  control={control}
-  render={({ field }) => (
-    <TextField
-      {...field}
-      fullWidth
-      margin="normal"
-      label="Add Elective Subject"
-      onKeyPress={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          handleAddNewElectiveSubject(
-            { id: Date.now(), name: e.target.value }
-          );
-          field.onChange("");
-        }
-      }}
-    />
-  )}
-/>
+            name="electiveSubject"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                margin="normal"
+                label="Add Elective Subject"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddNewElectiveSubject({
+                      id: Date.now(),
+                      name: e.target.value,
+                    });
+                    field.onChange("");
+                  }
+                }}
+              />
+            )}
+          />
           <Box mt={2}>
             {selectedSubjects.map((subject, index) => (
               <Box
@@ -339,19 +357,30 @@ const handleRemoveSubject = (index) => {
                     {subject.name} ({subject.elective_or_core})
                   </Typography>
                   <Box>
-                   {
-                    subject.elective_or_core=="core"&&(
+                    {subject.elective_or_core == "core" && (
                       <FormControlLabel
-                      control={
-                        <Switch
-                          checked={subject.need_special_rooms}
-                          onChange={() => handleToggleSpecialRooms(index)}
-                        />
-                      }
-                      label="Need Special Rooms"
-                    />
-                    )
-                   }
+                        control={
+                          <Switch
+                            checked={subject.need_special_rooms}
+                            onChange={() => handleToggleSpecialRooms(index)}
+                          />
+                        }
+                        label="Need Special Rooms"
+                      />
+                    )}
+                    {subject.elective_or_core == "core" && (
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={subject.need_multi_block_lessons}
+                            onChange={() =>
+                              handleToggleneedMultiBlockLessons(index)
+                            }
+                          />
+                        }
+                        label="Need Multi-block Lessons."
+                      />
+                    )}
                     <IconButton
                       onClick={() => handleRemoveSubject(index)}
                       size="small"
@@ -374,7 +403,9 @@ const handleRemoveSubject = (index) => {
                         `${option.room_number} - ${option.name}`
                       }
                       value={subject.subjects[0].preferedRooms}
-                      onChange={(e,newValue)=>handlePreferedRoomSelect(index,newValue)}
+                      onChange={(e, newValue) =>
+                        handlePreferedRoomSelect(index, newValue)
+                      }
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -394,6 +425,13 @@ const handleRemoveSubject = (index) => {
                       }
                     />
                   </Box>
+                )}
+                {subject?.need_multi_block_lessons && (
+                  <MultiBlockLessonsInput
+                    subject={subject}
+                    index={index}
+                    setSelectedSubjects={setSelectedSubjects}
+                  />
                 )}
 
                 {subject.elective_or_core === "core" && (

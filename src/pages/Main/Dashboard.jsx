@@ -5,7 +5,7 @@ import {
 
 } from "../../assets/datas";
 import { CiSearch } from "../../assets/icons";
-import { Lodings, ScheduleLoading, ToggleButton } from "../../components/common";
+import { Loadings, ScheduleLoading, ToggleButton } from "../../components/common";
 import CircularProgress from "@mui/material/CircularProgress";
 import TeacherAttendanceStatus from "../../components/specific/Dashboard/TeacherAttendanceStatus";
 import FreeTeacherOnaSession from "../../components/specific/Dashboard/FreeTeacherOnaSession";
@@ -293,7 +293,7 @@ const Dashboard = () => {
       <div className=" relative col-start-1 overflow-auto col-end-3 row-start-2 row-end-4  shadow-custom-10 rounded-lg border  bg-white">
         <div className="relative w-full h-full flex items-center justify-center  overflow-x-auto">
           {loading ? (
-            <Lodings.ThemedMiniLoader />
+            <Loadings.ThemedMiniLoader />
           ) : (
             <div className="absolute inset-0 w-full h-full ">
               {viewType ? (

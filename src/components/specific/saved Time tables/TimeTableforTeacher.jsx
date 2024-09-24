@@ -85,7 +85,7 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredTimetable.map((teacher, teacherIndex) => (
+            {filteredTimetable?.map((teacher, teacherIndex) => (
               <tr
                 key={teacherIndex}
                 className="bg-white hover:bg-gray-50 transition-colors duration-300"

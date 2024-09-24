@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 import { defaultAvatarImage } from "../../assets/images";
 import AddNewRoom from "../../components/forms/AddNewRoom";
 import RoomsSection from "../../components/specific/UserConfiguration/RoomsSection";
+import { Loadings } from "../../components/common";
 
 // theme for the input fields
 const theme = createTheme({
@@ -467,13 +468,12 @@ const UserConfiguration = ({  }) => {
     }
   };
   return isLoading ? (
-    <CircularProgress />
+    <Loadings.ThemedMiniLoader />
   ) : (
     <ThemeProvider theme={theme}>
       <div className="w-full h-full rounded-2xl px-6 py-5  shadow-lg overflow-auto">
         <div className="flex flex-row justify-between border-b pb-4">
           <div className="flex flex-row items-center gap-4">
-           
             <h1 className="text-xl font-semibold">School Details</h1>
           </div>
           <div className="flex flex-row gap-3">
@@ -955,10 +955,7 @@ const UserConfiguration = ({  }) => {
           />
         </div>
         {/* Rooms Section */}
-        <RoomsSection
-          rooms={rooms}
-          handleOpenRoomForm={handleOpenRoomForm}
-        />
+        <RoomsSection rooms={rooms} handleOpenRoomForm={handleOpenRoomForm} />
       </div>
       <AddNewRoom
         open={openRoomForm}

@@ -1,8 +1,35 @@
-import React, { useState } from 'react';
-import { Edit, Delete, Star, AccessTime, CheckCircle, Error } from '@mui/icons-material';
-import { Alert, AlertTitle, Tooltip } from '@mui/material';
+import React, { useState } from "react";
+import { Edit, Delete, Star, AccessTime } from "@mui/icons-material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Button,
+  Chip,
+  Tooltip,
+  Box,
+  CircularProgress,
+  Divider,
+} from "@mui/material";
+import {
+  CheckCircle,
+  Warning,
+  Error,
+  ThumbUp,
+  Balance,
+  Refresh,
+  TrendingUp,
+  TrendingDown,
+} from "@mui/icons-material";
 
-const SavedTimeTableCard = ({ table, onSubmitEdit, setDeleteTimeTableDialogOpen, handleSetDefault, isLoadingDefault }) => {
+const SavedTimeTableCard = ({
+  table,
+  onSubmitEdit,
+  setDeleteTimeTableDialogOpen,
+  handleSetDefault,
+  isLoadingDefault,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(table.name);
 
@@ -16,108 +43,201 @@ const SavedTimeTableCard = ({ table, onSubmitEdit, setDeleteTimeTableDialogOpen,
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleEdit();
     }
   };
 
-  const getScoreColor = (score) => {
-    if (score >= 90) return 'bg-green-500';
-    if (score >= 70) return 'bg-yellow-500';
-    return 'bg-red-500';
+  const getScoreStatus = (hardScore, softScore) => {
+    if (hardScore === 0 && softScore === 0)
+      return { label: "Perfect", icon: <CheckCircle />, color: "success" };
+    if (hardScore === 0)
+      return { label: "Feasible", icon: <ThumbUp />, color: "success" };
+    if (hardScore > -3)
+      return { label: "Near Feasible", icon: <Balance />, color: "warning" };
+    return { label: "Needs Improvement", icon: <Refresh />, color: "error" };
   };
 
-  const getScoreIcon = (score) => {
-    if (score >= 90) return '🏆';
-    if (score >= 70) return '⭐';
-    return '❗';
+  const formatScore = (score) => {
+    return score.toLocaleString("en-US", { maximumFractionDigits: 0 });
+  };
+
+  const scoreStatus = getScoreStatus(table.hard_score, table.soft_score);
+
+  const getScoreColor = (score, isHardScore = false) => {
+    if (isHardScore) {
+      return score === 0 ? "success.main" : "error.main";
+    }
+    // For soft score, lower is better
+    return score <= 5000
+      ? "success.main"
+      : score <= 10000
+      ? "warning.main"
+      : "error.main";
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
-      <div className="p-3">
-        <div className="flex justify-between items-center mb-2">
+    <Card
+      elevation={3}
+      sx={{
+        transition: "all 0.3s",
+        "&:hover": { transform: "translateY(-5px)", boxShadow: 6 },
+        border: `2px solid ${scoreStatus.color}.main`,
+        borderRadius: 2,
+      }}
+    >
+      <CardContent>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
+        >
           {isEditing ? (
             <input
               type="text"
               value={editedName}
               onChange={(e) => setEditedName(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="text-lg font-semibold border-b-2 border-blue-500 focus:outline-none focus:border-blue-700 transition-colors duration-300"
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: "bold",
+                border: "none",
+                borderBottom: "2px solid #3f51b5",
+                outline: "none",
+                width: "100%",
+              }}
               autoFocus
             />
           ) : (
-            <h2 className="text-lg font-semibold truncate">{table.name}</h2>
+            <Typography
+              variant="h5"
+              component="h2"
+              fontWeight="bold"
+              sx={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                flex: 1,
+                mr: 2,
+              }}
+            >
+              {table.name}
+            </Typography>
           )}
-          <div className="flex space-x-1">
+          <Box>
             <Tooltip title="Edit">
-              <button
-                onClick={handleEdit}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-300"
-              >
-                <Edit fontSize="small" className="text-gray-600" />
-              </button>
+              <IconButton size="small" onClick={handleEdit}>
+                <Edit fontSize="small" />
+              </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
-              <button
+              <IconButton
+                size="small"
                 onClick={() => setDeleteTimeTableDialogOpen(table.id)}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-300"
               >
-                <Delete fontSize="small" className="text-gray-600" />
-              </button>
+                <Delete fontSize="small" />
+              </IconButton>
             </Tooltip>
-          </div>
-        </div>
-        
-        <div className="flex items-center text-xs text-gray-500 mb-2">
-          <AccessTime fontSize="small" className="mr-1" />
-          <span>{new Date(table.created).toLocaleDateString()}</span>
-        </div>
+          </Box>
+        </Box>
 
-        <div className="flex flex-wrap gap-1 mb-2">
-          <Tooltip title={`Score: ${table.score}`}>
-            <span className={`px-2 py-0.5 rounded-full text-white text-xs font-medium ${getScoreColor(table.score)}`}>
-              {getScoreIcon(table.score)} {table.score}
-            </span>
-          </Tooltip>
-          <Tooltip title={table.feasible ? 'Feasible' : 'Not Feasible'}>
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${table.feasible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-              {table.feasible ? <CheckCircle fontSize="small" /> : <Error fontSize="small" />}
-            </span>
-          </Tooltip>
-          <Tooltip title={table.optimal ? 'Optimal' : 'Not Optimal'}>
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${table.optimal ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'}`}>
-              {table.optimal ? <CheckCircle fontSize="small" /> : <Error fontSize="small" />}
-            </span>
-          </Tooltip>
-        </div>
+        <Box display="flex" alignItems="center" mb={2}>
+          <AccessTime fontSize="small" sx={{ mr: 1 }} />
+          <Typography variant="body2" color="text.secondary">
+            {new Date(table.created).toLocaleDateString()}
+          </Typography>
+        </Box>
 
-        <button
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
+        >
+          <Chip
+            icon={scoreStatus.icon}
+            label={scoreStatus.label}
+            color={scoreStatus.color}
+            size="small"
+          />
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            color={getScoreColor(table.score)}
+          >
+            Score: {formatScore(table.score)}
+          </Typography>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Box mb={2}>
+          <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+            Mandatory Directives
+          </Typography>
+          <Box display="flex" alignItems="center">
+            <Typography
+              variant="h6"
+              color={getScoreColor(table.hard_score, true)}
+              sx={{ mr: 1 }}
+            >
+              {table.hard_score}
+            </Typography>
+            {table.hard_score === 0 ? (
+              <CheckCircle color="success" />
+            ) : (
+              <Error color="error" />
+            )}
+          </Box>
+        </Box>
+
+        <Box mb={2}>
+          <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+            Optional Directives
+          </Typography>
+          <Box display="flex" alignItems="center">
+            <Typography
+              variant="h6"
+              color={getScoreColor(table.soft_score)}
+              sx={{ mr: 1 }}
+            >
+              {formatScore(table.soft_score)}
+            </Typography>
+            {table.soft_score <= 5000 ? (
+              <TrendingDown color="success" />
+            ) : table.soft_score <= 10000 ? (
+              <TrendingUp color="warning" />
+            ) : (
+              <Warning color="error" />
+            )}
+          </Box>
+        </Box>
+
+        <Button
+          variant={table.is_default ? "contained" : "outlined"}
+          color="primary"
+          startIcon={<Star />}
+          fullWidth
           onClick={() => handleSetDefault(table.id)}
           disabled={isLoadingDefault}
-          className={`flex items-center justify-center w-full px-3 py-1 rounded-md text-xs font-medium transition-colors duration-300 ${
-            table.is_default
-              ? 'bg-blue-500 text-white hover:bg-blue-600'
-              : 'bg-white text-blue-500 border border-blue-500 hover:bg-blue-50'
-          }`}
+          sx={{ mt: 2 }}
         >
           {isLoadingDefault ? (
-            <div className="w-4 h-4 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="button" sx={{ mr: 1 }}>
+                Loading
+              </Typography>
+              <CircularProgress size={16} />
+            </Box>
+          ) : table.is_default ? (
+            "Default"
           ) : (
-            <>
-              <Star fontSize="small" className={`mr-1 ${table.is_default ? 'text-yellow-300' : ''}`} />
-              {table.is_default ? 'Default' : 'Set as Default'}
-            </>
+            "Set as Default"
           )}
-        </button>
-      </div>
-      {table.score < 70 && (
-        <Alert severity="warning" className="py-1 px-2">
-          <AlertTitle className="text-xs font-semibold">Low Score</AlertTitle>
-          <p className="text-xs">Consider optimizing this timetable.</p>
-        </Alert>
-      )}
-    </div>
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 

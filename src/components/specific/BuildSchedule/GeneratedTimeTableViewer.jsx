@@ -17,6 +17,7 @@ import TeacherTimeTableComponent from "../saved Time tables/TimeTableforTeacher"
 import StudentTimeTableComponent from "../saved Time tables/TimeTableforStudent";
 import TimetableControlPanel from "./TimetableControlPanel";
 import TimetableScoreDisplay from "./TimetableScoreDisplay";
+import { Loadings } from "../../common";
 
 const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
   const { headers, apiDomain } = useAuth();
@@ -90,7 +91,7 @@ const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <CircularProgress />
+        <Loadings.ThemedMiniLoader />
       </div>
     );
   }

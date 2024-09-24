@@ -10,7 +10,7 @@ import StatsPairDisplayer from "./StatsPairDisplayer";
 import PieChartStatsDisplayer from "./PieChartStatsDisplayer";
 import MeterGaugeChart from "./MeterGaugeChart";
 import ScheduleLoading from "./ScheduleLoading";
-import Lodings from "./Lodings";
+import Loadings from "./Loadings";
 
 
 
@@ -26,5 +26,5 @@ export {
   PieChartStatsDisplayer,
   MeterGaugeChart,
   ScheduleLoading,
-  Lodings,
+  Loadings,
 };

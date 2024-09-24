@@ -11,31 +11,35 @@ import {
   Chip,
   Box,
   Avatar,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { useAuth } from "../../context/Authcontext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import MultiBlockLessonsInput from "./subjectAssignmentForm/MultiBlockLessonsInput";
+import MultiBlockLessonsInputForSingleClasssubject from "./subjectAssignmentForm/MultiBlockLessonsInputForSingleClasssubject";
 
-const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
+const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
   const { apiDomain, headers } = useAuth();
   const [formData, setFormData] = useState(null);
   const [availableRooms, setAvailableRooms] = useState([]);
 
   const [availableSubjectAndTeachers, setAvailableSubjectAndTeachers] =
     useState([]);
-    const fetchAvailableRooms = async () => {
-      try {
-        const response = await axios.get(
-          `${apiDomain}/api/room/exclude_classrooms/`,
-          { headers }
-        );
-        setAvailableRooms(response.data);
-      } catch (err) {
-        toast.error("Failed to fetch available rooms");
-        console.error("Error fetching available rooms:", err);
-      }
-    };
-  
+  const fetchAvailableRooms = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/room/exclude_classrooms/`,
+        { headers }
+      );
+      setAvailableRooms(response.data);
+    } catch (err) {
+      toast.error("Failed to fetch available rooms");
+      console.error("Error fetching available rooms:", err);
+    }
+  };
+
   useEffect(() => {
     if (open && subject) {
       setFormData({
@@ -44,9 +48,16 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
         is_elective: subject.is_elective,
         teacher: subject.teacher,
         options: subject.options || [],
+        need_multi_block_lessons: subject.multi_block_lessons > 1,
+        need_special_rooms:
+          subject.options?.length > 0 &&
+          subject.options[0]?.preferred_rooms?.length > 0,
+        preferred_rooms: subject.options?.[0]?.preferred_rooms || [],
+        multi_block_lessons: subject.multi_block_lessons,
       });
+
       fetchAvailableSubjectAndTeachers();
-      fetchAvailableRooms()
+      fetchAvailableRooms();
     } else {
       setFormData(null);
       setAvailableSubjectAndTeachers([]);
@@ -131,21 +142,23 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
 
   const handleSubmit = async () => {
     let subjects = formData.is_elective
-  ? formData.options.map((option) => ({
-      subject: option.subject.id,
-      number_of_students: option.number_of_students,
-      assigned_teachers: option.allotted_teachers.map((teacher) => teacher.id),
-      preferred_rooms:[]
-     
-    }))
-  : [
-      {
-        subject: subject?.subjectId,
-        assigned_teachers: formData?.teacher?.map((teacher) => teacher.id) || [],
-        number_of_students:0,
-        preferred_rooms:[]
-      },
-    ]
+      ? formData.options.map((option) => ({
+          subject: option.subject.id,
+          number_of_students: option.number_of_students,
+          assigned_teachers: option.allotted_teachers.map(
+            (teacher) => teacher.id
+          ),
+          preferred_rooms: [],
+        }))
+      : [
+          {
+            subject: subject?.subjectId,
+            assigned_teachers:
+              formData?.teacher?.map((teacher) => teacher.id) || [],
+            number_of_students: 0,
+            preferred_rooms: [],
+          },
+        ];
 
     // Prepare the data
     const dataToSend = {
@@ -163,7 +176,7 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
 
       if (response.status === 200) {
         toast.success("Subject updated successfully!");
-        refresh()
+        refresh();
         onClose();
       } else {
         toast.error("Failed to update subject. Please try again.");
@@ -195,7 +208,47 @@ const UpdateSubjectForm = ({ open, onClose, subject ,refresh}) => {
           ? "Update Elective Subject"
           : "Update Core Subject"}
       </DialogTitle>
+      {!formData.is_elective && (
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData?.need_multi_block_lessons}
+              onChange={() =>
+                setFormData((prev) => ({
+                  ...prev,
+                  multi_block_lessons: 1,
+                  need_multi_block_lessons: !prev.need_multi_block_lessons,
+                }))
+              }
+            />
+          }
+          label="Need Multi-block Lessons."
+        />
+      )}
+      {!subject.is_elective  && (
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData.need_special_rooms}
+              onChange={() =>
+                setFormData((prev) => ({
+                  ...prev,
+                  preferred_rooms: [],
+                  need_special_rooms: !prev.need_special_rooms,
+                }))
+              }
+            />
+          }
+          label="Need Special Rooms"
+        />
+      )}
       <DialogContent>
+        {formData?.need_multi_block_lessons && (
+          <MultiBlockLessonsInputForSingleClasssubject
+            subject={formData}
+            setFormData={setFormData}
+          />
+        )}
         <TextField
           margin="dense"
           label="Subject Name"

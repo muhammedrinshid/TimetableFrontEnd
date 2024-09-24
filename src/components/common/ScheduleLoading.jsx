@@ -8,11 +8,27 @@ const ScheduleLoading = ({ minDuration = 5 }) => {
   const [startTime, setStartTime] = useState(null);
 
   const messages = [
-    'Arranging classes...',
+   'Arranging classes...',
     'Scheduling teachers...',
     'Optimizing lunch breaks...',
     'Balancing subjects...',
-    'Finalizing timetables...'
+    'Finalizing timetables...',
+    
+    'Checking room conflicts...',
+    'Resolving teacher conflicts...',
+    'Handling student group conflicts...',
+    'Validating elective group timeslot constraints...',
+    'Ensuring teacher assignments...',
+    'Ensuring timeslot assignments...',
+    
+    'Balancing tutor lesson load...',
+    'Enforcing daily lesson limits...',
+    'Preferring consistent teacher for subject...',
+    'Limiting subjects to once per day...',
+    'Avoiding overlapping periods for teachers with the same class...',
+    'Avoiding continuous subject blocks...',
+    'Minimizing continuous teaching for teachers...',
+    'Avoiding consecutive elective lessons...'
   ];
 
   const icons = [FaBook, FaClock, FaGraduationCap, FaChalkboardTeacher];

@@ -26,6 +26,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { toast } from "react-toastify";
+import MultiBlockLessonsInput from "./subjectAssignmentForm/MultiBlockLessonsInput";
 
 const schema = yup.object().shape({
   coreSubjects: yup.array().of(yup.string()),
@@ -49,8 +50,6 @@ const AddNewSubjectForm = ({
   const [totalSelectedLessons, setTotalSelectedLessons] = useState(0);
   const [alreadySelectedSubjects, setAlreadySelectedSubjects] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
-
-
 
   const fetchAvailableRooms = async () => {
     try {
@@ -94,7 +93,6 @@ const AddNewSubjectForm = ({
     if (open) {
       fetchSubjectsWithTeachers();
       fetchAvailableRooms();
-
     }
   }, [open, openAddNewSubjectForm]);
 
@@ -112,6 +110,9 @@ const AddNewSubjectForm = ({
       name: subject.name,
       elective_or_core: elective_or_core,
       need_special_rooms: false,
+      need_multi_block_lessons:false,
+      multi_block_lessons:1,
+      multi_block_lessons_error:'',
 
       subjects:
         elective_or_core === "core"
@@ -131,23 +132,34 @@ const AddNewSubjectForm = ({
   };
   const handleToggleSpecialRooms = (index) => {
     const updatedSubjects = [...selectedSubjects];
-    updatedSubjects[index].need_special_rooms = !updatedSubjects[index].need_special_rooms;
+    updatedSubjects[index].need_special_rooms =
+      !updatedSubjects[index].need_special_rooms;
+    setSelectedSubjects(updatedSubjects);
+  };
+
+  const handleToggleneedMultiBlockLessons = (index) => {
+    const updatedSubjects = [...selectedSubjects];
+    updatedSubjects[index].need_multi_block_lessons =
+      !updatedSubjects[index].need_multi_block_lessons;
+    updatedSubjects[index].multi_block_lessons = parseInt(1);
+    updatedSubjects[index].multi_block_lessons_error = "";
     setSelectedSubjects(updatedSubjects);
   };
   const handlePreferedRoomSelect = (index, newRooms) => {
     const updatedSubjects = [...selectedSubjects];
-    
+
     // Update the preferredRooms for the specific subject
     if (updatedSubjects[index].elective_or_core === "core") {
-     
-      updatedSubjects[index].subjects[0].preferedRooms = newRooms.map(room => ({
-        id: room.id,
-        room_number: room.room_number,
-        name: room.name,
-      }));
+      updatedSubjects[index].subjects[0].preferedRooms = newRooms.map(
+        (room) => ({
+          id: room.id,
+          room_number: room.room_number,
+          name: room.name,
+        })
+      );
     }
-    console.log(updatedSubjects)
-    
+    console.log(updatedSubjects);
+
     setSelectedSubjects(updatedSubjects);
   };
 
@@ -195,8 +207,7 @@ const AddNewSubjectForm = ({
           subjects: subject.subjects.map((s) => ({
             id: s.id,
             qualifiedTeachers: s.qualifiedTeachers,
-            preferedRooms:s.preferedRooms.map(room=>room.id)||[]
-
+            preferedRooms: s.preferedRooms.map((room) => room.id) || [],
           })),
         };
       }),
@@ -300,7 +311,6 @@ const AddNewSubjectForm = ({
                 borderColor="grey.300"
                 borderRadius={1}
               >
-                
                 <Box
                   display="flex"
                   justifyContent="space-between"
@@ -311,19 +321,30 @@ const AddNewSubjectForm = ({
                     {subject.name} ({subject.elective_or_core})
                   </Typography>
                   <Box>
-                   {
-                    subject.elective_or_core=="core"&&(
+                    {subject.elective_or_core == "core" && (
                       <FormControlLabel
-                      control={
-                        <Switch
-                          checked={subject.need_special_rooms}
-                          onChange={() => handleToggleSpecialRooms(index)}
-                        />
-                      }
-                      label="Need Special Rooms"
-                    />
-                    )
-                   }
+                        control={
+                          <Switch
+                            checked={subject.need_special_rooms}
+                            onChange={() => handleToggleSpecialRooms(index)}
+                          />
+                        }
+                        label="Need Special Rooms"
+                      />
+                    )}
+                    {subject.elective_or_core == "core" && (
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={subject.need_multi_block_lessons}
+                            onChange={() =>
+                              handleToggleneedMultiBlockLessons(index)
+                            }
+                          />
+                        }
+                        label="Need Multi-block Lessons."
+                      />
+                    )}
                     <IconButton
                       onClick={() => handleRemoveSubject(index)}
                       size="small"
@@ -367,6 +388,13 @@ const AddNewSubjectForm = ({
                       }
                     />
                   </Box>
+                )}
+                {subject?.need_multi_block_lessons && (
+                  <MultiBlockLessonsInput
+                    subject={subject}
+                    index={index}
+                    setSelectedSubjects={setSelectedSubjects}
+                  />
                 )}
                 {subject.elective_or_core === "core" && (
                   <Box mt={1}>
