@@ -712,7 +712,7 @@ const UserConfiguration = ({  }) => {
         </div>
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6" className="text-blue-600 mb-2">
-            Grades
+            Levles
           </Typography>
           <List>
             {schoolData?.grades?.map((grade) => (
@@ -750,7 +750,7 @@ const UserConfiguration = ({  }) => {
             onClick={() => handleOpenGradeDialog()}
             sx={{ mt: 2 }}
           >
-            Add New Grade
+            Add New Level
           </Button>
         </Box>
         {/* School Configuration Section */}
@@ -919,7 +919,7 @@ const UserConfiguration = ({  }) => {
                 autoFocus
                 margin="dense"
                 name="name"
-                label="Grade Name"
+                label="Level Name"
                 type="text"
                 fullWidth
                 InputLabelProps={{
