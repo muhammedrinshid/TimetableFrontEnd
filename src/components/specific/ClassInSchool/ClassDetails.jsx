@@ -3,6 +3,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
 import { LabelDispalyerWithIcon, LabelDisplayer } from "../../common";
+
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,6 +23,7 @@ import UpdateSubjectForm from "../../forms/UpdateSubjectForm";
 import SubjectCard from "./SubjectCard";
 import AddNewSubjectForm from "../../forms/AddNewSubjectForm";
 import ClassRoomWeeklyTimeTableComponent from "./ClassRoomWeeklyTimeTableComponent";
+import SubjectsAndTeachers from "./SubjectsAndTeachers";
 
 export const row1 = [
   "Instructor",
@@ -211,266 +213,203 @@ const ClassDetails = ({
   };
   return (
     <div
-      className={`w-full h-full rounded-2xl px-6 py-5 transition-opacity duration-300 ${
+      className={`relative flex flex-col  w-full h-full rounded-2xl px-6 py-5 transition-opacity duration-300 ${
         isAnimating ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="absolute top-0 right-0 w-full h-full flex flex-col justify-end  items-center ">
-        <div className="flex flex-row items-center gap-4 sticky bottom-0">
-          <IconButton
-            className="pointer-events-auto transition-all duration-200 ease-in-out"
-            sx={{
-              backgroundColor: isPreviousDisabled
-                ? "rgba(0, 0, 0, 0.1)"
-                : "rgba(0, 0, 0, 0.3)",
-              color: isPreviousDisabled ? "rgba(255, 255, 255, 0.3)" : "white",
-              "&:hover": {
-                backgroundColor: isPreviousDisabled
-                  ? "rgba(0, 0, 0, 0.1)"
-                  : "rgba(0, 0, 0, 0.5)",
-                transform: isPreviousDisabled
-                  ? "translateX(-50%)"
-                  : "scale(1.1) translateX(-45%)",
-              },
-              transform: "translateX(-50%)",
-              width: "36px",
-              height: "36px",
-              borderRadius: "50%",
-            }}
-            onClick={handlePrevious}
-            disabled={isPreviousDisabled}
-          >
-            <ArrowBackIosNewIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-
-          {/* Next button */}
-          <IconButton
-            className="pointer-events-auto transition-all duration-200 ease-in-out"
-            sx={{
-              backgroundColor: isNextDisabled
-                ? "rgba(0, 0, 0, 0.1)"
-                : "rgba(0, 0, 0, 0.3)",
-              color: isNextDisabled ? "rgba(255, 255, 255, 0.3)" : "white",
-              "&:hover": {
-                backgroundColor: isNextDisabled
-                  ? "rgba(0, 0, 0, 0.1)"
-                  : "rgba(0, 0, 0, 0.5)",
-                transform: isNextDisabled
-                  ? "translateX(50%)"
-                  : "scale(1.1) translateX(45%)",
-              },
-              transform: "translateX(50%)",
-              width: "36px",
-              height: "36px",
-              borderRadius: "50%",
-            }}
-            onClick={handleNext}
-            disabled={isNextDisabled}
-          >
-            <ArrowForwardIosIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </div>
-      </div>
-      {/* Header Section */}
-      <div className="flex flex-row justify-between border-b pb-4">
-        <div className="flex flex-row items-center gap-4">
-          <IconButton
-            onClick={() => {
-              setClassroomWeeklyTimetable([]);
-              setISelectedClassforView((prev) => ({ ...prev, isOpen: false }));
-            }}
-          >
-            <KeyboardBackspaceIcon fontSize="small" sx={{ color: "#818181" }} />
-          </IconButton>
-          <h1 className="text-xl font-semibold">
-            {classroomData?.standard_short_name}-{classroomData?.division}
-          </h1>
-        </div>
-
-        <div className="flex flex-row gap-3">
-          <Button
-            variant="outlined"
-            startIcon={<EditIcon />}
-            size="small"
-            sx={{
-              textTransform: "none",
-              borderRadius: 2,
-              padding: "10px 14px",
-              fontSize: 12,
-              backgroundColor: "rgba(33, 150, 243, 0.1)",
-              color: "#2196f3",
-              borderColor: "#2196f3",
-              "&:hover": {
-                backgroundColor: "rgba(33, 150, 243, 0.2)",
-                borderColor: "#1976d2",
-              },
-            }}
-            onClick={() =>
-              openEditCalssroomForm({
-                gradeId: selectedClassforView?.gradeId,
-                classroomId: classroomData?.id,
-                type: "all",
-              })
-            }
-          >
-            Update
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<DeleteOutlineIcon />}
-            size="small"
-            sx={{
-              textTransform: "none",
-              borderRadius: 2,
-              padding: "10px 14px",
-              fontSize: 12,
-              backgroundColor: "rgba(255, 182, 193, 0.2)",
-              color: "#d32f2f",
-              "&:hover": {
-                backgroundColor: "rgba(255, 182, 193, 0.5)",
-                borderColor: "#d32f2f",
-              },
-            }}
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
-
-      {/* Class Overview Section */}
-      <div className="flex flex-row pt-6 pl-1 border-b pb-5">
-        <div className="basis-1/3 flex flex-col items-center">
-          <div className="w-40 h-40 bg-blue-500 flex items-center justify-center text-white text-4xl font-bold rounded-lg shadow-lg">
-            {classroomData?.standard_short_name}-{classroomData?.division}
+      <div className=" flex flex-col bg-dark-background1 mb-4 p-3 rounded-lg shadow-custom-6">
+        {/* Header Section */}
+        <div className="flex flex-row justify-between border-b pb-4 sticky top-0 bg-dark-background1 rounded-t-lg p-3">
+          <div className="flex flex-row items-center gap-4">
+            <IconButton
+              onClick={() => {
+                setClassroomWeeklyTimetable([]);
+                setISelectedClassforView((prev) => ({
+                  ...prev,
+                  isOpen: false,
+                }));
+              }}
+            >
+              <KeyboardBackspaceIcon
+                fontSize="small"
+                sx={{ color: "#818181" }}
+              />
+            </IconButton>
+            <h1 className="text-xl font-semibold">
+              {classroomData?.standard_short_name}-{classroomData?.division}
+            </h1>
           </div>
-          <Box sx={{ width: "100%", p: 2 }}>
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" fontWeight="medium" gutterBottom>
-                Teachers Assigned
-              </Typography>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box sx={{ width: "100%", mr: 1 }}>
-                  <LinearProgress
-                    variant="determinate"
-                    value={
-                      classroomData?.total_subjects
-                        ? (classroomData.subjects_assigned_teacher /
-                            classroomData.total_subjects) *
-                          100
-                        : 0
-                    }
-                    sx={{
-                      height: 4,
-                      borderRadius: 2,
-                      backgroundColor: "#e0e0e0",
-                      "& .MuiLinearProgress-bar": {
-                        borderRadius: 2,
-                        backgroundColor: "#3f51b5",
-                      },
-                    }}
-                  />
-                </Box>
-              </Box>
-              <Typography variant="caption" color="text.secondary">
-                {classroomData?.subjects_assigned_teacher} /{" "}
-                {classroomData?.total_subjects}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="body2" fontWeight="medium" gutterBottom>
-                Lessons Assigned
-              </Typography>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box sx={{ width: "100%", mr: 1 }}>
-                  <LinearProgress
-                    variant="determinate"
-                    value={
-                      classroomData?.lessons_assigned_subjects
-                        ? (classroomData?.lessons_assigned_subjects /
-                            totalperiodsInWeek) *
-                          100
-                        : 0
-                    }
-                    sx={{
-                      height: 4,
-                      borderRadius: 2,
-                      backgroundColor: "#e0e0e0",
-                      "& .MuiLinearProgress-bar": {
-                        borderRadius: 2,
-                        backgroundColor: "#4caf50",
-                      },
-                    }}
-                  />
-                </Box>
-              </Box>
-              <Typography variant="caption" color="text.secondary" noWrap>
-                {classroomData?.lessons_assigned_subjects} /{" "}
-                {totalperiodsInWeek}
-              </Typography>
-            </Box>
-          </Box>
-        </div>
-        <div className="basis-2/3 px-6">
-          <p className="text-sm font-medium text-text_2 font-Inter mb-4">
-            CLASS DETAILS
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <LabelDisplayer
-              data={classroomData?.standard_name}
-              label="Standard"
-            />
-            <LabelDisplayer data={classroomData?.division} label="Division" />
-            <LabelDisplayer
-              data={classroomData?.number_of_students}
-              label="Number of Students"
-            />
-            <LabelDisplayer
-              data={
-                classroomData?.room
-                  ? classroomData.room?.room_number +
-                    " " +
-                    classroomData.room?.name
-                  : "No room assigned"
+       
+          <div className="flex flex-row gap-3">
+            <Button
+              variant="outlined"
+              startIcon={<EditIcon />}
+              size="small"
+              sx={{
+                textTransform: "none",
+                borderRadius: 2,
+                padding: "10px 14px",
+                fontSize: 12,
+                backgroundColor: "rgba(33, 150, 243, 0.1)",
+                color: "#2196f3",
+                borderColor: "#2196f3",
+                "&:hover": {
+                  backgroundColor: "rgba(33, 150, 243, 0.2)",
+                  borderColor: "#1976d2",
+                },
+              }}
+              onClick={() =>
+                openEditCalssroomForm({
+                  gradeId: selectedClassforView?.gradeId,
+                  classroomId: classroomData?.id,
+                  type: "all",
+                })
               }
-              label="Classroom"
-            />
+            >
+              Update
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<DeleteOutlineIcon />}
+              size="small"
+              sx={{
+                textTransform: "none",
+                borderRadius: 2,
+                padding: "10px 14px",
+                fontSize: 12,
+                backgroundColor: "rgba(255, 182, 193, 0.2)",
+                color: "#d32f2f",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 182, 193, 0.5)",
+                  borderColor: "#d32f2f",
+                },
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+
+        {/* Class Overview Section */}
+        <div className="flex flex-row pt-6 pl-1  pb-5">
+          <div className="basis-1/3 flex flex-col items-center">
+            <div className="w-40 h-40 bg-blue-500 flex items-center justify-center text-white text-4xl font-bold rounded-lg shadow-lg">
+              {classroomData?.standard_short_name}-{classroomData?.division}
+            </div>
+            <Box sx={{ width: "100%", p: 2 }}>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" fontWeight="medium" gutterBottom>
+                  Teachers Assigned
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{ width: "100%", mr: 1 }}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={
+                        classroomData?.total_subjects
+                          ? (classroomData.subjects_assigned_teacher /
+                              classroomData.total_subjects) *
+                            100
+                          : 0
+                      }
+                      sx={{
+                        height: 4,
+                        borderRadius: 2,
+                        backgroundColor: "#e0e0e0",
+                        "& .MuiLinearProgress-bar": {
+                          borderRadius: 2,
+                          backgroundColor: "#3f51b5",
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Typography variant="caption" color="text.secondary">
+                  {classroomData?.subjects_assigned_teacher} /{" "}
+                  {classroomData?.total_subjects}
+                </Typography>
+              </Box>
+
+              <Box>
+                <Typography variant="body2" fontWeight="medium" gutterBottom>
+                  Lessons Assigned
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{ width: "100%", mr: 1 }}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={
+                        classroomData?.lessons_assigned_subjects
+                          ? (classroomData?.lessons_assigned_subjects /
+                              totalperiodsInWeek) *
+                            100
+                          : 0
+                      }
+                      sx={{
+                        height: 4,
+                        borderRadius: 2,
+                        backgroundColor: "#e0e0e0",
+                        "& .MuiLinearProgress-bar": {
+                          borderRadius: 2,
+                          backgroundColor: "#4caf50",
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  {classroomData?.lessons_assigned_subjects} /{" "}
+                  {totalperiodsInWeek}
+                </Typography>
+              </Box>
+            </Box>
+          </div>
+          <div className="basis-2/3 px-6">
+            <p className="text-sm font-medium text-text_2 font-Inter mb-4">
+              CLASS DETAILS
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <LabelDisplayer
+                data={classroomData?.standard_name}
+                label="Standard"
+              />
+              <LabelDisplayer data={classroomData?.division} label="Division" />
+              <LabelDisplayer
+                data={classroomData?.number_of_students}
+                label="Number of Students"
+              />
+              <LabelDisplayer
+                data={
+                  classroomData?.room
+                    ? classroomData.room?.room_number +
+                      " " +
+                      classroomData.room?.name
+                    : "No room assigned"
+                }
+                label="Classroom"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Subjects and Teachers Section */}
-      <div className="py-6">
-        <p className="text-sm font-medium text-text_2 font-Inter mb-4">
-          SUBJECTS AND TEACHERS
-        </p>
-        <div className="space-y-4">
-          {classroomData?.subject_data.map((subject, index) => (
-            <SubjectCard
-              key={index}
-              subject={subject}
-              onEdit={handleSubjectEditButton}
-              onAddGroup={handleAddGroup}
-              selectedClassforView={selectedClassforView}
-              refresh={refresh}
-            />
-          ))}
-        </div>
-      </div>
-      <Tooltip title={"add new subject"}>
-        <button
-          onClick={onClickAddNewSubject}
-          className="fixed  right-6 bottom-6 p-4 bg-primary hover:bg-primary-dark bg-light-primary rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-          aria-label="Add new subject"
-        >
-          <AddIcon className="w-6 h-6 text-white" />
-        </button>
-      </Tooltip>
+      <SubjectsAndTeachers
+        classroomData={classroomData}
+        handleSubjectEditButton={handleSubjectEditButton}
+        handleAddGroup={handleAddGroup}
+        selectedClassforView={selectedClassforView}
+        refresh={refresh}
+        setOpenAddNewSubjectForm={setOpenAddNewSubjectForm}
+      />
+   
 
       {/* Timetable Section */}
       <div className="overflow-auto py-6">
         <ClassRoomWeeklyTimeTableComponent
           weeklyTimetable={classroomWeeklyTimetable}
+          classroomData={classroomData}
+
         />
       </div>
       <UpdateSubjectForm
@@ -488,6 +427,61 @@ const ClassDetails = ({
         openAddNewSubjectForm={openAddNewSubjectForm}
         refresh={refresh}
       />
+
+      <div className="self-center flex flex-row items-center gap-4 sticky bottom-0 ">
+        <IconButton
+          className="pointer-events-auto transition-all duration-200 ease-in-out"
+          sx={{
+            backgroundColor: isPreviousDisabled
+              ? "rgba(0, 0, 0, 0.1)"
+              : "rgba(0, 0, 0, 0.3)",
+            color: isPreviousDisabled ? "rgba(255, 255, 255, 0.3)" : "white",
+            "&:hover": {
+              backgroundColor: isPreviousDisabled
+                ? "rgba(0, 0, 0, 0.1)"
+                : "rgba(0, 0, 0, 0.5)",
+              transform: isPreviousDisabled
+                ? "translateX(-50%)"
+                : "scale(1.1) translateX(-45%)",
+            },
+            transform: "translateX(-50%)",
+            width: "36px",
+            height: "36px",
+            borderRadius: "50%",
+          }}
+          onClick={handlePrevious}
+          disabled={isPreviousDisabled}
+        >
+          <ArrowBackIosNewIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+
+        {/* Next button */}
+        <IconButton
+          className="pointer-events-auto transition-all duration-200 ease-in-out"
+          sx={{
+            backgroundColor: isNextDisabled
+              ? "rgba(0, 0, 0, 0.1)"
+              : "rgba(0, 0, 0, 0.3)",
+            color: isNextDisabled ? "rgba(255, 255, 255, 0.3)" : "white",
+            "&:hover": {
+              backgroundColor: isNextDisabled
+                ? "rgba(0, 0, 0, 0.1)"
+                : "rgba(0, 0, 0, 0.5)",
+              transform: isNextDisabled
+                ? "translateX(50%)"
+                : "scale(1.1) translateX(45%)",
+            },
+            transform: "translateX(50%)",
+            width: "36px",
+            height: "36px",
+            borderRadius: "50%",
+          }}
+          onClick={handleNext}
+          disabled={isNextDisabled}
+        >
+          <ArrowForwardIosIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+      </div>
     </div>
   );
 };

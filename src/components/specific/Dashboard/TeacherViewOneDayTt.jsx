@@ -79,8 +79,8 @@ const TeacherViewOneDayTt = ({
       <div style={{ minWidth: `${150 + NumberOfPeriodsInAday * 180}px` }}>
         <table className="w-full">
           <thead className="sticky top-0 left-0 z-20 backdrop-blur-[6.4px]">
-            <tr className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-              <th className="w-[150px] p-4 text-left font-semibold sticky left-0 z-10 backdrop-blur-[8.4px] bg-blue-500 border-r border-white">
+            <tr className="bg-gradient-to-r from-light-primary to-light-secondary text-white">
+              <th className="w-[150px] p-4 text-left font-semibold sticky left-0 z-10 backdrop-blur-[8.4px]  border-r border-white">
                 {teacherRow1[0]}
               </th>
               {teacherRow1.slice(1).map((header, index) => (

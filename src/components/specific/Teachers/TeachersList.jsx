@@ -100,7 +100,7 @@ const TeachersList = ({
           <SortMenu setSortType={setSortType} />
         </div>
       </div>
-      <div className="  grid grid-cols-[repeat(4,_minmax(120px,_1fr))] gap-6 overflow-auto mt-5 pr-4">
+      <div className="  grid md:grid-cols-[repeat(2,_minmax(120px,_1fr))] xl:grid-cols-[repeat(4,_minmax(150px,_1fr))] lg:grid-cols-[repeat(3,_minmax(120px,_1fr))] 2xl:grid-cols-[repeat(5,_minmax(170px,_1fr))] gap-6 overflow-auto mt-5 pr-4">
         {filteredAndSortedTeachers?.map((teacher, index) => {
           return (
             <div className="shadow-custom-8 rounded-2xl bg-white p-3  flex flex-col items-center justify-between ">

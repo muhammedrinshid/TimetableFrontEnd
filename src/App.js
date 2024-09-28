@@ -14,6 +14,7 @@ import UserConfiguration from "./pages/Main/UserConfiguration";
 import SchoolProfileDashboard from "./pages/Main/SchoolProfileDashboard";
 import DirectivesConfiguration from "./pages/Main/DirectivesConfiguration";
 import BuildSchedule from "./pages/Main/BuildSchedule";
+import { mainBg02 } from "./assets/images";
 function App() {
   return (
     <div className="w-full min-h-screen bg-[#F8F7FC] flex items-center justify-center font-Roboto">
@@ -32,7 +33,13 @@ function App() {
         limit={3}
         transition={Flip}
       />
-      <div className="w-full wide:max-w-8xl  h-screen  wide:max-h-128   wide:rounded-md   shadow-custom-2 overflow-clip">
+      <div
+        className="w-full 3xl:max-w-8xl  h-screen  3xl:max-h-128   3xl:rounded-md   shadow-custom-2 overflow-clip relative"
+        style={{
+          backgroundImage: `url(${mainBg02})`,
+        }}
+      >
+        <div className="absolute inset-0 bg-dark-background1 bg-opacity-90 z-0"></div>
         <BrowserRouter>
           <AuthProvider>
             <Routes>
@@ -57,10 +64,7 @@ function App() {
                     path="directives-configuration"
                     element={<DirectivesConfiguration />}
                   />
-                  <Route
-                    path="build-schedule"
-                    element={<BuildSchedule />}
-                  />
+                  <Route path="build-schedule" element={<BuildSchedule />} />
                 </Route>
               </Route>
               <Route path="login" element={<Login />} />

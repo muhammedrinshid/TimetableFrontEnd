@@ -72,7 +72,7 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
       <div className="overflow-x-auto shadow-xl rounded-lg">
         <table className="w-full table-fixed">
           <thead>
-            <tr className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+            <tr className="bg-gradient-to-r from-light-primary to-light-secondary text-white">
               <th className="w-1/6 p-4 text-left font-semibold">
                 {teacherRow1[0]}
               </th>
@@ -89,7 +89,7 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                 key={dayIndex}
                 className="bg-white hover:bg-gray-50 transition-colors duration-300"
               >
-             <td className="border-b p-4">
+                <td className="border-b p-4">
                   <Box
                     display="flex"
                     alignItems="center"
@@ -113,7 +113,6 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                       >
                         {day.day}
                       </Typography>
-        
                     </Box>
                   </Box>
                 </td>
@@ -148,7 +147,7 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                                 {session.type.charAt(0)}
                               </div>
                             </div>
-                            
+
                             <p className="room text-xs mb-3 flex justify-between items-center text-gray-600">
                               <span className="font-medium">
                                 Room {session?.room?.room_number}
@@ -167,8 +166,7 @@ const TeacherWeeklyTimeTableComponent = ({ teacherWeeklyTimetable }) => {
                                     </span>
                                     {session.type === "Elective" && (
                                       <span className="student-count text-gray-500 text-vs text-nowrap justify-self-end">
-                                        {classDetail.number_of_students}{" "}
-                                        cadet
+                                        {classDetail.number_of_students} cadet
                                       </span>
                                     )}
                                   </div>

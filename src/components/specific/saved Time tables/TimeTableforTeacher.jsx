@@ -16,7 +16,7 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
   useEffect(() => {
     if (searchTerm) {
       const lowercasedSearch = searchTerm.toLowerCase();
-      const filtered = teacherTimetable.filter((teacher) => {
+      const filtered = teacherTimetable?.filter((teacher) => {
         const nameMatch = teacher.instructor.name
           .toLowerCase()
           .includes(lowercasedSearch);

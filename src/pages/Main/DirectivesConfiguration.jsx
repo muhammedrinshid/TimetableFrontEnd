@@ -10,6 +10,7 @@ const DirectivesConfiguration = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { apiDomain, headers, logoutUser } = useAuth();
   const directiveDescriptions = {
+    tutor_free_period_constraint:"Ensures atleast one free period in a day",
     elective_group_timeslot:
       "Ensures that elective subjects are scheduled at the same time for all groups.",
     ensure_teacher_assigned:
@@ -194,6 +195,18 @@ const DirectivesConfiguration = () => {
           Optional Directives
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <DirectiveItem
+            name="tutor_free_period_constraint"
+            description={directiveDescriptions.tutor_free_period_constraint}
+            value={directives.tutor_free_period_constraint}
+            onChange={() =>
+              updateDirective(
+                "tutor_free_period_constraint",
+                !directives.tutor_free_period_constraint
+              )
+            }
+            disabled={false}
+          />
           <DirectiveItem
             name="tutor_lesson_load"
             description={directiveDescriptions.tutor_lesson_load}

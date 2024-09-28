@@ -17,7 +17,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
   useEffect(() => {
     if (searchTerm) {
       const lowercasedSearch = searchTerm.toLowerCase();
-      const filtered = StudentTimeTable.filter((classData) => {
+      const filtered = StudentTimeTable?.filter((classData) => {
         const classMatch =
           `${classData?.classroom?.standard}${classData?.classroom?.division}`
             .toLowerCase()

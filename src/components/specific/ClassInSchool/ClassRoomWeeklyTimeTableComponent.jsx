@@ -1,16 +1,30 @@
 import React from "react";
-import { Avatar, Box, Typography, Chip } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Typography,
+  Chip,
+  Button,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import { useAuth } from "../../../context/Authcontext";
 import ClassroomNotIncludedInTimetable from "../../empty state management components/ClassroomNotIncludedInTimetable";
+import { DownloadIcon } from "lucide-react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { AiOutlineFileExcel } from "react-icons/ai";
+import { SiMicrosoftexcel } from "react-icons/si";
+import { FaFileDownload } from "react-icons/fa";
 
-const ClassRoomWeeklyTimeTableComponent = ({ weeklyTimetable }) => {
+const ClassRoomWeeklyTimeTableComponent = ({
+  weeklyTimetable,
+  classroomData,
+}) => {
+  const { apiDomain, headers } = useAuth();
 
-    const {apiDomain}=useAuth()
-
-
-
-      const { NumberOfPeriodsInAday } = useAuth();
+  const { NumberOfPeriodsInAday } = useAuth();
 
   const studentRow = [
     "Time",
@@ -38,6 +52,34 @@ const ClassRoomWeeklyTimeTableComponent = ({ weeklyTimetable }) => {
     const hue = (dayName.charCodeAt(0) * 20) % 360;
     return `hsl(${hue}, 70%, 50%)`;
   };
+  const handleDownload = async () => {
+    try {
+      const response = await axios.get(
+        `${apiDomain}/api/time-table/download-classroom-timetable/${classroomData.id}/`,
+        {
+          headers,
+
+          responseType: "blob",
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `${classroomData?.standard_short_name}-${classroomData?.division}_timetable.xlsx`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast.success("Timetable downloaded successfully!");
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast.error("Failed to download timetable. Please try again.");
+    }
+  };
 
   const StyledAvatar = styled(Avatar)(({ theme }) => ({
     width: 70,
@@ -49,22 +91,30 @@ const ClassRoomWeeklyTimeTableComponent = ({ weeklyTimetable }) => {
     background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
   }));
 
-if (!weeklyTimetable || weeklyTimetable.length === 0) {
-  return (
-    <ClassroomNotIncludedInTimetable/>
-  )
-  
-}
-
+  if (!weeklyTimetable || weeklyTimetable.length === 0) {
+    return <ClassroomNotIncludedInTimetable />;
+  }
 
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
         Weekly Timetable
       </h2>
+
       <div className="overflow-x-auto shadow-xl rounded-lg">
-        <table className="w-full table-fixed">
-        <thead>
+        <div className="mb-2">
+          <Tooltip title={"Download Time Table File"}>
+            <button
+              onClick={handleDownload}
+              className="  p-4 bg-primary hover:bg-primary-dark bg-light-primary rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              aria-label="Add new subject"
+            >
+              <FaFileDownload className="w-6 h-6 text-white" />
+            </button>
+          </Tooltip>
+        </div>
+        <table className=" w-full table-fixed">
+          <thead className="">
             <tr className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
               <th className="w-1/6 p-4 text-left font-semibold">
                 {studentRow[0]}
@@ -175,12 +225,12 @@ if (!weeklyTimetable || weeklyTimetable.length === 0) {
                                   }
                                 </p>
                               )}
-                              {(
+                              {
                                 <p className="text-gray-600">
                                   Room: {distribution.room.name} (
                                   {distribution.room.number})
                                 </p>
-                              )}
+                              }
                             </div>
                           </div>
                         )

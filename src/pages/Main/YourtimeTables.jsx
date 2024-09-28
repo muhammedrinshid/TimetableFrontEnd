@@ -8,6 +8,9 @@ import axios from "axios";
 import SavedTimeTableCard from "../../components/specific/saved Time tables/SavedTimeTableCard";
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
 import SavedTimeTableViewer from "../../components/specific/saved Time tables/SavedTimeTableViewer";
+import { SearchInput } from "../../components/Mui components";
+import { SortMenu } from "../../components/specific/Teachers";
+import TimeTableSortMenu from "../../components/specific/saved Time tables/TimeTableSortMenu";
 
 const SavedTimeTables = () => {
   const { is_ready_for_timetable, apiDomain, headers } = useAuth();
@@ -15,11 +18,16 @@ const SavedTimeTables = () => {
   const [scheduleErrorList, setScheduleErrorList] = useState([]);
   const [editingTableId, setEditingTableId] = useState(null);
   const [editingName, setEditingName] = useState("");
+  const [sortType, setSortType] = useState("Date Ascending");
+  const [searchTerm, setSearchTerm] = useState("");
   const [deleteTimeTableDialogOpen, setDeleteTimeTableDialogOpen] =
     useState(false);
-  
+  const [visibleTables, setVisibleTables] = useState(4);
 
-    
+  const loadMore = () => {
+    setVisibleTables((prevVisible) => prevVisible + 4);
+  };
+
   const fetchTimetables = async () => {
     try {
       const response = await axios.get(
@@ -59,8 +67,6 @@ const SavedTimeTables = () => {
     fetchTimetables();
   }, []);
 
-
-
   const [loadingDefault, setLoadingDefault] = useState(null);
 
   const handleSetDefault = async (id) => {
@@ -84,7 +90,9 @@ const SavedTimeTables = () => {
       setLoadingDefault(null);
     }
   };
-
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
   const handleDelete = async () => {
     let timetable = savedTables.find(
       (table) => table.id == deleteTimeTableDialogOpen
@@ -113,7 +121,25 @@ const SavedTimeTables = () => {
       }
     }
   };
+  const sortTimetables = (a, b) => {
+    // Always prioritize the default timetable first
+    if (a.is_default && !b.is_default) return -1;
+    if (!a.is_default && b.is_default) return 1;
 
+    // Sorting logic based on sortType
+    switch (sortType) {
+      case "Name A-Z":
+        return a.name.localeCompare(b.name);
+      case "Name Z-A":
+        return b.name.localeCompare(a.name);
+      case "Date Ascending":
+        return new Date(a.date) - new Date(b.date);
+      case "Date Descending":
+        return new Date(b.date) - new Date(a.date);
+      default:
+        return 0;
+    }
+  };
   const onSubmitEdit = async (id, name) => {
     try {
       const response = await axios.put(
@@ -123,7 +149,7 @@ const SavedTimeTables = () => {
       );
 
       console.log("Timetable updated successfully:", response.data);
-      fetchTimetables()
+      fetchTimetables();
       // You can add additional logic here, such as updating the UI or state
     } catch (error) {
       console.error("Error updating timetable:", error);
@@ -131,52 +157,80 @@ const SavedTimeTables = () => {
       throw error;
     }
   };
-
+ const filteredAndSortedTimetables = savedTables
+   .filter((table) =>
+     table.name.toLowerCase().includes(searchTerm.toLowerCase())
+   )
+   .sort(sortTimetables);
   return (
-    <div className="w-full h-full p-6  overflow-auto relative">
-      <Typography variant="h4" className="mb-6 text-gray-800 font-bold">
-        Saved Timetables
-      </Typography>
+    <div className="w-full h-full px-6 pb-6  overflow-auto ">
+      <div className="relative">
+        <div className=" flex flex-row justify-start items-center gap-10 p-3 mb-5 sticky top-0 bg-dark-background1 shadow-custom-2 rounded-lg z-20">
+          <h3 className="text-gray-800 font-semibold text-2xl flex-grow">
+            {" "}
+            Saved Timetables
+          </h3>
+          <div className="p-1 bg-white rounded-2xl basis-2/5 h-fit shadow-custom-8">
+            <SearchInput value={searchTerm} onChange={handleSearchChange} />
+          </div>
+          <div className="p-1 bg-white rounded-2xl  shadow-custom-8">
+            <TimeTableSortMenu setSortType={setSortType} />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="space-y-4 2xl:space-y-0 2xl:grid 2xl:grid-cols-2 2xl:gap-4">
+            {filteredAndSortedTimetables
+              .slice(0, visibleTables)
+              .map((table) => (
+                <SavedTimeTableCard
+                  key={table.id}
+                  editingName={editingName}
+                  editingTableId={editingTableId}
+                  handleSetDefault={handleSetDefault}
+                  isLoadingDefault={loadingDefault}
+                  setDeleteTimeTableDialogOpen={setDeleteTimeTableDialogOpen}
+                  setEditingName={setEditingName}
+                  setEditingTableId={setEditingTableId}
+                  table={table}
+                  setSavedTables={setSavedTables}
+                  onSubmitEdit={onSubmitEdit}
+                />
+              ))}
+          </div>
 
-      <div className="space-y-4 ">
-        {savedTables.map((table) => (
-          <SavedTimeTableCard
-            editingName={editingName}
-            editingTableId={editingTableId}
-            handleSetDefault={handleSetDefault}
-            isLoadingDefault={loadingDefault}
-            setDeleteTimeTableDialogOpen={setDeleteTimeTableDialogOpen}
-            setEditingName={setEditingName}
-            setEditingTableId={setEditingTableId}
-            table={table}
-            setSavedTables={setSavedTables}
-            onSubmitEdit={onSubmitEdit}
-          />
-        ))}
-        <div className="flex flex-col items-center space-y-4">
-          
-
-          {scheduleErrorList.length > 0 && (
-            <div className="mt-4">
-              <Typography variant="h6" className="mb-2">
-                Available Schedules:
-              </Typography>
-              <div className="flex flex-wrap gap-2">
-                {scheduleErrorList.map((schedule, index) => (
-                  <Chip
-                    key={index}
-                    label={schedule}
-                    color="primary"
-                    variant="outlined"
-                    className="cursor-pointer hover:bg-primary-100"
-                  />
-                ))}
-              </div>
+          {visibleTables < savedTables.length && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={loadMore}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+              >
+                Load More
+              </button>
             </div>
           )}
+
+          <div className="col-span-2 flex flex-col items-center space-y-4 mt-4">
+            {scheduleErrorList.length > 0 && (
+              <div className="w-full">
+                <h3 className="text-lg font-semibold mb-2">
+                  Available Schedules:
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {scheduleErrorList.map((schedule, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 cursor-pointer hover:bg-blue-200"
+                    >
+                      {schedule}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
+      
       <SavedTimeTableViewer />
 
       <DeleteConfirmationPopup

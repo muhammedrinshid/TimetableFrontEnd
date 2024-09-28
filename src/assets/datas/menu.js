@@ -27,6 +27,11 @@ const menuData = [
     path: "",
   },
   {
+    name: "Academics",
+    icon: <MdSettings />, // Cleaner settings icon
+    path: "/user-configurations",
+  },
+  {
     name: "Teachers",
     icon: <MdOutlineSupervisorAccount />, // More representative teacher icon
     path: "/teachers",
@@ -41,11 +46,7 @@ const menuData = [
     icon: <MdOutlineSaveAlt />, // Alternative save icon
     path: "/saved-timetables",
   },
-  {
-    name: "Academics",
-    icon: <MdSettings />, // Cleaner settings icon
-    path: "/user-configurations",
-  },
+
   {
     name: "Directives", // New menu item
     icon: <FaSlidersH />, // Choose an appropriate icon
@@ -53,7 +54,7 @@ const menuData = [
   },
   {
     name: "Build Schedule", // New Build Schedule item
-    icon: <FaMagic/>, // Icon for building/creating
+    icon: <FaMagic />, // Icon for building/creating
     path: "/build-schedule", // Route for Build Schedule page
   },
 ];

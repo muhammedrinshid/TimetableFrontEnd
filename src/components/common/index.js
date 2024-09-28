@@ -11,6 +11,7 @@ import PieChartStatsDisplayer from "./PieChartStatsDisplayer";
 import MeterGaugeChart from "./MeterGaugeChart";
 import ScheduleLoading from "./ScheduleLoading";
 import Loadings from "./Loadings";
+import BackgroundIcons from "./BackgroundIcons";
 
 
 
@@ -27,4 +28,5 @@ export {
   MeterGaugeChart,
   ScheduleLoading,
   Loadings,
+  BackgroundIcons,
 };

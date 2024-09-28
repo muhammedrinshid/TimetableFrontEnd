@@ -13,6 +13,8 @@ import {
   Avatar,
   FormControlLabel,
   Switch,
+  Typography,
+  Autocomplete,
 } from "@mui/material";
 import { useAuth } from "../../context/Authcontext";
 import { toast } from "react-toastify";
@@ -52,8 +54,9 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
         need_special_rooms:
           subject.options?.length > 0 &&
           subject.options[0]?.preferred_rooms?.length > 0,
-        preferred_rooms: subject.options?.[0]?.preferred_rooms || [],
+        preferred_rooms: subject.preferred_rooms || [],
         multi_block_lessons: subject.multi_block_lessons,
+        multi_block_lessons_error: '',
       });
 
       fetchAvailableSubjectAndTeachers();
@@ -139,6 +142,30 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
           ],
     }));
   };
+  const handlePreferedRoomSelect = (newRooms) => {
+    // Update the preferredRooms for the specific subject
+    if (!formData.is_elective) {
+      setFormData((prev) => ({
+        ...prev,
+        options: prev.options.map((option, i) => {
+          // Check if the current option index matches the index passed
+          if (i === 0) {
+            // Assuming you want to update the first option
+
+            return ({
+              ...option,
+              preferred_rooms: newRooms.map((room) => ({
+                id: room.id,
+                room_number: room.room_number,
+                name: room.name,
+              })),
+            })
+          }
+          return option; // Return the unchanged option for other indices
+        }),
+      }));
+    }
+  };
 
   const handleSubmit = async () => {
     let subjects = formData.is_elective
@@ -148,7 +175,7 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
           assigned_teachers: option.allotted_teachers.map(
             (teacher) => teacher.id
           ),
-          preferred_rooms: [],
+          preferred_rooms:  [],
         }))
       : [
           {
@@ -156,15 +183,15 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
             assigned_teachers:
               formData?.teacher?.map((teacher) => teacher.id) || [],
             number_of_students: 0,
-            preferred_rooms: [],
+            preferred_rooms: formData.options[0]?.preferred_rooms.map((room)=>room.id) || [],
           },
         ];
-
     // Prepare the data
     const dataToSend = {
       name: formData.name,
       lessons_per_week: formData.lessons_per_week,
       subjects: subjects,
+      multi_block_lessons:formData.multi_block_lessons
     };
 
     try {
@@ -225,17 +252,20 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
           label="Need Multi-block Lessons."
         />
       )}
-      {!subject.is_elective  && (
+      {!subject.is_elective && (
         <FormControlLabel
           control={
             <Switch
               checked={formData.need_special_rooms}
               onChange={() =>
-                setFormData((prev) => ({
-                  ...prev,
-                  preferred_rooms: [],
-                  need_special_rooms: !prev.need_special_rooms,
-                }))
+                setFormData((prev) => {
+                  handlePreferedRoomSelect([]);
+                  return {
+                    ...prev,
+                    preferred_rooms: [],
+                    need_special_rooms: !prev.need_special_rooms,
+                  };
+                })
               }
             />
           }
@@ -248,6 +278,39 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
             subject={formData}
             setFormData={setFormData}
           />
+        )}
+        {formData.need_special_rooms && (
+          <Box mb={3}>
+            <Typography variant="h6" gutterBottom>
+              Special Rooms
+            </Typography>
+            <Autocomplete
+              multiple
+              options={availableRooms}
+              getOptionLabel={(option) =>
+                `${option.room_number} - ${option.name}`
+              }
+              value={formData.options[0].preferred_rooms}
+              onChange={(e, newValue) => handlePreferedRoomSelect(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Select Prefered Rooms"
+                  placeholder="Choose rooms"
+                />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant="outlined"
+                    label={`${option.room_number} - ${option.name}`}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+            />
+          </Box>
         )}
         <TextField
           margin="dense"
@@ -406,7 +469,11 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button
+          disabled={formData?.multi_block_lessons_error}
+          onClick={handleSubmit}
+          color="primary"
+        >
           Update
         </Button>
       </DialogActions>

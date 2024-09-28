@@ -38,9 +38,9 @@ const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
     setIsTeacherView(!isTeacherView);
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
+    const handleSearch = (event) => {
+      setSearchTerm(event.target.value);
+    };
 
   const fetchTeacherTimetable = async () => {
     try {

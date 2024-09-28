@@ -6,6 +6,7 @@ import { Typography, Switch, FormControlLabel } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import axios from "axios";
 import StudentTimeTableComponent from "./TimeTableforStudent";
+import TimetableControlPanel from "../BuildSchedule/TimetableControlPanel";
 
 const SavedTimeTableViewer = ({}) => {
   const { headers, apiDomain } = useAuth();
@@ -14,6 +15,7 @@ const SavedTimeTableViewer = ({}) => {
   const [isTeacherView, setIsTeacherView] = useState(true);
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState({});
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
@@ -68,25 +70,25 @@ const SavedTimeTableViewer = ({}) => {
     fetchStudentTimetable();
   }, []);
 
-
- 
+  const days = Object.keys(teacherWeekTimetable).map((day) => day)
+  const handleDayChange = (event) => {
+    setSelectedDay(event.target.value);
+  };
+     const handleSearch = (event) => {
+       setSearchTerm(event.target.value);
+     };
   return (
     <div className="mt-8">
-      <div className="w-full flex justify-between items-center mb-4">
-        <Typography variant="h5" className="text-gray-800 font-bold">
-         Default Weekly Timetable
-        </Typography>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={isTeacherView}
-              onChange={handleViewToggle}
-              color="primary"
-            />
-          }
-          label={isTeacherView ? "Teacher View" : "Student View"}
-        />
-      </div>
+      <TimetableControlPanel
+        selectedDay={selectedDay}
+        days={days}
+        handleDayChange={handleDayChange}
+        searchTerm={searchTerm}
+        handleSearch={handleSearch}
+        isTeacherView={isTeacherView}
+        handleViewToggle={handleViewToggle}
+      />
+
 
       <div className="w-full flex justify-center mb-4">
         {Object.keys(teacherWeekTimetable).map((day) => (
@@ -109,10 +111,13 @@ const SavedTimeTableViewer = ({}) => {
       {isTeacherView ? (
         <TeacherTimeTableComponent
           teacherTimetable={teacherWeekTimetable[selectedDay]}
+          searchTerm={searchTerm}
+
         />
       ) : (
         <StudentTimeTableComponent
           StudentTimeTable={studentWeekTimetable[selectedDay]}
+          searchTerm={searchTerm}
         />
       )}
     </div>
