@@ -21,7 +21,7 @@ function TeacherForm({
   subjects,
   handleCreateTeacherClose,
   tempCreateNewTeacher,
-  grades,
+  levels,
   setRefetch,
 }) {
   const { apiDomain, headers, logoutUser } = useAuth();
@@ -70,9 +70,9 @@ function TeacherForm({
         form.append(`qualified_subjects[${index}]`, subject.name);
       });
 
-      // Handle grades as a list of grade IDs
-      formData.grades.forEach((grade, index) => {
-        form.append(`grades[${index}]`, grade.id);
+      // Handle levels as a list of level IDs
+      formData.levels.forEach((level, index) => {
+        form.append(`levels[${index}]`, level.id);
       });
 
       // Handle image
@@ -219,7 +219,7 @@ function TeacherForm({
       <div className="flex flex-row py-4 gap-2">
         <div className="basis-1/2">
           <Controller
-            name="grades"
+            name="levels"
             control={control}
             defaultValue={[]}
             render={({ field: { onChange, value, ...rest } }) => (
@@ -227,8 +227,8 @@ function TeacherForm({
                 {...rest}
                 size="small"
                 multiple
-                id="grades-autocomplete"
-                options={grades}
+                id="levels-autocomplete"
+                options={levels}
                 value={value}
                 onChange={(event, newValue) => {
                   onChange(newValue);
@@ -239,10 +239,10 @@ function TeacherForm({
                   <TextField
                     {...params}
                     variant="outlined"
-                    label="Select Grades"
-                    placeholder="Select Grades"
-                    error={!!errors?.grades}
-                    helperText={errors?.grades ? errors?.grades.message : ""}
+                    label="Select Levels"
+                    placeholder="Select Levels"
+                    error={!!errors?.levels}
+                    helperText={errors?.levels ? errors?.levels.message : ""}
                   />
                 )}
               />

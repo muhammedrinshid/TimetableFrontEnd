@@ -65,8 +65,8 @@ const ClassDetails = ({
 
   const fetchClassroomData = async () => {
     let idForFetch =
-      classroomMap[selectedClassforView?.gradeId][
-        selectedClassforView?.standard_id
+      classroomMap[selectedClassforView?.levelId][
+        selectedClassforView?.grade_id
       ][selectedClassforView?.index];
     try {
       const response = await axios.get(
@@ -110,14 +110,14 @@ const ClassDetails = ({
 
   const isNextDisabled =
     selectedClassforView?.index + 1 ===
-    (classroomMap[selectedClassforView?.gradeId]?.[
-      selectedClassforView?.standard_id
+    (classroomMap[selectedClassforView?.levelId]?.[
+      selectedClassforView?.grade_id
     ]?.length || 0);
 
   const fetchClassroomWeekTimetable = async () => {
     let idForFetch =
-      classroomMap[selectedClassforView?.gradeId][
-        selectedClassforView?.standard_id
+      classroomMap[selectedClassforView?.levelId][
+        selectedClassforView?.grade_id
       ][selectedClassforView?.index];
 
     try {
@@ -174,7 +174,7 @@ const ClassDetails = ({
   };
 
   const handleSubjectEditButton = (subject) => {
-    let newData = { ...subject, gradeId: selectedClassforView.gradeId };
+    let newData = { ...subject, levelId: selectedClassforView.levelId };
     setSelectedSubject(newData);
     setIsUpdateFormOpen(true);
   };
@@ -185,8 +185,8 @@ const ClassDetails = ({
       isOpen: true,
       classroomId: classroomData?.id,
       selectedSubjects: classroomData.subject_data.map((sub) => sub.subjectId),
-      standardId: selectedClassforView?.standard_id,
-      gradeId: selectedClassforView?.gradeId,
+      gradeId: selectedClassforView?.grade_id,
+      levelId: selectedClassforView?.levelId,
       currentLessonsPerWeek: classroomData.lessons_assigned_subjects,
     }));
   };
@@ -236,7 +236,7 @@ const ClassDetails = ({
               />
             </IconButton>
             <h1 className="text-xl font-semibold">
-              {classroomData?.standard_short_name}-{classroomData?.division}
+              {classroomData?.grade_short_name}-{classroomData?.division}
             </h1>
           </div>
        
@@ -260,7 +260,7 @@ const ClassDetails = ({
               }}
               onClick={() =>
                 openEditCalssroomForm({
-                  gradeId: selectedClassforView?.gradeId,
+                  levelId: selectedClassforView?.levelId,
                   classroomId: classroomData?.id,
                   type: "all",
                 })
@@ -294,7 +294,7 @@ const ClassDetails = ({
         <div className="flex flex-row pt-6 pl-1  pb-5">
           <div className="basis-1/3 flex flex-col items-center">
             <div className="w-40 h-40 bg-blue-500 flex items-center justify-center text-white text-4xl font-bold rounded-lg shadow-lg">
-              {classroomData?.standard_short_name}-{classroomData?.division}
+              {classroomData?.grade_short_name}-{classroomData?.division}
             </div>
             <Box sx={{ width: "100%", p: 2 }}>
               <Box sx={{ mb: 2 }}>
@@ -370,8 +370,8 @@ const ClassDetails = ({
             </p>
             <div className="grid grid-cols-2 gap-4">
               <LabelDisplayer
-                data={classroomData?.standard_name}
-                label="Standard"
+                data={classroomData?.grade_name}
+                label="Grade"
               />
               <LabelDisplayer data={classroomData?.division} label="Division" />
               <LabelDisplayer

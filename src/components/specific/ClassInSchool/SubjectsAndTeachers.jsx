@@ -20,8 +20,8 @@ const SubjectsAndTeachers = ({
       isOpen: true,
       classroomId: classroomData?.id,
       selectedSubjects: classroomData.subject_data.map((sub) => sub.subjectId),
-      standardId: selectedClassforView?.standard_id,
-      gradeId: selectedClassforView?.gradeId,
+      gradeId: selectedClassforView?.grade_id,
+      levelId: selectedClassforView?.levelId,
       currentLessonsPerWeek: classroomData.lessons_assigned_subjects,
     }));
   };

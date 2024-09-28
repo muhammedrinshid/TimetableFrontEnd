@@ -60,8 +60,8 @@ const TeacherViewClassroomCard
                           `}
         >
           {/* <SiGoogleclassroom className="inline" />{" "} */}
-          {classRoom?.standard}
-          {classRoom?.standard && "-"}
+          {classRoom?.grade}
+          {classRoom?.grade && "-"}
           {classRoom?.division || "Free"}
         </h1>
         <h6 className="text-vs font-light text-text_1 flex justify-center items-center gap-1 text-center">

@@ -19,7 +19,7 @@ const SessionCardForTeacher = ({ session }) => {
           <div key={index} className="class-info">
             <School className="icon" />
             <span className="class-name">
-              {classDetail.standard} {classDetail.division}
+              {classDetail.grade} {classDetail.division}
             </span>
             {isElective && (
               <span className="student-count">

@@ -65,10 +65,10 @@ const AddNewSubjectForm = ({
   };
 
   const fetchSubjectsWithTeachers = async () => {
-    if (openAddNewSubjectForm?.gradeId) {
+    if (openAddNewSubjectForm?.levelId) {
       try {
         const response = await axios.get(
-          `${apiDomain}/api/class-room/subjects-with-teachers/${openAddNewSubjectForm.gradeId}`,
+          `${apiDomain}/api/class-room/subjects-with-teachers/${openAddNewSubjectForm.levelId}`,
           {
             headers,
           }

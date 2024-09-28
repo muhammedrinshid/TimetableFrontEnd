@@ -12,9 +12,9 @@ const ClassListDashboard = ({ ele }) => {
             border: "0.1px solid lightgray",
           }}
           variant=""
-          {...stringAvatar(ele.standard + " " + ele.standard + "df")}
+          {...stringAvatar(ele.grade + " " + ele.grade + "df")}
         >
-          {ele.standard}
+          {ele.grade}
           {ele.division}
         </Avatar>
         <p className="text-vs font-bold text-text_2">C00{ele.class_id}</p>

@@ -18,7 +18,7 @@ export const weeklyTimetableTeacher  = {
             room: "101",
             class_details: [
               {
-                standard: "10th",
+                grade: "10th",
                 division: "A",
                 number_of_students: 30,
               },
@@ -31,7 +31,7 @@ export const weeklyTimetableTeacher  = {
             room: "Lab 1",
             class_details: [
               {
-                standard: "11th",
+                grade: "11th",
                 division: "B",
                 number_of_students: 28,
               },
@@ -44,12 +44,12 @@ export const weeklyTimetableTeacher  = {
             room: "201",
             class_details: [
               {
-                standard: "12th",
+                grade: "12th",
                 division: "A",
                 number_of_students: 25,
               },
               {
-                standard: "12th",
+                grade: "12th",
                 division: "B",
                 number_of_students: 20,
               },
@@ -62,7 +62,7 @@ export const weeklyTimetableTeacher  = {
             room: "Lab 2",
             class_details: [
               {
-                standard: "11th",
+                grade: "11th",
                 division: "A",
                 number_of_students: 30,
               },
@@ -85,7 +85,7 @@ export const weeklyTimetableTeacher  = {
             room: "102",
             class_details: [
               {
-                standard: "10th",
+                grade: "10th",
                 division: "B",
                 number_of_students: 27,
               },
@@ -98,12 +98,12 @@ export const weeklyTimetableTeacher  = {
             room: "202",
             class_details: [
               {
-                standard: "11th",
+                grade: "11th",
                 division: "A",
                 number_of_students: 15,
               },
               {
-                standard: "11th",
+                grade: "11th",
                 division: "C",
                 number_of_students: 18,
               },
@@ -116,7 +116,7 @@ export const weeklyTimetableTeacher  = {
             room: "103",
             class_details: [
               {
-                standard: "12th",
+                grade: "12th",
                 division: "A",
                 number_of_students: 22,
               },
@@ -129,12 +129,12 @@ export const weeklyTimetableTeacher  = {
             room: "301",
             class_details: [
               {
-                standard: "10th",
+                grade: "10th",
                 division: "C",
                 number_of_students: 20,
               },
               {
-                standard: "12th",
+                grade: "12th",
                 division: "B",
                 number_of_students: 18,
               },
@@ -157,7 +157,7 @@ export const weeklyTimetableTeacher  = {
             room: "104",
             class_details: [
               {
-                standard: "10th",
+                grade: "10th",
                 division: "A",
                 number_of_students: 30,
               },
@@ -170,12 +170,12 @@ export const weeklyTimetableTeacher  = {
             room: "303",
             class_details: [
               {
-                standard: "11th",
+                grade: "11th",
                 division: "B",
                 number_of_students: 18,
               },
               {
-                standard: "12th",
+                grade: "12th",
                 division: "C",
                 number_of_students: 17,
               },
@@ -188,7 +188,7 @@ export const weeklyTimetableTeacher  = {
             room: "105",
             class_details: [
               {
-                standard: "11th",
+                grade: "11th",
                 division: "C",
                 number_of_students: 25,
               },
@@ -201,7 +201,7 @@ export const weeklyTimetableTeacher  = {
             room: "Lab 3",
             class_details: [
               {
-                standard: "12th",
+                grade: "12th",
                 division: "A",
                 number_of_students: 28,
               },

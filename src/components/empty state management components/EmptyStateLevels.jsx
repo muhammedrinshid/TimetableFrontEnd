@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 
-const EmptyClassState = ({ grade, onAddClass }) => {
+const EmptyClassState = ({ level, onAddClass }) => {
   return (
     <Box
       sx={{
@@ -22,7 +22,7 @@ const EmptyClassState = ({ grade, onAddClass }) => {
       </Typography>
       
       <Typography variant="body1" color="text.secondary" sx={{ mb: 1, maxWidth: 400 }}>
-        No classes added for you on {grade}.
+        No classes added for you on {level}.
       </Typography>
       
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 400 }}>

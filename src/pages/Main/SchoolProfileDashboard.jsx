@@ -59,12 +59,12 @@ const SchoolProfileDashboard = ({ schoolData }) => {
     lessonsPerWeek: 180,
     periodsPerDay: 8,
     workingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    grades: [
+    levels: [
       { name: "Elementary", count: 6 },
       { name: "Middle School", count: 3 },
       { name: "High School", count: 4 }
     ],
-    standards: [
+    grades: [
       { name: "6th", divisions: 4 },
       { name: "7th", divisions: 4 },
       { name: "8th", divisions: 3 },
@@ -145,20 +145,20 @@ const SchoolProfileDashboard = ({ schoolData }) => {
             </Card>
           </Grid>
 
-          {/* Grades and Standards */}
+          {/* Levels and Grades */}
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>Grades and Standards</Typography>
-                {school.grades.map((grade, index) => (
+                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>Levels and Grades</Typography>
+                {school.levels.map((level, index) => (
                   <Typography key={index}>
-                    <strong>{grade.name}:</strong> {grade.count} years
+                    <strong>{level.name}:</strong> {level.count} years
                   </Typography>
                 ))}
                 <Box sx={{ height: '1px', backgroundColor: 'grey.300', my: 1 }} />
-                {school.standards.map((standard, index) => (
+                {school.grades.map((grade, index) => (
                   <Typography key={index}>
-                    <strong>{standard.name} Grade:</strong> {standard.divisions} divisions
+                    <strong>{grade.name} Level:</strong> {grade.divisions} divisions
                   </Typography>
                 ))}
               </CardContent>

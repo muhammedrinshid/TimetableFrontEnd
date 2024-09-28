@@ -22,10 +22,10 @@ const TeachersList = ({
   setSelectedTeacherForUpdation,
   selectedTeacher,
   setIsDeleteTeacherPopupOpen,
-  grades,
-  setGradeType,
+  levels,
+  setLevelType,
   setSearchTerm,
-  gradeType,
+  levelType,
   searchTerm,
   setSortType,
   
@@ -36,12 +36,12 @@ const TeachersList = ({
   const iconStyle = {
     color: "#555555", // Change this to your desired color
   };
-  const options = grades?.map((grade) => ({
-    value: grade.id,
-    label: grade.short_name,
+  const options = levels?.map((level) => ({
+    value: level.id,
+    label: level.short_name,
   }));
-  const handleGradeChange = (value) => {
-    setGradeType(value);
+  const handleLevelChange = (value) => {
+    setLevelType(value);
   };
 
   const handleSearchChange = (event) => {
@@ -91,8 +91,8 @@ const TeachersList = ({
         </div>
         <div className="p-1 bg-white rounded-2xl basis-2/5 h-fit shadow-custom-8">
           <CustomSelect
-            value={gradeType}
-            onChange={handleGradeChange}
+            value={levelType}
+            onChange={handleLevelChange}
             options={options}
           />{" "}
         </div>
@@ -131,8 +131,8 @@ const TeachersList = ({
                 ))}
               </div>
               <div className="flex flex-row gap-1 flex-wrap mt-2">
-                {teacher.grades_display?.map((grade) => (
-                  <RandomColorChip2 subject={grade.short_name} />
+                {teacher.levels_display?.map((level) => (
+                  <RandomColorChip2 subject={level.short_name} />
                 ))}
               </div>
               <div className="flex flex-row mt-8 justify-between gap-5">

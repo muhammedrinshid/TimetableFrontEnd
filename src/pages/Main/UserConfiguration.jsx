@@ -100,12 +100,12 @@ const UserConfiguration = ({  }) => {
   const [imagePreview, setImagePreview] = useState(schoolData.profile_image);
   const [newImage, setNewImage] = useState(null);
   const [rooms, setRooms] = useState([]);
-  const [openGradeDialog, setOpenGradeDialog] = useState(false);
-  const [currentGrade, setCurrentGrade] = useState({
+  const [openLevelDialog, setOpenLevelDialog] = useState(false);
+  const [currentLevel, setCurrentLevel] = useState({
     name: "",
     short_name: "",
   });
-  const [isNewGrade, setIsNewGrade] = useState(false);
+  const [isNewLevel, setIsNewLevel] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(null);
 
   // this will fetch the data while loading the page
@@ -156,8 +156,8 @@ const UserConfiguration = ({  }) => {
   const handleSave = async () => {
     const updatedData = { ...schoolData };
 
-    // Remove grades from the data to be sent
-    delete updatedData.grades;
+    // Remove levels from the data to be sent
+    delete updatedData.levels;
 
     // Remove profile_image if it's a string (URL)
     if (typeof updatedData.profile_image === "string") {
@@ -246,38 +246,38 @@ const UserConfiguration = ({  }) => {
     });
   };
 
-  // popup handler for update and create grade
-  const handleOpenGradeDialog = (grade = null) => {
-    if (grade) {
-      setCurrentGrade(grade);
-      setIsNewGrade(false);
+  // popup handler for update and create level
+  const handleOpenLevelDialog = (level = null) => {
+    if (level) {
+      setCurrentLevel(level);
+      setIsNewLevel(false);
     } else {
-      setCurrentGrade({ name: "", short_name: "" });
-      setIsNewGrade(true);
+      setCurrentLevel({ name: "", short_name: "" });
+      setIsNewLevel(true);
     }
-    setOpenGradeDialog(true);
+    setOpenLevelDialog(true);
   };
 
-  const handleCloseGradeDialog = () => {
-    setOpenGradeDialog(false);
+  const handleCloseLevelDialog = () => {
+    setOpenLevelDialog(false);
   };
 
-  // handle changer for update and create grade
-  const handleGradeChange = (event) => {
-    setCurrentGrade({
-      ...currentGrade,
+  // handle changer for update and create level
+  const handleLevelChange = (event) => {
+    setCurrentLevel({
+      ...currentLevel,
       [event.target.name]: event.target.value,
     });
   };
 
-  // udate and create grade
-  const handleSaveGrade = async () => {
+  // udate and create level
+  const handleSaveLevel = async () => {
     // create
-    if (isNewGrade) {
+    if (isNewLevel) {
       try {
         const response = await axios.post(
-          `${apiDomain}/api/user/grade/`,
-          currentGrade,
+          `${apiDomain}/api/user/level/`,
+          currentLevel,
           {
             headers: headers,
           }
@@ -285,7 +285,7 @@ const UserConfiguration = ({  }) => {
 
         setSchoolData((prev) => ({
           ...prev,
-          grades: [...prev.grades, response.data],
+          levels: [...prev.levels, response.data],
         }));
       } catch (err) {
         if (err.response) {
@@ -315,19 +315,19 @@ const UserConfiguration = ({  }) => {
         }
       }
     } else {
-      // update grade
+      // update level
       try {
         const response = await axios.put(
-          `${apiDomain}/api/user/grade/${currentGrade.id}/`,
-          currentGrade,
+          `${apiDomain}/api/user/level/${currentLevel.id}/`,
+          currentLevel,
           {
             headers: headers,
           }
         );
         setSchoolData((prev) => ({
           ...prev,
-          grades: prev.grades.map((grade) =>
-            grade.id === currentGrade.id ? response.data : grade
+          levels: prev.levels.map((level) =>
+            level.id === currentLevel.id ? response.data : level
           ),
         }));
       } catch (err) {
@@ -358,19 +358,19 @@ const UserConfiguration = ({  }) => {
         }
       }
     }
-    handleCloseGradeDialog();
+    handleCloseLevelDialog();
   };
 
-  // function to open grade dlete popup and set which grade to be delete
-  const handleGradeDelete = (delete_id) => {
+  // function to open level dlete popup and set which level to be delete
+  const handleLevelDelete = (delete_id) => {
     setIsDeletePopupOpen(delete_id);
   };
 
   // function for delete confirmation
-  const handleConfirmGradeDelete = async () => {
+  const handleConfirmLevelDelete = async () => {
     try {
       const response = await axios.delete(
-        `${apiDomain}/api/user/grade/${isDeletePopupOpen}`,
+        `${apiDomain}/api/user/level/${isDeletePopupOpen}`,
         {
           headers: headers,
         }
@@ -380,7 +380,7 @@ const UserConfiguration = ({  }) => {
       fetchData();
     } catch (error) {
       // Handle errors
-      console.error("There was an error deleting the grade:", error);
+      console.error("There was an error deleting the level:", error);
       toast.error("error occured");
       // Optionally, handle errors in the UI or state
     }
@@ -712,25 +712,25 @@ const UserConfiguration = ({  }) => {
         </div>
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6" className="text-blue-600 mb-2">
-            Grades
+            Levels
           </Typography>
           <List>
-            {schoolData?.grades?.map((grade) => (
+            {schoolData?.levels?.map((level) => (
               <ListItem
-                key={grade.id}
+                key={level.id}
                 secondaryAction={
                   <>
                     <IconButton
                       edge="end"
                       aria-label="edit"
-                      onClick={() => handleOpenGradeDialog(grade)}
+                      onClick={() => handleOpenLevelDialog(level)}
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
                       edge="end"
                       aria-label="delete"
-                      onClick={() => handleGradeDelete(grade?.id)}
+                      onClick={() => handleLevelDelete(level?.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -738,8 +738,8 @@ const UserConfiguration = ({  }) => {
                 }
               >
                 <ListItemText
-                  primary={grade?.name}
-                  secondary={grade?.short_name}
+                  primary={level?.name}
+                  secondary={level?.short_name}
                 />
               </ListItem>
             ))}
@@ -747,10 +747,10 @@ const UserConfiguration = ({  }) => {
           <Button
             variant="outlined"
             startIcon={<AddIcon />}
-            onClick={() => handleOpenGradeDialog()}
+            onClick={() => handleOpenLevelDialog()}
             sx={{ mt: 2 }}
           >
-            Add New Grade
+            Add New 
           </Button>
         </Box>
         {/* School Configuration Section */}
@@ -910,24 +910,24 @@ const UserConfiguration = ({  }) => {
             />
           </Box>
 
-          <Dialog open={openGradeDialog} onClose={handleCloseGradeDialog}>
+          <Dialog open={openLevelDialog} onClose={handleCloseLevelDialog}>
             <DialogTitle>
-              {isNewGrade ? "Create New Grade" : "Edit Grade"}
+              {isNewLevel ? "Create New Level" : "Edit Level"}
             </DialogTitle>
             <DialogContent>
               <TextField
                 autoFocus
                 margin="dense"
                 name="name"
-                label="Grade Name"
+                label="Level Name"
                 type="text"
                 fullWidth
                 InputLabelProps={{
                   shrink: true,
                 }}
                 variant="outlined"
-                value={currentGrade.name}
-                onChange={handleGradeChange}
+                value={currentLevel.name}
+                onChange={handleLevelChange}
               />
               <TextField
                 margin="dense"
@@ -939,19 +939,19 @@ const UserConfiguration = ({  }) => {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={currentGrade.short_name}
-                onChange={handleGradeChange}
+                value={currentLevel.short_name}
+                onChange={handleLevelChange}
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseGradeDialog}>Cancel</Button>
-              <Button onClick={handleSaveGrade}>Save</Button>
+              <Button onClick={handleCloseLevelDialog}>Cancel</Button>
+              <Button onClick={handleSaveLevel}>Save</Button>
             </DialogActions>
           </Dialog>
           <DeleteConfirmationPopup
             isOpen={isDeletePopupOpen}
             onClose={() => setIsDeletePopupOpen(false)}
-            onConfirm={handleConfirmGradeDelete}
+            onConfirm={handleConfirmLevelDelete}
           />
         </div>
         {/* Rooms Section */}

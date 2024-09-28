@@ -5,9 +5,9 @@ import { Group as GroupIcon, Room as RoomIcon } from "@mui/icons-material";
 const ClassroomInfoCard = ({ classData }) => {
   const { classroom } = classData;
 
-  const getAvatarColor = (standard, division) => {
+  const getAvatarColor = (grade, division) => {
     const hue =
-      (standard?.charCodeAt(0) * 44 + division.charCodeAt(0) * 5) % 360;
+      (grade?.charCodeAt(0) * 44 + division.charCodeAt(0) * 5) % 360;
     return `hsl(${hue}, 70%, 80%)`;
   };
 
@@ -17,7 +17,7 @@ const ClassroomInfoCard = ({ classData }) => {
         <div className="flex items-center mb-4">
           <Avatar
             sx={{
-              bgcolor: getAvatarColor(classroom.standard, classroom.division),
+              bgcolor: getAvatarColor(classroom.grade, classroom.division),
               width: 56,
               height: 56,
               fontSize: "1.5rem",
@@ -25,7 +25,7 @@ const ClassroomInfoCard = ({ classData }) => {
               color: "white",
             }}
           >
-            {`${classroom.standard}${classroom.division}`.substring(0, 4)}
+            {`${classroom.grade}${classroom.division}`.substring(0, 4)}
           </Avatar>
 
           <div>

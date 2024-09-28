@@ -25,11 +25,11 @@ const TeachersInSchool = () => {
 
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [grades, setGrades] = useState([]);
+  const [levels, setLevels] = useState([]);
   const [subjectsTeachersCount,setSubjectsTeachersCount]=useState([])
   const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(true);
-  const [isLoadingGrades, setIsLoadingGrades] = useState(true);
+  const [isLoadingLevels, setIsLoadingLevels] = useState(true);
   const [refetch,setRefetch]=useState(false)
 
  
@@ -92,29 +92,29 @@ const TeachersInSchool = () => {
     }
   };
 
-  // Fetch grades function
-  const fetchGrades = async () => {
+  // Fetch levels function
+  const fetchLevels = async () => {
     try {
-      const response = await axios.get(`${apiDomain}/api/user/grades`, {
+      const response = await axios.get(`${apiDomain}/api/user/levels`, {
         headers,
       });
-      setGrades(response.data);
-      setIsLoadingGrades(false);
+      setLevels(response.data);
+      setIsLoadingLevels(false);
 
       // Check if response.data is empty
       if (response.data.length === 0) {
-        toast.info("You have no grades. Create grades to proceed.");
+        toast.info("You have no levels. Create levels to proceed.");
       }
     } catch (error) {
-      console.error("Error fetching grades:", error);
-      toast.error("Error fetching grades");
+      console.error("Error fetching levels:", error);
+      toast.error("Error fetching levels");
     }
   };
 
   useEffect(() => {
     fetchTeachers();
     fetchSubjects();
-    fetchGrades();
+    fetchLevels();
     fetchSubjectsTeachersCount()
   }, [refetch]);
 
@@ -186,7 +186,7 @@ const TeachersInSchool = () => {
         setIsDeleteTeacherPopupOpen={setIsDeleteTeacherPopupOpen}
         setSelectedTeacherForUpdation={setSelectedTeacherForUpdation}
         setRefetch={setRefetch}
-        grades={grades}
+        levels={levels}
       />
 
       {/* overall details */}
@@ -240,7 +240,7 @@ const TeachersInSchool = () => {
             handleCreateTeacherClose={handleCreateTeacherClose}
             setRefetch={setRefetch}
             subjects={subjects}
-            grades={grades}
+            levels={levels}
           />
         </DialogContent>
       </Dialog>
@@ -255,7 +255,7 @@ const TeachersInSchool = () => {
           <TeacherUpdateForm
             handleUpdateTeacherClose={handleUpdateTeacherClose}
             subjects={subjects}
-            grades={grades}
+            levels={levels}
             setRefetch={setRefetch}
 
             teacherData={selectedTeacherForUpdation}

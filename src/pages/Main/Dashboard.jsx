@@ -210,13 +210,13 @@ const Dashboard = () => {
   };
   const filteredStudentData = studentWeekTimetable.filter((student) => {
     const {
-      standard,
+      grade,
       division,
       class_id,
       room: { room_number },
     } = student.classroom;
     return (
-      standard.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      grade.toLowerCase().includes(searchQuery.toLowerCase()) ||
       division.toLowerCase().includes(searchQuery.toLowerCase()) ||
       class_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       room_number.toLowerCase().includes(searchQuery.toLowerCase())
@@ -268,7 +268,7 @@ const Dashboard = () => {
             renderInput={(params) => (
               <StyledTextField
                 {...params}
-                variant="standard"
+                variant="grade"
                 InputProps={{
                   ...params.InputProps,
                   disableUnderline: true,

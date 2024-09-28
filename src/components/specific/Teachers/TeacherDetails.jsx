@@ -371,11 +371,11 @@ const handleTeacherNext = (
               QUALIFIED GRADES
             </p>
             <div className="flex gap-2 flex-wrap">
-              {selectedTeacher?.grades_display?.map((grade) => (
+              {selectedTeacher?.levels_display?.map((level) => (
                 // <p className="text-[10px] p-[2px] w-fit px-2 text-nowrap font-semibold  bg-pale_orange bg-opacity-60 text-white first:bg-purple-500 last:bg-blue-500  font-sans rounded-lg">
-                //   {grade.name}
+                //   {level.name}
                 // </p>
-                <RandomColorChip subject={grade.name} />
+                <RandomColorChip subject={level.name} />
               ))}
             </div>
             <StatsPairDisplayer

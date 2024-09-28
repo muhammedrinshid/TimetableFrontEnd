@@ -12,18 +12,18 @@ import {
 } from "../../Mui components";
 import ClassCard from "../ClassInSchool/ClassCard";
 import DivisionCard from "../ClassInSchool/DivisionCard";
-import EmptyState from "../../empty state management components/EmptyStateGrades";
-import AddStandardForm from "../../forms/AddStandardForm";
+import EmptyState from "../../empty state management components/EmptyStateLevels";
+import AddGradeForm from "../../forms/AddGradeForm";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../../context/Authcontext";
-import GradeSortMenu from "./GradeSortMenu";
 import { Avatar } from "@mui/material";
+import LevelSortMenu from "./LevelSortMenu";
 
 const ClassList = ({
   setISelectedClassforView,
   handleClassroomDelete,
-  handleStandardDelete,
+  handleGradeDelete,
   refectClasssroomListdata,
   refetchClassroomList,
   openEditCalssroomForm,
@@ -33,24 +33,24 @@ const ClassList = ({
   const [isAddStandarFormOpen, setIsAddStandarFormOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [sortMethod, setSortMethod] = useState("Grade Name A-Z"); // Default sort method
+  const [sortMethod, setSortMethod] = useState("Level Name A-Z"); // Default sort method
 
   const [seletctedGreadeForCreation, setSeletctedGreadeForCreation] =
     useState("");
-  const [classByGrade, setClassByGrade] = useState([]);
+  const [classByLevel, setClassByLevel] = useState([]);
 
   const [availableSubjcts, setcAvailableSubjects] = useState(
     availableSubjectsInSchool
   );
   const [OpenTeacherAssingmentForm, setOpenTeacherAssingmentForm] = useState({
     isOpen: false,
+    level_id: "",
     grade_id: "",
-    standard_id: "",
     type: "all",
     div: "",
   });
 
-  const [whichGradeToDisplay, setWhichGradeToDisplay] = useState("");
+  const [whichLevelToDisplay, setWhichLevelToDisplay] = useState("");
   const getCharLightColor = (char) => {
     const singleChar = char.charAt(0);
 
@@ -65,19 +65,19 @@ const ClassList = ({
     return `hsl(${hash}, 70%, 80%)`;
   };
   const options = [
-    ...classByGrade.map((grade) => ({ value: grade.name, label: grade.name })),
+    ...classByLevel.map((level) => ({ value: level.name, label: level.name })),
   ];
-  function getClassroomIdsByGradeAndStandard(data) {
+  function getClassroomIdsByLevelAndGrade(data) {
     const result = {};
-    data.forEach((grade) => {
-      const standards = {};
-      grade.standards.forEach((standard) => {
-        const classroomIds = standard.classrooms.map(
+    data.forEach((level) => {
+      const grades = {};
+      level.grades.forEach((grade) => {
+        const classroomIds = grade.classrooms.map(
           (classroom) => classroom.id
         );
-        standards[standard.id] = classroomIds;
+        grades[grade.id] = classroomIds;
       });
-      result[grade.id] = standards;
+      result[level.id] = grades;
     });
     return result;
   }
@@ -87,13 +87,13 @@ const ClassList = ({
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${apiDomain}/api/class-room/grades-standards-classrooms/`,
+          `${apiDomain}/api/class-room/levels-grades-classrooms/`,
           {
             headers: headers,
           }
         );
-        setClassByGrade(response.data);
-        const result = getClassroomIdsByGradeAndStandard(response.data);
+        setClassByLevel(response.data);
+        const result = getClassroomIdsByLevelAndGrade(response.data);
         setClassroomMap(result);
       } catch (error) {
         if (error.response) {
@@ -108,10 +108,10 @@ const ClassList = ({
         console.error("Error fetching data:", error);
       }
     };
-    const fetcGradeSubjecthData = async () => {
+    const fetcLevelSubjecthData = async () => {
       try {
         const response = await axios.get(
-          `${apiDomain}/api/class-room/grade-subjects/`,
+          `${apiDomain}/api/class-room/level-subjects/`,
           {
             headers: headers,
           }
@@ -132,7 +132,7 @@ const ClassList = ({
     };
 
     fetchData();
-    fetcGradeSubjecthData();
+    fetcLevelSubjecthData();
   }, [refetchClassroomList]);
 
   // handle the function of add button click on classCard
@@ -149,30 +149,30 @@ const ClassList = ({
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
-  const handleGradeChange = (value) => {
-    setWhichGradeToDisplay(value);
+  const handleLevelChange = (value) => {
+    setWhichLevelToDisplay(value);
     console.log(value);
   };
 
   // temprary function mock the add new divison
 
   // function to open the assign teacher form
-  const openAssignTeacherForm = ({ grade_id, division, standard_id, type,standard }) => {
+  const openAssignTeacherForm = ({ level_id, division, grade_id, type,grade }) => {
     setOpenTeacherAssingmentForm((prev) => ({
       ...prev,
       isOpen: true,
-      grade_id: grade_id,
+      level_id: level_id,
       division: division,
-      standard_id: standard_id,
+      grade_id: grade_id,
       type: type,
-      standard:standard||""
+      grade:grade||""
     }));
   };
 
-  // filter the grade accroding to the selected grade
-  const filteredGrades = whichGradeToDisplay
-    ? classByGrade.filter((grade) => grade.name === whichGradeToDisplay)
-    : classByGrade;
+  // filter the level accroding to the selected level
+  const filteredLevels = whichLevelToDisplay
+    ? classByLevel.filter((level) => level.name === whichLevelToDisplay)
+    : classByLevel;
   return (
     <div className=" relative ">
       {/* header and contorle  section */}
@@ -185,10 +185,10 @@ const ClassList = ({
 
           <div className="bg-white rounded-3xl p-2 px-4 shadow-custom-8">
             <StyledAvatarGroup max={4}>
-              {classByGrade.map((grade) => (
+              {classByLevel.map((level) => (
                 <Avatar
                   sx={{
-                    bgcolor: getCharLightColor(grade?.name || "c"),
+                    bgcolor: getCharLightColor(level?.name || "c"),
                     color: "text.primary",
                     width: 30,
                     height: 30,
@@ -196,7 +196,7 @@ const ClassList = ({
                     fontWeight: "bold",
                   }}
                 >
-                  {grade?.short_name}
+                  {level?.short_name}
                 </Avatar>
               ))}
             </StyledAvatarGroup>
@@ -210,29 +210,29 @@ const ClassList = ({
           </div>
           <div className="p-1 bg-white rounded-2xl basis-2/5 h-fit shadow-custom-8">
             <CustomSelect
-              value={whichGradeToDisplay}
-              onChange={handleGradeChange}
+              value={whichLevelToDisplay}
+              onChange={handleLevelChange}
               options={options}
             />{" "}
           </div>
           <div className="p-1 bg-white rounded-2xl  shadow-custom-8">
-            <GradeSortMenu setSortType={setSortMethod} />
+            <LevelSortMenu setSortType={setSortMethod} />
           </div>
         </div>
       </div>
       <div className="overflow-y-auto h-full max-h-full ">
-        {filteredGrades?.map((grade) => {
-          const filteredAndSortedStandards = [...grade.standards]
+        {filteredLevels?.map((level) => {
+          const filteredAndSortedGrades = [...level.grades]
             .filter(
-              (standard) =>
+              (grade) =>
                 searchQuery === "" ||
-                standard.name.toLowerCase().includes(searchQuery.toLowerCase())
+                grade.name.toLowerCase().includes(searchQuery.toLowerCase())
             )
             .sort((a, b) => {
               switch (sortMethod) {
-                case "Grade Name A-Z":
+                case "Level Name A-Z":
                   return a.short_name.localeCompare(b.short_name);
-                case "Grade Name Z-A":
+                case "Level Name Z-A":
                   return b.short_name.localeCompare(a.short_name);
                 case "Divisions High to Low":
                   return b.classrooms.length - a.classrooms.length;
@@ -245,34 +245,34 @@ const ClassList = ({
           return (
             <div className="w-full min-h-44 my-2 flex items-center justify-start flex-col border-b-2 border-slate-300 py-6">
               <p className="text-sm font-medium text-slate-50 font-Inter my-2 p-2 rounded-xl bg-light-primary bg-opacity-75 flex items-center sticky top-0 z-10">
-                <SchoolIcon className="mr-2" /> {grade.name}
+                <SchoolIcon className="mr-2" /> {level.name}
               </p>
 
-              {filteredAndSortedStandards.length == 0 ? (
-                <EmptyState grade={grade.name} />
+              {filteredAndSortedGrades.length == 0 ? (
+                <EmptyState level={level.name} />
               ) : (
                 <div className="flex flex-col w-full max-w-full ">
-                  {filteredAndSortedStandards.map((standard) => {
+                  {filteredAndSortedGrades.map((grade) => {
                     return (
                       <div className="flex flex-row justify-start my-3 gap-5 items-center flex-wrap border-b last:border-none">
                         <div className="">
                           <ClassCard
                             openAssignTeacherForm={openAssignTeacherForm}
+                            level={level}
                             grade={grade}
-                            standard={standard}
                             refectClasssroomListdata={refectClasssroomListdata}
-                            handleStandardDelete={handleStandardDelete}
+                            handleGradeDelete={handleGradeDelete}
                           />
                         </div>
-                        {standard?.classrooms?.map((division, index) => (
+                        {grade?.classrooms?.map((division, index) => (
                           <DivisionCard
                             division={division}
-                            classroom_name={standard?.short_name+" "+division?.division}
-                            standard_id={standard?.id}
+                            classroom_name={grade?.short_name+" "+division?.division}
+                            grade_id={grade?.id}
                             handleClassroomDelete={handleClassroomDelete}
                             setISelectedClassforView={setISelectedClassforView}
                             openEditCalssroomForm={openEditCalssroomForm}
-                            grade={grade}
+                            level={level}
                             index={index}
                           />
                         ))}
@@ -283,18 +283,18 @@ const ClassList = ({
               )}
 
               <AddButton
-                onClick={() => handleAddButtonClick(grade.id)}
+                onClick={() => handleAddButtonClick(level.id)}
                 label={"Add New Grade"}
               />
             </div>
           );
         })}
       </div>
-      <AddStandardForm
+      <AddGradeForm
         open={isAddStandarFormOpen}
         onClose={handleFormClose}
         seletctedGreadeForCreation={seletctedGreadeForCreation}
-        setClassByGrade={setClassByGrade}
+        setClassByLevel={setClassByLevel}
       />
       <SubjectAssignmentForm
         open={OpenTeacherAssingmentForm.isOpen}

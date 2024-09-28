@@ -32,10 +32,10 @@ const DivisionCard = ({
   setISelectedClassforView,
   division,
   handleClassroomDelete,
-  standard_id,
+  grade_id,
   openEditCalssroomForm,
   classroom_name,
-  grade,
+  level,
   index,
 }) => {
   const { totalperiodsInWeek } = useAuth();
@@ -47,8 +47,8 @@ const DivisionCard = ({
     setISelectedClassforView({
       isOpen: true,
       id: division?.id,
-      standard_id: standard_id,
-      gradeId: grade.id,
+      grade_id: grade_id,
+      levelId: level.id,
       index: index,
     });
   };
@@ -110,7 +110,7 @@ const DivisionCard = ({
             size="small"
             onClick={() =>
               openEditCalssroomForm({
-                gradeId: grade?.id,
+                levelId: level?.id,
                 classroomId: division?.id,
                 type: "all",
                 name:classroom_name||""

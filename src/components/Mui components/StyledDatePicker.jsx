@@ -29,7 +29,7 @@ const CustomDatePicker = () => {
           renderInput={(params) => (
             <TextField
               {...params}
-              variant="standard"
+              variant="grade"
               fullWidth
             />
           )}

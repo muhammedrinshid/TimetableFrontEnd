@@ -31,22 +31,22 @@ const getLightColorFromString = (input) => {
 };
 
 const ClassCard = ({
-  standard,
   grade,
+  level,
   openAssignTeacherForm,
   refectClasssroomListdata,
-  handleStandardDelete,
+  handleGradeDelete,
 }) => {
-  const avatarLetter = standard.short_name;
-  const avatarColor = getLightColorFromString(standard?.name);
+  const avatarLetter = grade.short_name;
+  const avatarColor = getLightColorFromString(grade?.name);
   const { apiDomain, headers } = useAuth();
-  const onClickAddNewDivision = async (standard_id) => {
-    console.log(standard_id);
+  const onClickAddNewDivision = async (grade_id) => {
+    console.log(grade_id);
 
     try {
       const response = await axios.post(
         `${apiDomain}/api/class-room/add-division/`,
-        { standard_id: standard_id },
+        { grade_id: grade_id },
         { headers: headers }
       );
 
@@ -103,11 +103,11 @@ const ClassCard = ({
       </Avatar>
       <CardContent sx={{ textAlign: "center", p: "0 !important", mb: 2 }}>
         <Typography component="div" variant="h6" fontWeight="bold">
-          {standard.name}
+          {grade.name}
         </Typography>
         <Typography variant="body2" color="text.secondary" component="div">
-          {standard?.classrooms?.length}{" "}
-          {standard?.classrooms?.length === 1 ? "Division" : "Divisions"}
+          {grade?.classrooms?.length}{" "}
+          {grade?.classrooms?.length === 1 ? "Division" : "Divisions"}
         </Typography>
       </CardContent>
       <Box
@@ -120,7 +120,7 @@ const ClassCard = ({
         <Tooltip title="Add new division" arrow>
           <IconButton
             aria-label="add division"
-            onClick={() => onClickAddNewDivision(standard.id)}
+            onClick={() => onClickAddNewDivision(grade.id)}
             size="small"
           >
             <AddIcon />
@@ -132,10 +132,10 @@ const ClassCard = ({
             size="small"
             onClick={() =>
               openAssignTeacherForm({
-                grade_id: grade.id,
-                standard_id: standard?.id,
+                level_id: level.id,
+                grade_id: grade?.id,
                 type: "all",
-                standard:standard?.name
+                grade:grade?.name
               })
             }
           >
@@ -146,7 +146,7 @@ const ClassCard = ({
           <IconButton
             aria-label="delete class"
             size="small"
-            onClick={() => handleStandardDelete(standard.id)}
+            onClick={() => handleGradeDelete(grade.id)}
           >
             <DeleteIcon />
           </IconButton>

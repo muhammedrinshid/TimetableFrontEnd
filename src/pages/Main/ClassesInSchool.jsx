@@ -20,12 +20,12 @@ const ClassesInSchool = ({}) => {
   };
   const [isClassroomDeletePopupOpen, setIsClassroomDeletePopupOpen] =
     useState(null);
-  const [isStandardDeletePopupOpen, setIsStandardDeletePopupOpen] =
+  const [isGradeDeletePopupOpen, setIsGradeDeletePopupOpen] =
     useState(null);
 
     const [editClassroomForm, setEditClassroomForm] = useState({
       isOpen:false,
-      gradeId: "",
+      levelId: "",
       classroomId:"",
       type: "all",
     });
@@ -41,27 +41,27 @@ const ClassesInSchool = ({}) => {
   const handleClassroomDelete = (delete_id) => {
     setIsClassroomDeletePopupOpen(delete_id);
   };
-  // handle delete popup for Standard
-  const handleStandardDelete = (delete_id) => {
-    setIsStandardDeletePopupOpen(delete_id);
+  // handle delete popup for Grade
+  const handleGradeDelete = (delete_id) => {
+    setIsGradeDeletePopupOpen(delete_id);
   };
 
-  // function for delete confirmation Standard
-  const handleConfirmStandardDelete = async () => {
-    if (isStandardDeletePopupOpen) {
+  // function for delete confirmation Grade
+  const handleConfirmGradeDelete = async () => {
+    if (isGradeDeletePopupOpen) {
       try {
         const response = await axios.delete(
-          `${apiDomain}/api/class-room/standard/${isStandardDeletePopupOpen}`,
+          `${apiDomain}/api/class-room/grade/${isGradeDeletePopupOpen}`,
           {
             headers: headers,
           }
         );
         toast.success("Successfully deleted");
-        setIsStandardDeletePopupOpen(null);
+        setIsGradeDeletePopupOpen(null);
         refectClasssroomListdata();
       } catch (error) {
         // Handle errors
-        console.error("There was an error deleting the Standard:", error);
+        console.error("There was an error deleting the Grade:", error);
         toast.error("error occured");
         // Optionally, handle errors in the UI or state
       }
@@ -81,7 +81,7 @@ const ClassesInSchool = ({}) => {
         refectClasssroomListdata();
       } catch (error) {
         // Handle errors
-        console.error("There was an error deleting the grade:", error);
+        console.error("There was an error deleting the level:", error);
         toast.error("error occured");
         // Optionally, handle errors in the UI or state
       }
@@ -89,16 +89,16 @@ const ClassesInSchool = ({}) => {
   };
   const [openElectiveGroupPopup, setOpenElectiveGroupPopup] = useState(null);
   const handleAddGroup = ({
-    standardId,
+    gradeId,
     classroomId,
     electiveSubjectId,
     currenGrpId,
   }) => {
    
 
-    if (standardId && classroomId && electiveSubjectId) {
+    if (gradeId && classroomId && electiveSubjectId) {
       setOpenElectiveGroupPopup({
-        standardId: standardId,
+        gradeId: gradeId,
         classroomId: classroomId,
         electiveSubjectId: electiveSubjectId,
         currenGrpId: currenGrpId,
@@ -107,11 +107,11 @@ const ClassesInSchool = ({}) => {
       toast.error("error occured");
     }
   };
-  const openEditCalssroomForm = ({gradeId, classroomId,name}) => {
+  const openEditCalssroomForm = ({levelId, classroomId,name}) => {
     setEditClassroomForm((prev) => ({
       ...prev,
       isOpen: true,
-      gradeId:gradeId,
+      levelId:levelId,
       classroomId:classroomId,
       name:name
      
@@ -129,7 +129,7 @@ const ClassesInSchool = ({}) => {
         <ClassList
           setISelectedClassforView={setISelectedClassforView}
           handleClassroomDelete={handleClassroomDelete}
-          handleStandardDelete={handleStandardDelete}
+          handleGradeDelete={handleGradeDelete}
           refetchClassroomList={refetchClassroomList}
           refectClasssroomListdata={refectClasssroomListdata}
           openEditCalssroomForm={openEditCalssroomForm}
@@ -153,9 +153,9 @@ const ClassesInSchool = ({}) => {
         onConfirm={handleConfirmClassroomDelete}
       />
       <DeleteConfirmationPopup
-        isOpen={isStandardDeletePopupOpen}
-        onClose={() => setIsStandardDeletePopupOpen(false)}
-        onConfirm={handleConfirmStandardDelete}
+        isOpen={isGradeDeletePopupOpen}
+        onClose={() => setIsGradeDeletePopupOpen(false)}
+        onConfirm={handleConfirmGradeDelete}
       />
       <ElectiveGroupPopup
         open={openElectiveGroupPopup}

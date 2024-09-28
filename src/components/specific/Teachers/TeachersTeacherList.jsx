@@ -10,14 +10,14 @@ const TeachersTeacherList = ({
   handleChange,
   setSelectedTeacherForUpdation,
   setIsDeleteTeacherPopupOpen,
-  grades
+  levels
 }) => {
   const [selectedTeacher, setISelectedTeacher] = useState({
     isopen: false,
   });
 
 const [teachersMap,setTeachersMap]=useState([])
-const [gradeType, setGradeType] = useState("");
+const [levelType, setLevelType] = useState("");
 const [searchTerm, setSearchTerm] = useState("");
 const [sortType, setSortType] = useState("Name A-Z");
 
@@ -25,8 +25,8 @@ const filteredAndSortedTeachers = useMemo(() => {
   return teachers
     ?.filter(
       (teacher) =>
-        gradeType === "" ||
-        teacher.grades_display.some((grade) => grade.id === gradeType)
+        levelType === "" ||
+        teacher.levels_display.some((level) => level.id === levelType)
     )
     .filter(
       (teacher) =>
@@ -52,7 +52,7 @@ const filteredAndSortedTeachers = useMemo(() => {
           return 0;
       }
     });
-}, [teachers, gradeType, searchTerm, sortType]);
+}, [teachers, levelType, searchTerm, sortType]);
   return (
     <ReactCardFlip
       containerClassName="col-start-1 col-end-2 row-start-1 row-end-3 overflow-auto "
@@ -66,11 +66,11 @@ const filteredAndSortedTeachers = useMemo(() => {
         handleChange={handleChange}
         setSelectedTeacherForUpdation={setSelectedTeacherForUpdation}
         setIsDeleteTeacherPopupOpen={setIsDeleteTeacherPopupOpen}
-        grades={grades}
+        levels={levels}
         filteredAndSortedTeachers={filteredAndSortedTeachers}
-        gradeType={gradeType}
+        levelType={levelType}
         searchTerm={searchTerm}
-        setGradeType={setGradeType}
+        setLevelType={setLevelType}
         setSearchTerm={setSearchTerm}
         setSortType={setSortType}
       />

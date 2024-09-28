@@ -3,7 +3,7 @@
 export const class_data=
   [
     {
-        "standard": 1,
+        "grade": 1,
         "class_id": 1,
         "division": "A",
         "periods": [
@@ -42,7 +42,7 @@ export const class_data=
         ]
     },
     {
-        "standard": 2,
+        "grade": 2,
         "class_id": 2,
         "division": "B",
         "periods": [
@@ -81,7 +81,7 @@ export const class_data=
         ]
     },
     {
-        "standard": 3,
+        "grade": 3,
         "class_id": 3,
         "division": "C",
         "periods": [
@@ -120,7 +120,7 @@ export const class_data=
         ]
     },
     {
-        "standard": 4,
+        "grade": 4,
         "class_id": 4,
         "division": "A",
         "periods": [
@@ -159,7 +159,7 @@ export const class_data=
         ]
     },
     {
-        "standard": 5,
+        "grade": 5,
         "class_id": 5,
         "division": "B",
         "periods": [
@@ -198,7 +198,7 @@ export const class_data=
         ]
     },
     {
-        "standard": 1,
+        "grade": 1,
         "class_id": 6,
         "division": "C",
         "periods": [
@@ -237,7 +237,7 @@ export const class_data=
         ]
     },
     {
-        "standard": 2,
+        "grade": 2,
         "class_id": 7,
         "division": "A",
         "periods": [
@@ -276,7 +276,7 @@ export const class_data=
         ]
     },
     {
-        "standard": 3,
+        "grade": 3,
         "class_id": 8,
         "division": "B",
         "periods": [

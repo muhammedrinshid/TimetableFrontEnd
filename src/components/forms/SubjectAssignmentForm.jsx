@@ -65,10 +65,10 @@ const SubjectAssignmentForm = ({
   };
 
   const fetchSubjectsWithTeachers = async () => {
-    if (OpenTeacherAssingmentForm?.grade_id) {
+    if (OpenTeacherAssingmentForm?.level_id) {
       try {
         const response = await axios.get(
-          `${apiDomain}/api/class-room/subjects-with-teachers/${OpenTeacherAssingmentForm.grade_id}`,
+          `${apiDomain}/api/class-room/subjects-with-teachers/${OpenTeacherAssingmentForm.level_id}`,
           {
             headers,
           }
@@ -248,7 +248,7 @@ const SubjectAssignmentForm = ({
 
     try {
       const response = await axios.post(
-        `${apiDomain}/api/class-room/assign-subjects-to-all-classrooms/${OpenTeacherAssingmentForm.standard_id}/`,
+        `${apiDomain}/api/class-room/assign-subjects-to-all-classrooms/${OpenTeacherAssingmentForm.grade_id}/`,
         formattedData,
         { headers }
       );
@@ -272,7 +272,7 @@ const isSubmitDisabled =
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        Assign Subjects to All Division of {OpenTeacherAssingmentForm?.standard}
+        Assign Subjects to All Division of {OpenTeacherAssingmentForm?.grade}
         <Typography
           variant="subtitle1"
           color={isSubmitDisabled ? "error" : "textSecondary"}
@@ -282,7 +282,7 @@ const isSubmitDisabled =
       </DialogTitle>
       <Alert severity="warning" sx={{ mt: 2 }}>
         This action will replace all existing subjects for every class in this
-        grade. Please make sure to select the appropriate classroom assignments.
+        level. Please make sure to select the appropriate classroom assignments.
       </Alert>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>

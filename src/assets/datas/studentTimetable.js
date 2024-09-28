@@ -3,7 +3,7 @@ export const weeklyTimetablestudent = {
   MON: [
     {
       classroom:{
-        standard: "1th",
+        grade: "1th",
       division: "C",
       total_students: 90,
       room: {
@@ -149,7 +149,7 @@ export const weeklyTimetablestudent = {
       ]
     },
     {
-      standard: "10th",
+      grade: "10th",
       division: "A",
       total_students: 90,
       room: {
@@ -294,7 +294,7 @@ export const weeklyTimetablestudent = {
       ]
     },
     {
-      standard: "10th",
+      grade: "10th",
       division: "A",
       total_students: 90,
       room: {
@@ -441,7 +441,7 @@ export const weeklyTimetablestudent = {
   ],
   TUE: [
     {
-      standard: "10th",
+      grade: "10th",
       division: "A",
       total_students: 90,
       room: {
@@ -582,7 +582,7 @@ export const weeklyTimetablestudent = {
   ],
   WED: [
     {
-      standard: "10th",
+      grade: "10th",
       division: "A",
       total_students: 90,
       room: {

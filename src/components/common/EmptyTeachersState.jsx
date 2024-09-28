@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 
-const EmptyTeachersState = ({ grade, onAddTeacher }) => {
+const EmptyTeachersState = ({ level, onAddTeacher }) => {
   return (
     <Box
       sx={{
@@ -22,11 +22,11 @@ const EmptyTeachersState = ({ grade, onAddTeacher }) => {
       </Typography>
       
       <Typography variant="body1" color="text.secondary" sx={{ mb: 1, maxWidth: 400 }}>
-        No teachers added for grade {grade}.
+        No teachers added for level {level}.
       </Typography>
       
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 400 }}>
-        Please add teachers for this grade.
+        Please add teachers for this level.
       </Typography>
       
       <Button variant="contained" color="primary" onClick={onAddTeacher}>

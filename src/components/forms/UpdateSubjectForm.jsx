@@ -71,7 +71,7 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
     if (subject && subject.id) {
       try {
         const response = await fetch(
-          `${apiDomain}/api/class-room/subjects-with-teachers/${subject.gradeId}`,
+          `${apiDomain}/api/class-room/subjects-with-teachers/${subject.levelId}`,
           { headers }
         );
         const data = await response.json();

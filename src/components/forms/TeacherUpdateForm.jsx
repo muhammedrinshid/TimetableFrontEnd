@@ -23,7 +23,7 @@ function TeacherUpdateForm({
   subjects,
   handleUpdateTeacherClose,
   teacherData,
-  grades,
+  levels,
   setRefetch,
 }) {
   const { apiDomain, logoutUser, headers } = useAuth();
@@ -90,13 +90,13 @@ function TeacherUpdateForm({
         hasChanges = true;
       }
 
-      // Handle grades
-      const oldGrades = teacherData.grades_display.map((g) => g.id);
-      const newGrades = formData.grades.map((g) => g.id);
+      // Handle levels
+      const oldLevels = teacherData.levels_display.map((g) => g.id);
+      const newLevels = formData.levels.map((g) => g.id);
       if (
-        JSON.stringify(oldGrades.sort()) !== JSON.stringify(newGrades.sort())
+        JSON.stringify(oldLevels.sort()) !== JSON.stringify(newLevels.sort())
       ) {
-        updatedData.grades = newGrades;
+        updatedData.levels = newLevels;
         hasChanges = true;
       }
 
@@ -277,16 +277,16 @@ function TeacherUpdateForm({
         </div>
         <div className="basis-1/2">
           <Controller
-            name="grades"
+            name="levels"
             control={control}
-            defaultValue={teacherData?.grades_display}
+            defaultValue={teacherData?.levels_display}
             render={({ field: { onChange, value, ...rest } }) => (
               <Autocomplete
                 {...rest}
                 size="small"
                 multiple
-                id="grades-autocomplete"
-                options={grades}
+                id="levels-autocomplete"
+                options={levels}
                 value={value}
                 onChange={(event, newValue) => {
                   onChange(newValue);
@@ -297,17 +297,17 @@ function TeacherUpdateForm({
                   <TextField
                     {...params}
                     variant="outlined"
-                    label="Select Grades"
-                    placeholder="Select Grades"
-                    error={!!errors?.grades}
-                    helperText={errors?.grades ? errors?.grades.message : ""}
+                    label="Select Levels"
+                    placeholder="Select Levels"
+                    error={!!errors?.levels}
+                    helperText={errors?.levels ? errors?.levels.message : ""}
                   />
                 )}
               />
             )}
           />
-          {errors?.grade && (
-            <FormHelperText error>{errors?.grade?.message}</FormHelperText>
+          {errors?.level && (
+            <FormHelperText error>{errors?.level?.message}</FormHelperText>
           )}
         </div>
       </div>

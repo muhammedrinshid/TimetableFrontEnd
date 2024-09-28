@@ -1,7 +1,7 @@
 export const schoolData = [
   {
     name: "Elementary",
-    standards: [
+    grades: [
       {
         name: "LKG",
         shortName: "LKG",
@@ -258,7 +258,7 @@ export const schoolData = [
   },
   {
     name: "Middle School",
-    standards: [
+    grades: [
       {
         name: "6th Grade",
         shortName: "6",
@@ -647,7 +647,7 @@ export const schoolData = [
   },
   {
     name: "High School",
-    standards: [
+    grades: [
       {
         name: "9th Grade",
         shortName: "9",
@@ -981,7 +981,7 @@ export const schoolData = [
   },
   {
     name: "Higher Secondary",
-    standards: [
+    grades: [
       {
         name: "11th Grade",
         shortName: "11",
@@ -1221,7 +1221,7 @@ const sampl=[
       "id": "fea34d9c-bf94-433f-86d6-5b792429d023",
       "name": "High School edited",
       "short_name": "HS edited",
-      "standards": [
+      "grades": [
           {
               "id": "be4ebbb4-ae7a-4c24-b367-794b2e77bd41",
               "name": "10 th  grade",
@@ -1278,10 +1278,10 @@ const sampl=[
       "id": "6be8e9af-977b-4207-9662-299a2d352254",
       "name": "Lower Primary",
       "short_name": "LP",
-      "standards": [
+      "grades": [
           {
               "id": "5ba20ef9-f314-453b-8414-e5d8a9b94875",
-              "name": "1st standard",
+              "name": "1st grade",
               "short_name": "1",
               "classrooms": [
                   {
@@ -1300,7 +1300,7 @@ const sampl=[
           },
           {
               "id": "5ba20ef9-f314-453b-8414-e5d8a9b94875",
-              "name": "1st standard",
+              "name": "1st grade",
               "short_name": "1",
               "classrooms": [
                   {
@@ -1335,12 +1335,12 @@ const sampl=[
       "id": "38aef8f9-90ca-49dc-9090-ec84454186ec",
       "name": "Lower Primary",
       "short_name": "LP",
-      "standards": []
+      "grades": []
   },
   {
       "id": "bfbe174d-2226-473c-ad32-37c3e229bc6d",
       "name": "Upper Primary",
       "short_name": "UP",
-      "standards": []
+      "grades": []
   }
 ]

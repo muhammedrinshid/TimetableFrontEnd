@@ -2,7 +2,7 @@ classroomdata=[
 
 
     name:"class room name ",
-    standard name:"name of the class_room standard",
+    grade name:"name of the class_room grade",
     division:"classroom division",
     room no:"class_room.room.number",
     lessons_assinged_subjects:"which will calculate the total number of lessons per week of each class subject of a class room either you can create a new property in class_room or calculate in each query",

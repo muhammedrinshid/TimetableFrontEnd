@@ -213,8 +213,8 @@ const FreeTeacherOnaSession = ({
                     variant="outlined"
                   />
                   <h1 className="text-sm mt-1 font-semibold text-dark-accent">
-                    {classRoom?.standard}
-                    {classRoom?.standard && "-"}
+                    {classRoom?.grade}
+                    {classRoom?.grade && "-"}
                     {classRoom?.division || "No class"}
                   </h1>
                   <h3 className="text-sm font-light text-black">            {teacher.qualified_subjects[teacher.class_subject[selectedSession]] || "   "}</h3>

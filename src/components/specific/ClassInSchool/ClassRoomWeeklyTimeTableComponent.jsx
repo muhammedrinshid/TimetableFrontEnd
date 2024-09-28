@@ -68,7 +68,7 @@ const ClassRoomWeeklyTimeTableComponent = ({
       link.href = url;
       link.setAttribute(
         "download",
-        `${classroomData?.standard_short_name}-${classroomData?.division}_timetable.xlsx`
+        `${classroomData?.grade_short_name}-${classroomData?.division}_timetable.xlsx`
       );
       document.body.appendChild(link);
       link.click();

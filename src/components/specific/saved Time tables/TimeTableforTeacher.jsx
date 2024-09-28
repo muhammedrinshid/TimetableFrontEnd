@@ -157,7 +157,7 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
                                     className="class-info flex justify-between items-center mb-2 bg-white bg-opacity-50 rounded-md p-2"
                                   >
                                     <span className="class-name text-xs font-semibold text-gray-700">
-                                      {classDetail?.standard}{" "}
+                                      {classDetail?.grade}{" "}
                                       {classDetail?.division}
                                     </span>
                                     {session?.type === "Elective" && (

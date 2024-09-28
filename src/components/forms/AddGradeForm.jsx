@@ -10,11 +10,11 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../context/Authcontext";
 
-const AddStandardForm = ({
+const AddGradeForm = ({
   open,
   onClose,
   seletctedGreadeForCreation,
-  setClassByGrade,
+  setClassByLevel,
 }) => {
   const { apiDomain, logoutUser, headers } = useAuth();
 
@@ -30,34 +30,34 @@ const AddStandardForm = ({
       number_of_divisions: "",
     },
   });
-  const createStandardAndClassrooms = async (standardData) => {
-    const apiUrl = `${apiDomain}/api/class-room/create-standard/`;
+  const createGradeAndClassrooms = async (gradeData) => {
+    const apiUrl = `${apiDomain}/api/class-room/create-grade/`;
 
     const requestData = {
-      name: standardData.name,
-      short_name: standardData.short_name,
-      grade: standardData.grade,
-      number_of_divisions: standardData.number_of_divisions,
+      name: gradeData.name,
+      short_name: gradeData.short_name,
+      level: gradeData.level,
+      number_of_divisions: gradeData.number_of_divisions,
     };
 
     try {
       const response = await axios.post(apiUrl, requestData, { headers });
       console.log(response);
-      let newStandard = {
-        ...response.data.standard,
+      let newGrade = {
+        ...response.data.grade,
         classrooms: response.data.classrooms,
       };
 
-      setClassByGrade((prev) => {
-        let newData = prev.map((grade) =>
-          grade.id == response.data.grade_id
-            ? { ...grade, standards: [...grade.standards,newStandard]}
-            : grade
+      setClassByLevel((prev) => {
+        let newData = prev.map((level) =>
+          level.id == response.data.level_id
+            ? { ...level, grades: [...level.grades,newGrade]}
+            : level
         );
         return newData
       });
       onClose()
-      toast.success("Standard and classrooms created successfully");
+      toast.success("Grade and classrooms created successfully");
     } catch (err) {
       if (err.response) {
         console.error(
@@ -70,7 +70,7 @@ const AddStandardForm = ({
           logoutUser(); // Assuming you have this function defined
         } else {
           toast.error(
-            `Error creating standard and classrooms: ${
+            `Error creating grade and classrooms: ${
               err.response.data?.message || "Unexpected error"
             }`
           );
@@ -87,16 +87,16 @@ const AddStandardForm = ({
   };
 
   const onSubmitForm = async (data) => {
-    data["grade"] = seletctedGreadeForCreation;
+    data["level"] = seletctedGreadeForCreation;
 
     console.log(data);
 
     try {
-      const result = await createStandardAndClassrooms(data);
+      const result = await createGradeAndClassrooms(data);
       // Handle successful creation
 
       // Show success toast
-      toast.success("Standard and classrooms created successfully!");
+      toast.success("Grade and classrooms created successfully!");
       // Update your component state or perform any other actions here
     } catch (error) {
       // Error is already handled in the function, but you can add any additional handling here if needed
@@ -108,19 +108,19 @@ const AddStandardForm = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add New Standard</DialogTitle>
+      <DialogTitle>Add New Grade</DialogTitle>
       <form onSubmit={handleSubmit(onSubmitForm)}>
         <DialogContent>
           <Controller
             name="name"
             control={control}
-            rules={{ required: "Standard name is required" }}
+            rules={{ required: "Grade name is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
                 autoFocus
                 margin="dense"
-                label="Standard Name"
+                label="Grade Name"
                 type="text"
                 fullWidth
                 error={!!errors.name}
@@ -176,4 +176,4 @@ const AddStandardForm = ({
   );
 };
 
-export default AddStandardForm;
+export default AddGradeForm;

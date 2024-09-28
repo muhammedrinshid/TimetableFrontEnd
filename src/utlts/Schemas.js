@@ -39,17 +39,17 @@ const teacherSchema = yup.object().shape({
     )
     .min(1, "At least one subject is required"),
 
-  grades: yup
+  levels: yup
     .array()
     .of(
       yup.object().shape({
-        id: yup.string().required("Grade ID is required"),
-        name: yup.string().required("Grade name is required"),
+        id: yup.string().required("Level ID is required"),
+        name: yup.string().required("Level name is required"),
         // Add more validation rules as needed for other properties
       })
     )
-    .min(1, "At least one grade must be selected")
-    .required("Teacher grade is a required field"),
+    .min(1, "At least one level must be selected")
+    .required("Teacher level is a required field"),
 });
 
 const AssignSubjectSchema = yup.object().shape({

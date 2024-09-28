@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import GradeIcon from '@mui/icons-material/Grade';
+import LevelIcon from '@mui/icons-material/Grade';
 import GroupIcon from '@mui/icons-material/Group';
 
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 
-const GradeSortMenu = ({ setSortType }) => {
+const LevelSortMenu = ({ setSortType }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -33,19 +33,19 @@ const GradeSortMenu = ({ setSortType }) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleSort('Grade Name A-Z')}>
+        <MenuItem onClick={() => handleSort('Level Name A-Z')}>
           <ListItemIcon>
-            <GradeIcon />
+            <LevelIcon />
             <ArrowUpwardIcon />
           </ListItemIcon>
-          <ListItemText primary="Grade Name A-Z" />
+          <ListItemText primary="Level Name A-Z" />
         </MenuItem>
-        <MenuItem onClick={() => handleSort('Grade Name Z-A')}>
+        <MenuItem onClick={() => handleSort('Level Name Z-A')}>
           <ListItemIcon>
-            <GradeIcon />
+            <LevelIcon />
             <ArrowDownwardIcon />
           </ListItemIcon>
-          <ListItemText primary="Grade Name Z-A" />
+          <ListItemText primary="Level Name Z-A" />
         </MenuItem>
         <MenuItem onClick={() => handleSort('Divisions High to Low')}>
           <ListItemIcon>
@@ -66,4 +66,4 @@ const GradeSortMenu = ({ setSortType }) => {
   );
 };
 
-export default GradeSortMenu;
+export default LevelSortMenu;

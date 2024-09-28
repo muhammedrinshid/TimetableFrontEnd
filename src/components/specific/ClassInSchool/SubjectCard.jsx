@@ -29,7 +29,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
         setIsDeleteClassSubjectForm(null);
         refresh();
       } catch (error) {
-        console.error("There was an error deleting the Standard:", error);
+        console.error("There was an error deleting the Grade:", error);
         toast.error("Error occurred");
       }
     }
@@ -146,7 +146,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
                       size="small"
                       onClick={() =>
                         onAddGroup({
-                          standardId: selectedClassforView.standard_id,
+                          gradeId: selectedClassforView.grade_id,
                           classroomId: selectedClassforView.id,
                           electiveSubjectId: subject?.id,
                           currenGrpId: subject?.elective_group?.id || null,
@@ -161,7 +161,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
                     size="small"
                     onClick={() =>
                       onAddGroup({
-                        standardId: selectedClassforView.standard_id,
+                        gradeId: selectedClassforView.grade_id,
                         classroomId: selectedClassforView.id,
                         electiveSubjectId: subject?.id,
                       })

@@ -26,7 +26,7 @@
 //   const fetchAvailableSubjectAndTeachers = async () => {
 //     if (subject && subject.id) {
 //       try {
-//         const response = await fetch(`${apiDomain}/api/class-room/subjects-with-teachers/${subject.gradeId}`, { headers });
+//         const response = await fetch(`${apiDomain}/api/class-room/subjects-with-teachers/${subject.levelId}`, { headers });
 //         const data = await response.json();
 //         setAvailableSubjectAndTeachers(data);
 //       } catch (error) {

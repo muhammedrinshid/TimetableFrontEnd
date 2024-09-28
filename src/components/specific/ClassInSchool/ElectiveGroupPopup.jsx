@@ -34,16 +34,16 @@ const ElectiveGroupPopup = ({ open, onClose, openElectiveGroupPopup, refresh }) 
   const [selectedAdditionalRooms, setSelectedAdditionalRooms] = useState([]);
 
   useEffect(() => {
-    if (open && openElectiveGroupPopup?.standardId) {
-      fetchElectiveGroupData(openElectiveGroupPopup.standardId);
+    if (open && openElectiveGroupPopup?.gradeId) {
+      fetchElectiveGroupData(openElectiveGroupPopup.gradeId);
       fetchAvailableRooms();
     }
   }, [open, openElectiveGroupPopup]);
 
-  const fetchElectiveGroupData = async (standardId) => {
+  const fetchElectiveGroupData = async (gradeId) => {
     try {
       const response = await axios.get(
-        `${apiDomain}/api/class-room/elective-subject-add/${standardId}/`,
+        `${apiDomain}/api/class-room/elective-subject-add/${gradeId}/`,
         { headers }
       );
       setExistingGroups(response.data.existing_elective_groups);
@@ -152,7 +152,7 @@ const ElectiveGroupPopup = ({ open, onClose, openElectiveGroupPopup, refresh }) 
       const formData = {
         groupName: selectedGroup?.label || null,
         groupId: selectedGroup?.value || null,
-        standardId: openElectiveGroupPopup?.standardId,
+        gradeId: openElectiveGroupPopup?.gradeId,
         divisions: selectedClassrooms,
         preferredRooms: selectedAdditionalRooms.map(room => room.id)
       };

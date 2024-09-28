@@ -124,7 +124,7 @@ const SwapTeacherPopus = ({
           " from Session-" +
           (whoWantSwap.session + 1) +
           " of Class " +
-          classdeatails?.standard +
+          classdeatails?.grade +
           classdeatails?.division}
       </DialogTitle>
       <DialogContent>
@@ -231,9 +231,9 @@ const SwapTeacherPopus = ({
           </div>
         </div>
         <DialogContentText id="alert-dialog-slide-description">
-          Do you really want to change the {classdeatails?.standard}
+          Do you really want to change the {classdeatails?.grade}
           {"-"}
-          {classdeatails?.division} standard session- {whoWantSwap?.session + 1}{" "}
+          {classdeatails?.division} grade session- {whoWantSwap?.session + 1}{" "}
           on {selectedDate?.getDate()}{" "}
           {selectedDate?.toLocaleString("default", { month: "long" })}{" "}
           from {whoWantSwap?.subject} with {teacher1?.instructor?.name} to{" "}

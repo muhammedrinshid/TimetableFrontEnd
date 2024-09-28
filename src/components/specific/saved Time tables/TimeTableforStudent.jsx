@@ -19,7 +19,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
       const lowercasedSearch = searchTerm.toLowerCase();
       const filtered = StudentTimeTable?.filter((classData) => {
         const classMatch =
-          `${classData?.classroom?.standard}${classData?.classroom?.division}`
+          `${classData?.classroom?.grade}${classData?.classroom?.division}`
             .toLowerCase()
             .includes(lowercasedSearch);
         const roomMatch =
@@ -63,9 +63,9 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
     fontWeight: "bold",
   }));
 
-  const getAvatarColor = (standard, division) => {
+  const getAvatarColor = (grade, division) => {
     const hue =
-      ((standard?.charCodeAt(0) ?? 0) * 20 +
+      ((grade?.charCodeAt(0) ?? 0) * 20 +
         (division?.charCodeAt(0) ?? 0) * 5) %
       360;
     return `hsl(${hue}, 70%, 50%)`;
@@ -117,12 +117,12 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
                     <StyledAvatar
                       sx={{
                         bgcolor: getAvatarColor(
-                          classData?.classroom?.standard,
+                          classData?.classroom?.grade,
                           classData?.classroom?.division
                         ),
                       }}
                     >
-                      {`${classData?.classroom?.standard}${classData?.classroom?.division}`}
+                      {`${classData?.classroom?.grade}${classData?.classroom?.division}`}
                     </StyledAvatar>
                     <Box>
                       <Typography
@@ -131,7 +131,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
                         fontWeight="bold"
                         gutterBottom
                       >
-                        {`${classData?.classroom?.standard} ${classData?.classroom?.division}`}
+                        {`${classData?.classroom?.grade} ${classData?.classroom?.division}`}
                       </Typography>
                       <Box mb={1}>
                         <InfoChip

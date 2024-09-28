@@ -95,7 +95,7 @@ const FormComponent = ({
     maxPeriods: "",
     minPeriods: "",
     subjects: [],
-    grade: "",
+    level: "",
     image: null,
   });
   const handleSelectChange = (newValue) => {
@@ -137,7 +137,7 @@ const FormComponent = ({
 
     resolver:yupResolver(teacherSchema)
   });
-  const gradesOptions = ["HSS", "HS", "UP"];
+  const levelsOptions = ["HSS", "HS", "UP"];
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex justify-center items-center">
@@ -223,20 +223,20 @@ const FormComponent = ({
         <div className="basis-1/2">
           {" "}
           <FormControl variant="outlined" fullWidth>
-            <InputLabel>Grade</InputLabel>
+            <InputLabel>Level</InputLabel>
             <Select
-              label="Grade"
+              label="Level"
               size="small"
-              value={formValues.grade}
+              value={formValues.level}
               onChange={handleInputChange}
               error={errors.}
               inputProps={{
-                name: "grade",
+                name: "level",
               }}
             >
-              {gradesOptions.map((grade) => (
-                <MenuItem key={grade} value={grade}>
-                  {grade}
+              {levelsOptions.map((level) => (
+                <MenuItem key={level} value={level}>
+                  {level}
                 </MenuItem>
               ))}
             </Select>
@@ -255,7 +255,7 @@ const FormComponent = ({
         <FileUpload handleImageChange={handleImageChange} />
       </div>
 
-      {/* Other form fields (Image Upload, Notes, Weekly Periods, Subjects, Grade, Image Preview) */}
+      {/* Other form fields (Image Upload, Notes, Weekly Periods, Subjects, Level, Image Preview) */}
 
       <div className="flex flex-row gap-3 w-full justify-end mt-8">
         <Button variant="outlined" onClick={handleCreateTeacherClose}>
