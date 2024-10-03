@@ -53,7 +53,7 @@ const menuData = [
     path: "/directives-configuration",
   },
   {
-    name: "Build Schedule", // New Build Schedule item
+    name: "Ai Scheduler", // New Build Schedule item
     icon: <FaMagic />, // Icon for building/creating
     path: "/build-schedule", // Route for Build Schedule page
   },
