@@ -71,7 +71,7 @@ const TeachersList = ({
 
         <div className="bg-white rounded-3xl p-2 px-4 shadow-custom-8">
           <StyledAvatarGroup max={4}>
-            {filteredAndSortedTeachers.map((teacher) => (
+            {filteredAndSortedTeachers?.map((teacher) => (
               <Avatar
                 alt={teacher?.name}
                 sx={{ width: 30, height: 30, fontSize: 20 }}

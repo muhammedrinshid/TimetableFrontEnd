@@ -326,7 +326,7 @@ const UserConfiguration = ({  }) => {
         );
         setSchoolData((prev) => ({
           ...prev,
-          grades: prev.grades.map((grade) =>
+          grades: prev.grades?.map((grade) =>
             grade.id === currentGrade.id ? response.data : grade
           ),
         }));

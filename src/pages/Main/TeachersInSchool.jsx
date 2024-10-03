@@ -98,7 +98,7 @@ const TeachersInSchool = () => {
       const response = await axios.get(`${apiDomain}/api/user/grades`, {
         headers,
       });
-      setGrades(response.data);
+      setGrades(response.data||[]);
       setIsLoadingGrades(false);
 
       // Check if response.data is empty
