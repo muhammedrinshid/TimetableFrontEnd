@@ -14,8 +14,6 @@ import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import { grey } from "@mui/material/colors";
 import { useAuth } from "../../../context/Authcontext";
 
-
-
 const TeacherViewOneDayTt = ({
   teacherTimetable,
   changeTecherStatus,
@@ -117,7 +115,10 @@ const TeacherViewOneDayTt = ({
                   {teacher.sessions
                     .slice(0, NumberOfPeriodsInAday)
                     .map((session, sessionIndex) => (
-                      <td key={sessionIndex} className="border-b border-r p-2 w-[180px]">
+                      <td
+                        key={sessionIndex}
+                        className="border-b border-r p-2 w-[180px]"
+                      >
                         <div
                           className={`rounded-lg h-full ${getSessionColor(
                             session,

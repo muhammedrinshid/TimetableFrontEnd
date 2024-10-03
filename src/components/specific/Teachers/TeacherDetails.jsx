@@ -408,9 +408,10 @@ const handleTeacherNext = (
 
       <TeacherWeeklyTimeTableComponent
         teacherWeeklyTimetable={teacherWeeklyTimetable}
+        TeacherDetails={selectedTeacher}
       />
 
-      <div className="flex flex-row items-center justify-center gap-2 sticky bottom-6">
+      <div className="flex flex-row items-center justify-center gap-2 sticky bottom-0">
         {/* Previous Button */}
         <IconButton
           className="pointer-events-auto transition-all duration-200 ease-in-out"
