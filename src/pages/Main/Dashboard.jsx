@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Teacher_data,
-  class_data,
-
-} from "../../assets/datas";
+import { Teacher_data, class_data } from "../../assets/datas";
 import { CiSearch } from "../../assets/icons";
-import { Loadings, ScheduleLoading, ToggleButton } from "../../components/common";
+import { Loadings, ToggleButton } from "../../components/common";
 import CircularProgress from "@mui/material/CircularProgress";
 import TeacherAttendanceStatus from "../../components/specific/Dashboard/TeacherAttendanceStatus";
 import FreeTeacherOnaSession from "../../components/specific/Dashboard/FreeTeacherOnaSession";
@@ -19,30 +15,37 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/Authcontext";
 import { styled, TextField } from "@mui/material";
+import { motion } from "framer-motion";
 
 const Dashboard = () => {
-  const { apiDomain, headers } = useAuth();
   const today = new Date();
-  const [loading, setLoading] = useState(false);
+  const { apiDomain, headers } = useAuth();
 
+  // 1.  states
+
+  const [loading, setLoading] = useState(false);
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState([]);
   const [studentWeekTimetable, setStudentWeekTimetable] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // New state for search query
   const [teachers, setTeachers] = useState(Teacher_data);
   const [classsRomms, setClassRooms] = useState(class_data);
-
+  const [whoWantSwap, setWhoWantSwap] = useState({
+    subject: "",
+    session: 0,
+    teacherDetails: null,
+    isOpen: false,
+  });
+  const [whichOnSwap, setWhichOnSwap] = useState({
+    subject: "",
+    teacherDetails: null,
+  });
   const [viewType, setViewType] = useState(true);
-
   const [selectedDate, setSelectedDate] = useState(today);
-
   const [selectedSession, setSelectedSession] = useState(0);
   const [swapPopup, setSwapPopup] = useState(false);
 
-  function getCapitalDayOfWeek() {
-    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const dayIndex = selectedDate.getDay();
-    return daysOfWeek[dayIndex].toUpperCase();
-  }
+  // 2. useEffect for side effects
+
   useEffect(() => {
     let weekDay = getCapitalDayOfWeek();
     const fetchTeacherWeekTimetable = async () => {
@@ -59,6 +62,7 @@ const Dashboard = () => {
         toast.error(`Failed to load teacher timetable. Please try again.`);
       }
     };
+    // 3.  functions
 
     const fetchStudentWeekTimetable = async () => {
       try {
@@ -92,16 +96,11 @@ const Dashboard = () => {
     delayedFetch();
   }, [selectedDate]);
 
-  const [whoWantSwap, setWhoWantSwap] = useState({
-    subject: "",
-    session: 0,
-    teacherDetails:null,
-    isOpen: false,
-  });
-  const [whichOnSwap, setWhichOnSwap] = useState({
-    subject: "",
-    teacherDetails:null,
-  });
+  function getCapitalDayOfWeek() {
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dayIndex = selectedDate.getDay();
+    return daysOfWeek[dayIndex].toUpperCase();
+  }
 
   const StyledTextField = styled(TextField)({
     "& .MuiInputBase-root": {
@@ -172,7 +171,7 @@ const Dashboard = () => {
     }
   };
 
-  const toggleDrawer = (typ, indx,sub, teacherDetails) => {
+  const toggleDrawer = (typ, indx, sub, teacherDetails) => {
     if (typ === "toggle") {
       if (whoWantSwap.isOpen) {
         setWhoWantSwap(() => ({
@@ -208,6 +207,7 @@ const Dashboard = () => {
         getTeacherStatus(data.present) === "half leave"
     ).length;
   };
+
   const filteredStudentData = studentWeekTimetable.filter((student) => {
     const {
       standard,
@@ -234,7 +234,15 @@ const Dashboard = () => {
   });
 
   return (
-    <div className=" grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4  ">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+      }}
+      className=" grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4  "
+    >
       {/* contorle panel */}
       <div className="col-start-1  col-end-2  row-start-1 row-end-2  flex flex-row items-center   ">
         {/*  */}
@@ -305,10 +313,7 @@ const Dashboard = () => {
                   toggleFullDayLeaveorPresent={toggleFullDayLeaveorPresent}
                 />
               ) : (
-                <StudentrViewOneDayTt
-                  
-                  studentTimeTable={filteredStudentData}
-                />
+                <StudentrViewOneDayTt studentTimeTable={filteredStudentData} />
               )}
             </div>
           )}
@@ -339,7 +344,7 @@ const Dashboard = () => {
         teachers={teachers}
         selectedDate={selectedDate}
       />
-    </div>
+    </motion.div>
   );
 };
 

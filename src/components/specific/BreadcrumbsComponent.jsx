@@ -32,7 +32,7 @@ function getBreadcrumbs(pathname) {
   const breadcrumbPaths = pathnames.map((value, index) => {
     const href = `/${pathnames.slice(0, index + 1).join('/')}`;
     return {
-      label: value.replace(/-/g, ' ').toUpperCase(),
+      label: value.replace(/-/g, ' '),
       href,
       icon: getIconForPath(value),
     };
@@ -65,7 +65,7 @@ export default function IconBreadcrumbs() {
                 sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
               >
                 {crumb.icon}
-                <Typography sx={{ display: 'inline', ml: 0.5 }}>{crumb.label}</Typography>
+                <Typography textTransform={"capitalize"} sx={{ display: 'inline', ml: 0.5 }}>{crumb.label}</Typography>
               </Typography>
             )}
           </React.Fragment>

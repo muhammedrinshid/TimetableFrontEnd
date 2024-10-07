@@ -9,6 +9,7 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
+import { motion } from "framer-motion";
 
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import CreateTeacherForm from "../../components/forms/CreateTeacherForm";
@@ -16,7 +17,6 @@ import TeacherUpdateForm from "../../components/forms/TeacherUpdateForm";
 import axios from "axios";
 import { useAuth } from "../../context/Authcontext";
 import { toast } from "react-toastify";
-import { useStateManager } from "react-select";
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
 
 const TeachersInSchool = () => {
@@ -178,7 +178,15 @@ const TeachersInSchool = () => {
   };
 
   return (
-    <div className=" grid grid-rows-[10fr_4fr] grid-cols-[6fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4 ">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+      }}
+      className=" grid grid-rows-[10fr_4fr] grid-cols-[6fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4 "
+    >
       {/* teachers list placed */}
 
       <TeachersTeacherList
@@ -197,7 +205,9 @@ const TeachersInSchool = () => {
               <h3 className="text-base text-slate-300 font-medium mb-1">
                 Registred Teachers
               </h3>
-              <h1 className="text-2xl font-semibold text-slate-100">{teachers?.length}</h1>
+              <h1 className="text-2xl font-semibold text-slate-100">
+                {teachers?.length}
+              </h1>
             </div>
             <AccountCircleRoundedIcon
               fontSize="large"
@@ -234,7 +244,7 @@ const TeachersInSchool = () => {
 
       {/* Create new teacher pop up */}
       <Dialog open={createTeacherFormOpen} onClose={handleCreateTeacherClose}>
-        <DialogTitle>Add  Teacher</DialogTitle>
+        <DialogTitle>Add Teacher</DialogTitle>
         <DialogContent>
           <CreateTeacherForm
             handleCreateTeacherClose={handleCreateTeacherClose}
@@ -257,17 +267,16 @@ const TeachersInSchool = () => {
             subjects={subjects}
             grades={grades}
             setRefetch={setRefetch}
-
             teacherData={selectedTeacherForUpdation}
           />
         </DialogContent>
       </Dialog>
       <DeleteConfirmationPopup
-            isOpen={isDeleteTeacherPopupOpen}
-            onClose={() => setIsDeleteTeacherPopupOpen(false)}
-            onConfirm={deleteSubmit}
-          />
-    </div>
+        isOpen={isDeleteTeacherPopupOpen}
+        onClose={() => setIsDeleteTeacherPopupOpen(false)}
+        onConfirm={deleteSubmit}
+      />
+    </motion.div>
   );
 };
 

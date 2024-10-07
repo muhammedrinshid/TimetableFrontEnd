@@ -11,6 +11,7 @@ import SavedTimeTableViewer from "../../components/specific/saved Time tables/Sa
 import { SearchInput } from "../../components/Mui components";
 import { SortMenu } from "../../components/specific/Teachers";
 import TimeTableSortMenu from "../../components/specific/saved Time tables/TimeTableSortMenu";
+import { motion } from "framer-motion";
 
 const SavedTimeTables = () => {
   const { is_ready_for_timetable, apiDomain, headers } = useAuth();
@@ -163,7 +164,13 @@ const SavedTimeTables = () => {
    )
    .sort(sortTimetables);
   return (
-    <div className="w-full h-full px-6 pb-6  overflow-auto ">
+     <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+      }} className="w-full h-full px-6 pb-6  overflow-auto ">
       <div className="relative">
         <div className=" flex flex-row justify-start items-center gap-10 p-3 mb-5 sticky top-0 bg-dark-background1 shadow-custom-2 rounded-lg z-20">
           <h3 className="text-gray-800 font-semibold text-2xl flex-grow">
@@ -238,7 +245,7 @@ const SavedTimeTables = () => {
         onClose={() => setDeleteTimeTableDialogOpen(false)}
         onConfirm={handleDelete}
       />
-    </div>
+    </motion.div>
   );
 };
 

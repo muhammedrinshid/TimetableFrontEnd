@@ -4,6 +4,7 @@ import { Switch, Tooltip, CircularProgress } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { toast } from 'react-toastify'; 
 import { useAuth } from '../../context/Authcontext';
+import { motion } from "framer-motion";
 
 const DirectivesConfiguration = () => {
   const [directives, setDirectives] = useState({});
@@ -108,7 +109,13 @@ const DirectivesConfiguration = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 dark:bg-dark-background text-dark-primary dark:text-light-primary overflow-y-scroll">
+      <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+      }} className="container mx-auto px-4 py-8 dark:bg-dark-background text-dark-primary dark:text-light-primary overflow-y-scroll">
       <h1 className="text-3xl font-bold mb-6 text-center text-dark-primary dark:text-light-primary">
         Directives Configuration
       </h1>
@@ -313,7 +320,7 @@ const DirectivesConfiguration = () => {
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

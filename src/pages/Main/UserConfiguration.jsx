@@ -5,6 +5,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import { motion } from "framer-motion";
 
 import {
   Avatar,
@@ -471,7 +472,13 @@ const UserConfiguration = ({  }) => {
     <Loadings.ThemedMiniLoader />
   ) : (
     <ThemeProvider theme={theme}>
-      <div className="w-full h-full rounded-2xl px-6 py-5  shadow-lg overflow-auto">
+      <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+      }} className="w-full h-full rounded-2xl px-6 py-5  shadow-lg overflow-auto">
         <div className="flex flex-row justify-between border-b pb-4">
           <div className="flex flex-row items-center gap-4">
             <h1 className="text-xl font-semibold">School Details</h1>
@@ -956,7 +963,7 @@ const UserConfiguration = ({  }) => {
         </div>
         {/* Rooms Section */}
         <RoomsSection rooms={rooms} handleOpenRoomForm={handleOpenRoomForm} />
-      </div>
+      </motion.div>
       <AddNewRoom
         open={openRoomForm}
         handleClose={handleCloseRoomForm}

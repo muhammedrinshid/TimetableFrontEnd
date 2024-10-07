@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { availableSubjectsInSchool } from "../../../assets/datas";
 import SchoolIcon from "@mui/icons-material/School";
+import { motion } from "framer-motion";
 
 import AddButton from "../../common/AddButton";
 import SubjectAssignmentForm from "../../forms/SubjectAssignmentForm";
@@ -116,7 +117,7 @@ const ClassList = ({
             headers: headers,
           }
         );
-        console.log(response.data)
+        console.log(response.data);
       } catch (error) {
         if (error.response) {
           toast.error(
@@ -157,7 +158,13 @@ const ClassList = ({
   // temprary function mock the add new divison
 
   // function to open the assign teacher form
-  const openAssignTeacherForm = ({ grade_id, division, standard_id, type,standard }) => {
+  const openAssignTeacherForm = ({
+    grade_id,
+    division,
+    standard_id,
+    type,
+    standard,
+  }) => {
     setOpenTeacherAssingmentForm((prev) => ({
       ...prev,
       isOpen: true,
@@ -165,7 +172,7 @@ const ClassList = ({
       division: division,
       standard_id: standard_id,
       type: type,
-      standard:standard||""
+      standard: standard || "",
     }));
   };
 
@@ -174,7 +181,15 @@ const ClassList = ({
     ? classByGrade.filter((grade) => grade.name === whichGradeToDisplay)
     : classByGrade;
   return (
-    <div className=" relative ">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+      }}
+      className=" relative "
+    >
       {/* header and contorle  section */}
       <div className="">
         {/* header */}
@@ -267,7 +282,9 @@ const ClassList = ({
                         {standard?.classrooms?.map((division, index) => (
                           <DivisionCard
                             division={division}
-                            classroom_name={standard?.short_name+" "+division?.division}
+                            classroom_name={
+                              standard?.short_name + " " + division?.division
+                            }
                             standard_id={standard?.id}
                             handleClassroomDelete={handleClassroomDelete}
                             setISelectedClassforView={setISelectedClassforView}
@@ -303,7 +320,7 @@ const ClassList = ({
         }
         OpenTeacherAssingmentForm={OpenTeacherAssingmentForm}
       />
-    </div>
+    </motion.div>
   );
 };
 
