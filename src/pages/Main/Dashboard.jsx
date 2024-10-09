@@ -241,23 +241,22 @@ const Dashboard = () => {
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
       }}
-      className=" grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4  "
+      className="grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto pl-6 pr-4 pb-6 gap-4 "
     >
-      {/* contorle panel */}
-      <div className="col-start-1  col-end-2  row-start-1 row-end-2  flex flex-row items-center   ">
-        {/*  */}
-        {/* view controler tacher and student */}
-        <div className="flex flex-row   h-full basis-1/2 flex-shrink-0 flex-grow rounded-lg mr-2">
+      {/* Control panel */}
+      <div className="col-start-1 col-end-2 row-start-1 row-end-2 flex flex-row items-center">
+        {/* View controller teacher and student */}
+        <div className="flex flex-row h-full basis-1/2 flex-shrink-0 flex-grow rounded-lg mr-2">
           <ToggleButton onChange={setViewType} value={viewType} />
         </div>
 
         {/* Search place */}
-        <div className=" flex items-center justify-around  px-2 shadow_box bg-white rounded-lg h-full flex-shrink-0">
-          <CiSearch className="text-xl " />
+        <div className="flex items-center justify-around px-2 shadow_box bg-white dark:bg-dark-secondary rounded-lg h-full flex-shrink-0">
+          <CiSearch className="text-xl dark:text-dark-muted" />
 
           <input
             type="text"
-            className="outline-none border-none placeholder:text-opacity-50 focus:ring-0 focus:border focus:border-b-2 focus:border-light-primary "
+            className="outline-none border-none placeholder:text-opacity-50 focus:ring-0 focus:border focus:border-b-2 focus:border-light-primary dark:focus:border-dark-accent dark:bg-dark-secondary dark:text-dark-text dark:placeholder-dark-muted"
             name="search"
             placeholder=" Search...."
             onChange={(e) => {
@@ -267,8 +266,9 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      {/* date selector */}
-      <div className="col-start-2 col-end-3 row-start-1 row-end-2 shadow_box flex flex-row justify-center items-center ">
+
+      {/* Date selector */}
+      <div className="col-start-2 col-end-3 row-start-1 row-end-2 shadow_box flex flex-row justify-center items-center dark:bg-dark-secondary">
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DesktopDatePicker
             value={selectedDate}
@@ -280,14 +280,17 @@ const Dashboard = () => {
                 InputProps={{
                   ...params.InputProps,
                   disableUnderline: true,
+                  className: "dark:text-dark-text",
                 }}
+                className="dark:bg-dark-secondary"
               />
             )}
           />
         </LocalizationProvider>
       </div>
-      {/* thecher present status of the day  */}
-      <div className="col-start-3 col-end-4 row-start-1 row-end-3 shadow_box flex flex-col overflow-hidden">
+
+      {/* Teacher present status of the day */}
+      <div className="col-start-3 col-end-4 row-start-1 row-end-3 shadow_box flex flex-col overflow-hidden dark:bg-dark-secondary">
         <TeacherAttendanceStatus
           countPresentTeachers={countPresentTeachers}
           getTeacherStatus={getTeacherStatus}
@@ -297,13 +300,13 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* teacher view and student view */}
-      <div className=" relative col-start-1 overflow-auto col-end-3 row-start-2 row-end-4  shadow-custom-10 rounded-lg border  bg-white">
-        <div className="relative w-full h-full flex items-center justify-center  overflow-x-auto">
+      {/* Teacher view and student view */}
+      <div className="relative col-start-1 overflow-auto col-end-3 row-start-2 row-end-4 shadow-custom-10 rounded-lg border dark:border-dark-border bg-white dark:bg-dark-background1">
+        <div className="relative w-full h-full flex items-center justify-center overflow-x-auto">
           {loading ? (
             <Loadings.ThemedMiniLoader />
           ) : (
-            <div className="absolute inset-0 w-full h-full ">
+            <div className="absolute inset-0 w-full h-full">
               {viewType ? (
                 <TeacherViewOneDayTt
                   teacherTimetable={filteredTeacherData}
@@ -320,7 +323,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* free teacher status for a specific session*/}
+      {/* Free teacher status for a specific session */}
       <FreeTeacherOnaSession
         findClassById={findClassById}
         toggleDrawer={toggleDrawer}

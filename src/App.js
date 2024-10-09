@@ -17,7 +17,7 @@ import BuildSchedule from "./pages/Main/BuildSchedule";
 import { mainBg02 } from "./assets/images";
 function App() {
   return (
-    <div className="w-full min-h-screen bg-[#F8F7FC] flex items-center justify-center font-Roboto">
+    <div className="w-full min-h-screen dark:bg-light-background bg-[#F8F7FC] flex items-center justify-center font-Roboto">
       <ToastContainer
         position="bottom-right"
         autoClose={4000}
@@ -39,7 +39,7 @@ function App() {
           backgroundImage: `url(${mainBg02})`,
         }}
       >
-        <div className="absolute inset-0 bg-dark-background1 bg-opacity-90 z-0"></div>
+        <div className="absolute inset-0 bg-light-background1 dark:bg-dark-border dark:bg-opacity-80 bg-opacity-95 z-0"></div>
         <BrowserRouter>
           <AuthProvider>
             <Routes>

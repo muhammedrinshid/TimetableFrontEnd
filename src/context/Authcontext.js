@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   
   const [loading, setLoading] = useState(true);
   const [fullMenu, setFullmenu] = useState(true);
+ const [darkMode, setDarkMode] = useState(false);
 
   const [user, setUser] = useState(() =>
     localStorage.getItem("authTokens") ? jwtDecode(authTocken.access) : null
@@ -71,6 +72,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+ const toggleTheme = () => {
+   setDarkMode((prev) => !prev);
+ };
+
+ useEffect(() => {
+   // Set the attribute on the html element based on darkMode state
+   if (darkMode) {
+     document.documentElement.setAttribute("data-theme", "dark");
+   } else {
+     document.documentElement.removeAttribute("data-theme");
+   }
+ }, [darkMode]);
+
   const contextData = {
     user:user,
     fullMenu: fullMenu,
@@ -103,6 +117,8 @@ export const AuthProvider = ({ children }) => {
       }
     
     },
+    darkMode:darkMode,
+    toggleTheme:toggleTheme
 
   };
 

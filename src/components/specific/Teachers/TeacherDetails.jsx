@@ -284,7 +284,7 @@ const handleTeacherNext = (
 
           <div className=" flex flex-row items-center gap-2">
             <p className="text-[10px] text-text_2 font-light mr-4">
-              created on 22-06-2026
+              created on 22-06-2024
             </p>
             <Button
               variant="outlined"
@@ -368,7 +368,7 @@ const handleTeacherNext = (
               ACADEMIC DETAILS
             </p>
             <p className="text-[11px] font-medium text-text_2 font-Inter my-2 mt-8">
-              QUALIFIED GRADES
+              QUALIFIED LEVELS
             </p>
             <div className="flex gap-2 flex-wrap">
               {selectedTeacher?.grades_display?.map((grade) => (

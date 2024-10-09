@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 module.exports = {
-  darkMode: "selector", // or 'media' or 'class'
+  darkMode: ["class", '[data-theme="dark"]'], // Enable dark mode using a class or a custom attribute
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontSize: {
@@ -87,14 +87,22 @@ module.exports = {
           accent: "#715DF1",
           highlight: "#ff8c42",
           background: "#DFDFDF",
+          background1: "#ecf3fa",
         },
         dark: {
-          primary: "#141414",
-          secondary: "#242424",
-          accent: "#36454F",
-          highlight: "#ff5733",
-          background: "#0c0c0c",
-          background1: "#ecf3fa",
+          primary: "#1c1c1c", // Dark gray for primary elements
+          secondary: "#2a2a2a", // Slightly lighter gray for secondary elements
+          accent: "#4b86f5", // Bright blue for accent elements
+          highlight: "#ffcc00", // Golden yellow for highlights
+          background: "#121212", // Very dark gray for background
+          background1: "#1f1f1f", // Darker background for sections
+          text: "#e0e0e0", // Light gray for text
+          muted: "#b0b0b0", // Muted gray for less prominent text
+          border: "#333333", // Dark border for separation
+          shadow: "#000000", // Black for shadows
+          success: "#4caf50", // Green for success messages
+          error: "#f44336", // Red for error messages
+          warning: "#ff9800",
         },
         text_1: "#818181",
         text_2: "#a6a6a6",
