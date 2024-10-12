@@ -193,3 +193,38 @@ html, body {
   scrollbar-width: thin;
   scrollbar-color: rgba(205, 204, 224, 0.6) #f1f1f1;
 }
+/* General gradient animations */
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Apply the animation to the classes */
+.bg-gradient-moving {
+  background-size: 200% 200%;
+  animation: gradient-move 8s ease infinite;
+}
+
+/* Optional: Blinking border */
+.blinking-top-border {
+  position: relative;
+}
+
+.blinking-top-border::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f39c12, #f1c40f, #e74c3c, #f39c12);
+  background-size: 200% 200%;
+  animation: gradient-move 2s linear infinite;
+}

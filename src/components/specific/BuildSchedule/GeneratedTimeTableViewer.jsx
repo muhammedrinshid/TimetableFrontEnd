@@ -108,6 +108,7 @@ const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
         handleSearch={handleSearch}
         isTeacherView={isTeacherView}
         handleViewToggle={handleViewToggle}
+        timeTableId={timeTableId}
       />
 
       {isTeacherView ? (

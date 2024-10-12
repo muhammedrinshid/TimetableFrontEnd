@@ -7,7 +7,6 @@ const PrivateRoute = () => {
 
                                                                                                     
     const {user}=useAuth()
-    console.log(user)
 
   
 

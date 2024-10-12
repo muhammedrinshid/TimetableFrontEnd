@@ -57,6 +57,11 @@ const menuData = [
     icon: <FaMagic />, // Icon for building/creating
     path: "/build-schedule", // Route for Build Schedule page
   },
+  {
+    name: "sample edit", // New Build Schedule item
+    icon: <FaMagic />, // Icon for building/creating
+    path: "/sss", // Route for Build Schedule page
+  },
 ];
 
 export default menuData;

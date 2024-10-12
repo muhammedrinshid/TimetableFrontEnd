@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Teacher_data, class_data } from "../../assets/datas";
 import { CiSearch } from "../../assets/icons";
 import { Loadings, ToggleButton } from "../../components/common";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -27,18 +26,17 @@ const Dashboard = () => {
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState([]);
   const [studentWeekTimetable, setStudentWeekTimetable] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // New state for search query
-  const [teachers, setTeachers] = useState(Teacher_data);
-  const [classsRomms, setClassRooms] = useState(class_data);
+    const [whichOnSwap, setWhichOnSwap] = useState({
+      subject: "",
+      teacherDetails: null,
+    });
   const [whoWantSwap, setWhoWantSwap] = useState({
     subject: "",
     session: 0,
     teacherDetails: null,
     isOpen: false,
   });
-  const [whichOnSwap, setWhichOnSwap] = useState({
-    subject: "",
-    teacherDetails: null,
-  });
+
   const [viewType, setViewType] = useState(true);
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectedSession, setSelectedSession] = useState(0);
@@ -112,13 +110,8 @@ const Dashboard = () => {
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
   };
-  // function to find the details of class or session by the id
-  const findClassById = (id) => {
-    return classsRomms.find((cls) => cls.class_id === id) || null;
-  };
-  const findTaecherById = (id) => {
-    return teachers.find((tch) => tch.teacher_id === id) || null;
-  };
+ 
+
 
   // function to change the present status of a teacher for a entair day
   const toggleFullDayLeaveorPresent = (teacher_id, present_or_leave) => {
@@ -325,26 +318,22 @@ const Dashboard = () => {
 
       {/* Free teacher status for a specific session */}
       <FreeTeacherOnaSession
-        findClassById={findClassById}
         toggleDrawer={toggleDrawer}
         selectedSession={selectedSession}
         teachers={teacherWeekTimetable}
         whoWantSwap={whoWantSwap}
-        findTaecherById={findTaecherById}
         setSwapPopup={setSwapPopup}
         setWhichOnSwap={setWhichOnSwap}
       />
       <SwapTeacherPopus
-        findTaecherById={findTaecherById}
         swapPopup={swapPopup}
-        findClassById={findClassById}
         setSwapPopup={setSwapPopup}
         whichOnSwap={whichOnSwap}
         whoWantSwap={whoWantSwap}
-        setTeachers={setTeachers}
-        setClassRooms={setClassRooms}
-        class_rooms={classsRomms}
-        teachers={teachers}
+        setTeacherWeekTimetable={setTeacherWeekTimetable}
+        setStudentWeekTimetable={setStudentWeekTimetable}
+        studentWeekTimetable={studentWeekTimetable}
+        teacherWeekTimetable={teacherWeekTimetable}
         selectedDate={selectedDate}
       />
     </motion.div>

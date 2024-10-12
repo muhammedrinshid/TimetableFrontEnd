@@ -250,8 +250,8 @@ const handleTeacherNext = (
         isAnimating ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="flex flex-col bg-dark-background1 mb-4 p-3 rounded-lg shadow-custom-6">
-        <div className=" p-2 flex flex-row justify-between items-center border-b pb-4 sticky top-0 backdrop-blur-lg bg-dark-background1 z-10">
+      <div className="flex flex-col bg-light-background1 mb-4 p-3 rounded-lg shadow-custom-6">
+        <div className=" p-2 flex flex-row justify-between items-center border-b pb-4 sticky top-0 backdrop-blur-lg bg-light-background1 z-10">
           <div className="flex flex-row items-center gap-4 ">
             <IconButton>
               <KeyboardBackspaceIcon

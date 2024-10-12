@@ -36,20 +36,20 @@ const getSessionColor = (session, teacher, index) => {
 
   if (!session.subject) {
     colorClass =
-      "bg-green-100 text-green-800 dark:bg-gray-900 dark:text-gray-400"; // Free period
+      "bg-gradient-to-b  from-green-200 via-white to-green-200 text-green-90 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400 bg-gradient-moving"; // Free period with gradient
   } else {
     switch (session.type) {
       case "Core":
         colorClass =
-          "bg-blue-100 text-blue-800 dark:bg-black dark:text-gray-200"; // Core class
+          "from-blue-200 bg-gradient-to-b  via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200 "; // Core class with gradient
         break;
       case "Elective":
         colorClass =
-          "bg-purple-100 text-purple-800 dark:bg-gray-900 dark:text-gray-300"; // Elective class
+          " from-purple-300 bg-gradient-to-b via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300"; // Elective class with gradient
         break;
       default:
         colorClass =
-          "bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-400"; // Default fallback
+          "bg-gradient-moving bg-gradient-to-b  from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400"; // Default fallback with gradient
         break;
     }
   }
@@ -64,6 +64,7 @@ const getSessionColor = (session, teacher, index) => {
 
   return colorClass;
 };
+
 
 
 const getSessionBorderColor = (session) => {
@@ -84,13 +85,13 @@ const getSessionBorderColor = (session) => {
         <table className="w-full">
           <thead className="sticky top-0 left-0 z-20 backdrop-blur-[6.4px]">
             <tr className="bg-gradient-to-r from-indigo-500 to-purple-500 text-gray-900 dark:from-gray-800 dark:to-gray-500 dark:text-gray-200">
-              <th className="w-[150px] p-4 text-left font-semibold sticky left-0 z-10 backdrop-blur-[8.4px] border-r border-gray-300 dark:border-gray-600">
+              <th className="w-[150px] p-4 text-left text-white font-semibold sticky left-0 z-10 backdrop-blur-[8.4px] border-r border-gray-300 dark:border-gray-600">
                 {teacherRow1[0]}
               </th>
               {teacherRow1.slice(1).map((header, index) => (
                 <th
                   key={index}
-                  className="w-[180px] p-4 text-left font-semibold cursor-pointer border-l border-gray-300 dark:border-gray-600"
+                  className="w-[180px] text-light-background1 p-4 text-left font-semibold cursor-pointer border-l border-gray-300 dark:border-gray-600"
                   onClick={() => setSelectedSession(index)}
                 >
                   {header}
@@ -149,7 +150,7 @@ const getSessionBorderColor = (session) => {
                                     session.type === "Core"
                                       ? "bg-green-500 dark:bg-green-400 text-white"
                                       : "bg-yellow-500 dark:bg-yellow-400 text-gray-900 dark:text-white"
-                                  } text-vs font-semibold uppercase rounded-full tracking-wider`}
+                                  } text-vs font-semibold uppercase rounded-full tracking-wider py-1 px-2`}
                                 >
                                   {session.type.charAt(0)}
                                 </div>
@@ -255,18 +256,24 @@ const getSessionBorderColor = (session) => {
                                   }
                                   disabled={
                                     teacher.instructor.present[sessionIndex] ||
-                                    teacher.sessions.subject === null
+                                    teacher?.sessions[sessionIndex]?.subject ===
+                                      null
                                   }
                                   sx={{
-                                    color: teacher.instructor.present[
-                                      sessionIndex
-                                    ]
-                                      ? darkMode
-                                        ? "#A9A9A9" // Gray color in dark mode when teacher is present
-                                        : "gray" // Gray color in light mode when teacher is present
-                                      : darkMode
-                                      ? "#FFFFFF" // White color in dark mode when teacher is absent
-                                      : "inherit", // Default color in light mode when teacher is absent
+                                    "& svg": {
+                                      color:
+                                        teacher.instructor.present[
+                                          sessionIndex
+                                        ] ||
+                                        teacher?.sessions[sessionIndex]
+                                          ?.subject === null
+                                          ? darkMode
+                                            ? "#A9A9A9" // Gray color in dark mode when teacher is present
+                                            : "gray" // Gray color in light mode when teacher is present
+                                          : darkMode
+                                          ? "#FFFFFF" // White color in dark mode when teacher is absent
+                                          : "inherit", // Default color in light mode when teacher is absent
+                                    },
                                   }}
                                 >
                                   <ChangeCircleIcon

@@ -24,7 +24,7 @@ const TeacherAttendanceStatus = ({
               sx={{ width: 25, height: 25, fontSize: 6 }}
               src={
                 teacher?.instructor?.profile_image
-                  ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
+                  ? `${apiDomain}/${teacher?.instructor?.profile_image}`
                   : undefined
               }
             />
@@ -52,7 +52,7 @@ const TeacherAttendanceStatus = ({
                 <Avatar
                   src={
                     teacher?.instructor?.profile_image
-                      ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
+                      ? `${apiDomain}/${teacher?.instructor?.profile_image}`
                       : undefined
                   }
                 >
@@ -78,7 +78,7 @@ const TeacherAttendanceStatus = ({
                 </div>
               </div>
 
-              <div className="w-1/4 py-3 px-1">
+              <div className="w-1/4 py-3 px-2">
                 <StatusChip status={status} />
                 {status == "present" ? (
                   <Tooltip title="Mark as full day leave">

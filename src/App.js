@@ -3,7 +3,6 @@ import Login from "./pages/Login";
 import Main from "./pages/Main";
 import { AuthProvider } from "./context/Authcontext";
 import PrivateRoute from "./utlts/PrivateRoute";
-import Wrokshop from "./pages/Workshop";
 import TeachersInSchool from "./pages/Main/TeachersInSchool";
 import Dashboard from "./pages/Main/Dashboard";
 import ClassesInSchool from "./pages/Main/ClassesInSchool";
@@ -15,6 +14,8 @@ import SchoolProfileDashboard from "./pages/Main/SchoolProfileDashboard";
 import DirectivesConfiguration from "./pages/Main/DirectivesConfiguration";
 import BuildSchedule from "./pages/Main/BuildSchedule";
 import { mainBg02 } from "./assets/images";
+import TimetablePage from "./pages/Main/EditTableSample";
+import EditTimetable from "./pages/Main/EditTimetable";
 function App() {
   return (
     <div className="w-full min-h-screen dark:bg-light-background bg-[#F8F7FC] flex items-center justify-center font-Roboto">
@@ -65,11 +66,21 @@ function App() {
                     element={<DirectivesConfiguration />}
                   />
                   <Route path="build-schedule" element={<BuildSchedule />} />
+                  <Route
+                    path="edit-timetable/:viewType/:id"
+                    element={<EditTimetable />}
+                  />{" "}
+                  <Route
+                    path="edit-timetable/:viewType"
+                    element={<EditTimetable />}
+                  />{" "}
+                  <Route
+                    path="edit-timetable"
+                    element={<EditTimetable />}
+                  />{" "}
                 </Route>
               </Route>
               <Route path="login" element={<Login />} />
-
-              <Route path="s" element={<Wrokshop />} />
             </Routes>
           </AuthProvider>
         </BrowserRouter>{" "}

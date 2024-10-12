@@ -217,9 +217,9 @@ const ClassDetails = ({
         isAnimating ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className=" flex flex-col bg-dark-background1 mb-4 p-3 rounded-lg shadow-custom-6">
+      <div className=" flex flex-col bg-light-background1 mb-4 p-3 rounded-lg shadow-custom-6">
         {/* Header Section */}
-        <div className="flex flex-row justify-between border-b pb-4 sticky top-0 bg-dark-background1 rounded-t-lg p-3">
+        <div className="flex flex-row justify-between border-b pb-4 sticky top-0 bg-light-background1 rounded-t-lg p-3">
           <div className="flex flex-row items-center gap-4">
             <IconButton
               onClick={() => {

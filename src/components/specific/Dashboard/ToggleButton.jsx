@@ -1,50 +1,10 @@
-import React from 'react';
-import { Button, Box, Typography } from '@mui/material';
-import { styled } from '@mui/system';
-import { PiChalkboardTeacherDuotone, PiStudent } from 'react-icons/pi';
-
-const StyledToggleButton = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  display: 'flex',
-  backgroundColor: 'white',
-  width: '100%',
-  height: '100%', // Match the height of the search input
-  borderRadius: '8px', // Rounded corners like the search input
-  boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)', // Similar shadow to search input
-  overflow: 'hidden', // Ensure the SliderIndicator doesn't overflow
-}));
-
-const SliderIndicator = styled(Box)(({ theme, value }) => ({
-  position: 'absolute',
-  width: '50%',
-  height: '100%',
-  backgroundColor: theme.palette.primary.main,
-  transition: 'transform 0.3s ease',
-  transform: value ? 'translateX(0)' : 'translateX(100%)',
-}));
-
-const ToggleOption = styled(Button)(({ theme, active }) => ({
-  flex: 1,
-  zIndex: 1,
-  borderRadius: 0,
-  color: active ? theme.palette.primary.contrastText : theme.palette.text.primary,
-  backgroundColor: 'transparent',
-  transition: 'color 0.3s',
-  '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-  },
-  '&:focus': {
-    outline: 'none',
-  },
-}));
-
-const IconWrapper = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  marginRight: '8px',
-});
+import React from "react";
+import { PiChalkboardTeacherDuotone, PiStudent } from "react-icons/pi";
+import { useAuth } from "../../../context/Authcontext";
 
 const ToggleButton = ({ onChange, value }) => {
+  const { darkMode } = useAuth();
+
   const handleViewType = (type) => {
     if (type !== value) {
       onChange(type);
@@ -52,33 +12,53 @@ const ToggleButton = ({ onChange, value }) => {
   };
 
   return (
-    <StyledToggleButton>
-      <SliderIndicator value={value} />
-      <ToggleOption
-        active={value}
+    <div
+      className={`relative flex w-full rounded-lg overflow-hidden transition-all h-full p-1 mr-5
+        ${darkMode ? "bg-dark-secondary" : "bg-white shadow-md"}`}
+    >
+      <div
+        className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg transition-transform duration-500 ease-in-out
+    ${value ? "left-1" : "right-1"}
+    ${
+      darkMode
+        ? "bg-gradient-to-r from-dark-accent to-dark-primary"
+        : "bg-gradient-to-r from-light-primary to-light-secondary"
+    }`}
+      />
+
+      <button
         onClick={() => handleViewType(true)}
-        disableRipple
+        className={`flex-1 flex items-center justify-center font-medium z-10 transition-colors duration-500
+          ${
+            value
+              ? darkMode
+                ? "text-dark-text"
+                : "text-white"
+              : darkMode
+              ? "text-dark-muted"
+              : "text-light-primary"
+          }`}
       >
-        <IconWrapper>
-          <PiChalkboardTeacherDuotone size={20} />
-        </IconWrapper>
-        <Typography variant="button" color="inherit" style={{ textTransform: 'capitalize' }}>
-          Teacher View
-        </Typography>
-      </ToggleOption>
-      <ToggleOption
-        active={!value}
+        <PiChalkboardTeacherDuotone size={20} className="mr-2" />
+        Teacher
+      </button>
+      <button
         onClick={() => handleViewType(false)}
-        disableRipple
+        className={`flex-1 flex items-center justify-center font-medium z-10 transition-colors duration-500
+          ${
+            !value
+              ? darkMode
+                ? "text-dark-text"
+                : "text-white"
+              : darkMode
+              ? "text-dark-muted"
+              : "text-light-primary"
+          }`}
       >
-        <IconWrapper>
-          <PiStudent size={20} />
-        </IconWrapper>
-        <Typography variant="button" color="inherit" style={{ textTransform: 'capitalize' }}>
-          Class View
-        </Typography>
-      </ToggleOption>
-    </StyledToggleButton>
+        <PiStudent size={20} className="mr-2" />
+        Class
+      </button>
+    </div>
   );
 };
 

@@ -95,7 +95,7 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
                     <Avatar
                       src={
                         teacher?.instructor?.profile_image
-                          ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
+                          ? `${apiDomain}/${teacher?.instructor?.profile_image}`
                           : undefined
                       }
                       className="w-10 h-10 rounded-full shadow-md transition-transform duration-300 hover:scale-110"

@@ -22,7 +22,7 @@ const Main = () => {
     
     >
       {/* grind item one */}
-      <div class="bg-light-primary dark:bg-dark-primary dark:opacity-90 opacity-90 border-b border-white border-opacity-70 flex justify-center items-center ">
+      <div class="bg-light-primary dark:bg-black dark:opacity-90 opacity-90 border-b border-white border-opacity-70 flex justify-center items-center ">
         <Avatar src={logo}></Avatar>
       </div>
 

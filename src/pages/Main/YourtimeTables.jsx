@@ -14,7 +14,7 @@ import TimeTableSortMenu from "../../components/specific/saved Time tables/TimeT
 import { motion } from "framer-motion";
 
 const SavedTimeTables = () => {
-  const { is_ready_for_timetable, apiDomain, headers } = useAuth();
+  const {  apiDomain, headers } = useAuth();
   const [savedTables, setSavedTables] = useState([]);
   const [scheduleErrorList, setScheduleErrorList] = useState([]);
   const [editingTableId, setEditingTableId] = useState(null);
@@ -23,6 +23,8 @@ const SavedTimeTables = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteTimeTableDialogOpen, setDeleteTimeTableDialogOpen] =
     useState(false);
+    const [defaultTableId, setDefaultTableId] = useState(null);
+
   const [visibleTables, setVisibleTables] = useState(4);
 
   const loadMore = () => {
@@ -38,6 +40,10 @@ const SavedTimeTables = () => {
         }
       );
       setSavedTables(response.data); // Assuming response.data is an array of timetables
+        const defaultTable = response.data.find((table) => table.is_default);
+        if (defaultTable) {
+          setDefaultTableId(defaultTable.id);
+        }
     } catch (error) {
       if (error.response) {
         // The request was made, and the server responded with a status code
@@ -172,7 +178,7 @@ const SavedTimeTables = () => {
         ease: [0.6, -0.05, 0.01, 0.99],
       }} className="w-full h-full px-6 pb-6  overflow-auto ">
       <div className="relative">
-        <div className=" flex flex-row justify-start items-center gap-10 p-3 mb-5 sticky top-0 bg-dark-background1 shadow-custom-2 rounded-lg z-20">
+        <div className=" flex flex-row justify-start items-center gap-10 p-3 mb-5 sticky top-0 bg-light-background1 shadow-custom-2 rounded-lg z-20">
           <h3 className="text-gray-800 font-semibold text-2xl flex-grow">
             {" "}
             Saved Timetables
@@ -238,7 +244,7 @@ const SavedTimeTables = () => {
         </div>
       </div>
       
-      <SavedTimeTableViewer />
+      <SavedTimeTableViewer timeTableId={defaultTableId} />
 
       <DeleteConfirmationPopup
         isOpen={deleteTimeTableDialogOpen}

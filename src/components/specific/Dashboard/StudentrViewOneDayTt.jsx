@@ -31,7 +31,7 @@ const StudentrViewOneDayTt = ({ studentTimeTable }) => {
         <table className="w-full">
           <thead>
             <tr className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-              <th className="w-[150px] p-4 text-left font-semibold sticky left-0 z-10 backdrop-blur-[8.4px] bg-blue-500 border-r border-white">
+              <th className="w-[150px] text-white p-4 text-left font-semibold sticky left-0 z-10 backdrop-blur-[8.4px] bg-blue-500 border-r border-white">
                 {studentRow[0]}
               </th>
               {studentRow?.slice(1)?.map((header, index) => (

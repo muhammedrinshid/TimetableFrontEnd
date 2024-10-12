@@ -11,7 +11,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-light-primary dark:bg-dark-primary dark:opacity-90 opacity-90 flex flex-col h-full">
+    <div className="bg-light-primary dark:bg-dark-primary dark:opacity-90 opacity-90 flex flex-col h-full dark:bg-gradient-to-b dark:from-black dark:via-gray-800 dark:to-black">
       {/* menus */}
       <div className="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
         <div className="flex flex-col justify-start py-4">
@@ -23,7 +23,7 @@ const Sidebar = () => {
                 `flex cursor-pointer ${
                   fullMenu ? "justify-start" : "justify-center"
                 } items-center rounded-lg mx-2 my-1 p-2 duration-200  text-white text-opacity-80 hover:text-light-primary dark:hover:text-dark-background1 hover:bg-white dark:hover:bg-dark-accent hover:opacity-70
-        ${isActive ? "bg-white bg-opacity-80 dark:bg-dark-accent " : ""}`
+        ${isActive ? "bg-white bg-opacity-80 dark:bg-dark-accent dark:bg-gradient-to-r dark:from-light-primary dark:to-gray-700  " : ""}`
               }
             >
               {({ isActive }) => (
@@ -31,7 +31,7 @@ const Sidebar = () => {
                   <span
                     className={`text-xl text-center cursor-pointer ${
                       isActive
-                        ? "text-light-primary dark:text-dark-background1"
+                        ? "text-light-primary dark:text-light-background1"
                         : "hover:text-opacity-100"
                     }`}
                   >
@@ -39,9 +39,9 @@ const Sidebar = () => {
                   </span>
                   {fullMenu && (
                     <p
-                      className={`animate-zoom-in text-xs duration-200 ml-2 ${
+                      className={`animate-zoom-in font-Roboto text-xs duration-200 ml-2 ${
                         isActive
-                          ? "text-light-primary dark:text-dark-background1"
+                          ? "text-light-primary dark:text-light-background1"
                           : ""
                       }`}
                     >

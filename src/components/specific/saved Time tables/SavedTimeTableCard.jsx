@@ -84,7 +84,7 @@ const SavedTimeTableCard = ({
 
   return (
     <div
-      className={`bg-dark-background1 rounded-lg shadow-lg transition-all duration-300 hover:translate-y-[-5px] hover:shadow-xl border-2 ${scoreStatus.color
+      className={`bg-light-background1 rounded-lg shadow-lg transition-all duration-300 hover:translate-y-[-5px] hover:shadow-xl border-2 ${scoreStatus.color
         .split(" ")[0]
         .replace("bg", "border")}`}
     >

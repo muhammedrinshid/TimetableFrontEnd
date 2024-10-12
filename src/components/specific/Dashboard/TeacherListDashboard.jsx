@@ -29,7 +29,7 @@ const TeacherListDashboard = ({
           <Avatar
             src={
               teacher?.profile_image
-                ? `${apiDomain}/media/${teacher?.profile_image}`
+                ? `${apiDomain}/${teacher?.profile_image}`
                 : undefined
             }
             sx={{

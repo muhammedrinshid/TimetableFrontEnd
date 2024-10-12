@@ -17,94 +17,248 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useAuth } from "../../../context/Authcontext";
+import { toast } from "react-toastify";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 const SwapTeacherPopus = ({
   whoWantSwap,
-  findTaecherById,
   swapPopup,
   setSwapPopup,
-  findClassById,
   whichOnSwap,
-  setClassRooms,
-  setTeachers,
-  class_rooms,
-  teachers,
+  setStudentWeekTimetable,
+  setTeacherWeekTimetable,
+  studentWeekTimetable,
+  teacherWeekTimetable,
   selectedDate,
 }) => {
   const { apiDomain } = useAuth();
+  // the teacher who want swap
   const teacher1 = whoWantSwap?.teacherDetails;
+  // the teacher who will place
   const teacher2 = whichOnSwap?.teacherDetails;
+  const sessionIndx = whoWantSwap?.session;
   const classdeatails =
-    whoWantSwap?.teacherDetails?.sessions[whoWantSwap?.session]
-      ?.class_details[0];
+    whoWantSwap?.teacherDetails?.sessions[sessionIndx]?.class_details[0];
 
-  const [seconTeacherSubject, setseconTeacherSubject] = useState(-1);
+  const [seconTeacherSubject, setseconTeacherSubject] = useState({
+    index: -1,
+    name: "",
+  });
 
   useEffect(() => {}, [whoWantSwap, whichOnSwap]);
 
   const handleChange = (event) => {
-    setseconTeacherSubject(event.target.value);
+    setseconTeacherSubject({
+      index: event.target.value,
+      name: teacher2?.instructor?.qualified_subjects[event.target.value]?.name ||"",
+    });
   };
 
   const onSwapSubmit = () => {
     // Create a copy of the current state to apply changes temporarily
-    const newClassRooms = [...class_rooms];
-    const newTeachers = [...teachers];
+    const newClassRooms = [...studentWeekTimetable];
+    const newTeachers = [...teacherWeekTimetable];
 
-    // Find the class room and update its periods
-    const updatedClassRooms = newClassRooms.map((class_room) =>
-      class_room.class_id === whoWantSwap.class_id
-        ? {
-            ...class_room,
-            periods: class_room.periods.map((period, ind) =>
-              ind === whoWantSwap.session
-                ? {
-                    teacher_id: teacher2.teacher_id,
-                    subject: teacher2.qualified_subjects[seconTeacherSubject],
-                  }
-                : period
-            ),
-          }
-        : class_room
-    );
+    // // Find the class room and update its periods
+    // const updatedClassRooms = newClassRooms.map((class_room) =>
+    //   class_room.class_id === whoWantSwap.class_id
+    //     ? {
+    //         ...class_room,
+    //         periods: class_room.periods.map((period, ind) =>
+    //           ind === whoWantSwap.session
+    //             ? {
+    //                 teacher_id: teacher2.teacher_id,
+    //                 subject: teacher2.qualified_subjects[seconTeacherSubject],
+    //               }
+    //             : period
+    //         ),
+    //       }
+    //     : class_room
+    // );
 
-    // Update teacher1's class_slot and class_subject
-    const updatedTeachersForTeacher1 = newTeachers.map((teacher) =>
-      teacher.teacher_id === teacher1.teacher_id
-        ? {
-            ...teacher,
-            class_slot: teacher.class_slot.map((slot, ind) =>
-              ind === whoWantSwap.session ? null : slot
-            ),
-            class_subject: teacher.class_subject.map((sub, ind) =>
-              ind === whoWantSwap.session ? null : sub
-            ),
-          }
-        : teacher
-    );
+    // // Update teacher1's class_slot and class_subject
+    //  const updatedTeachers = newTeachers.map((teacher) =>
+    //    teacher.teacher_id === teacher1.teacher_id
+    //      ? {
+    //          ...teacher,
+    //          sessions: teacher.sessions.map((session, index) =>
+    //            index === sessionIndx
+    //              ? {
+    //                  ...session,
+    //                  subject: null,
+    //                  type: null,
+    //                  elective_subject_name: null,
+    //                  room: null,
+    //                  class_details: null,
+    //                }
+    //              : session
+    //          ),
+    //        }
+    //      : teacher.teacher_id === teacher2.teacher_id
+    //      ? {
+    //          ...teacher,
+    //          sessions: teacher.sessions.map((session, index) =>
+    //            index === sessionIndx
+    //              ? {
+    //                  ...session,
+    //                  subject: seconTeacherSubject,
+    //                  type: "Core",
+    //                  elective_subject_name: seconTeacherSubject,
+    //                  room: teacher1.sessions[sessionIndx].class_details,
+    //                  class_details: teacher1.sessions[sessionIndx].class_details,
+    //                }
+    //              : session
+    //          ),
+    //        }
+    //      : teacher
+    //  );
 
-    // Update teacher2's class_slot and class_subject
-    const updatedTeachersForTeacher2 = updatedTeachersForTeacher1.map(
-      (teacher) =>
-        teacher.teacher_id === teacher2.teacher_id
+    // // Update teacher2's class_slot and class_subject
+    // const updatedTeachersForTeacher2 = updatedTeachersForTeacher1.map(
+    //   (teacher) =>
+    //     teacher.teacher_id === teacher2.teacher_id
+    //       ? {
+    //           ...teacher,
+    //           class_slot: teacher.class_slot.map((slot, ind) =>
+    //             ind === whoWantSwap.session ? whoWantSwap.class_id : slot
+    //           ),
+    //           class_subject: teacher.class_subject.map((sub, ind) =>
+    //             ind === whoWantSwap.session ? seconTeacherSubject : sub
+    //           ),
+    //         }
+    //       : teacher
+    // );
+
+    if (teacher1.sessions[sessionIndx].type == "Core") {
+      const updatedTeachers = newTeachers.map((teacher) => {
+        return teacher?.instructor?.teacher_id ===
+          teacher1?.instructor?.teacher_id
           ? {
               ...teacher,
-              class_slot: teacher.class_slot.map((slot, ind) =>
-                ind === whoWantSwap.session ? whoWantSwap.class_id : slot
-              ),
-              class_subject: teacher.class_subject.map((sub, ind) =>
-                ind === whoWantSwap.session ? seconTeacherSubject : sub
+              sessions: teacher.sessions.map((session, index) =>
+                index === sessionIndx
+                  ? {
+                      ...session,
+                      subject: null,
+                      type: null,
+                      elective_subject_name: null,
+                      room: null,
+                      class_details: null,
+                    }
+                  : session
               ),
             }
-          : teacher
-    );
+          : teacher?.instructor?.teacher_id === teacher2?.instructor?.teacher_id
+          ? {
+              ...teacher,
+              sessions: teacher.sessions.map((session, index) =>
+                index === sessionIndx
+                  ? {
+                      ...teacher1.sessions[sessionIndx],
+                      subject: seconTeacherSubject.name,
+                      elective_subject_name: seconTeacherSubject.name,
+                    }
+                  : session
+              ),
+            }
+          : teacher;
+      });
+      setTeacherWeekTimetable(updatedTeachers);
+      setseconTeacherSubject({ index: -1, name: "" });
+    } else {
+      if (
+        teacher1.sessions[sessionIndx].subject !== seconTeacherSubject.name
+      ) {
+        // If subjects don't match, show a toast notification and return early
+    
+        toast.info("Subjects don't match for swapping");
+        return null;
+      }
+
+      // Get all class IDs for the session's class distribution
+      const involvedClassIds = teacher1.sessions[sessionIndx].class_details.map(
+        (detail) => detail.id
+      );
+
+      // Update teacher week timetable
+      const updatedTeachers = newTeachers.map((teacher) => {
+        if (
+          teacher?.instructor?.teacher_id === teacher1?.instructor?.teacher_id
+        ) {
+          return {
+            ...teacher,
+            sessions: teacher.sessions.map((session, index) =>
+              index === sessionIndx
+                ? {
+                    subject: null,
+                    type: null,
+                    elective_subject_name: null,
+                    room: null,
+                    class_details: null,
+                  }
+                : session
+            ),
+          };
+        } else if (
+          teacher?.instructor?.teacher_id === teacher2?.instructor?.teacher_id
+        ) {
+          return {
+            ...teacher,
+            sessions: teacher.sessions.map((session, index) =>
+              index === sessionIndx
+                ? {
+                    ...teacher1.sessions[sessionIndx],
+                  }
+                : session
+            ),
+          };
+        }
+        return teacher;
+      });
+
+      // Update student week timetable
+      const updatedStudentTimetable = newClassRooms.map((classroom) => {
+        if (involvedClassIds.includes(classroom.classroom.id)) {
+          return {
+            ...classroom,
+            sessions: classroom.sessions.map((session, index) => {
+              if (index === sessionIndx) {
+                return {
+                  ...session,
+                  class_distribution: session.class_distribution.map(
+                    (distribution) => {
+           
+                      if (
+                        distribution.teacher.id === teacher1.instructor.id
+                      ) {
+                        return {
+                          ...distribution,
+                          teacher: {
+                            name: teacher2.instructor.name,
+                            profile_image: teacher2.instructor.profile_image,
+                          },
+                        };
+                      }
+                      return distribution;
+                    }
+                  ),
+                };
+              }
+              return session;
+            }),
+          };
+        }
+        return classroom;
+      });
+
+      setTeacherWeekTimetable(updatedTeachers)
+      setStudentWeekTimetable(updatedStudentTimetable)
+    }
 
     // Now apply all the updates if they are successful
-    setClassRooms(updatedClassRooms);
-    setTeachers(updatedTeachersForTeacher2);
+    // setStudentWeekTimetable(updatedClassRooms);
 
     // Close the swap popup
     setSwapPopup(false);
@@ -147,7 +301,7 @@ const SwapTeacherPopus = ({
                 }}
                 src={
                   teacher1?.instructor?.profile_image
-                    ? `${apiDomain}/media/${teacher1?.instructor?.profile_image}`
+                    ? `${apiDomain}/${teacher1?.instructor?.profile_image}`
                     : undefined
                 }
                 variant=""
@@ -192,7 +346,7 @@ const SwapTeacherPopus = ({
                 }}
                 src={
                   teacher2?.instructor?.profile_image
-                    ? `${apiDomain}/media/${teacher2?.instructor?.profile_image}`
+                    ? `${apiDomain}/${teacher2?.instructor?.profile_image}`
                     : undefined
                 }
                 variant=""
@@ -215,7 +369,7 @@ const SwapTeacherPopus = ({
               <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
-                value={seconTeacherSubject}
+                value={seconTeacherSubject.index}
                 label="seconTeacherSubject"
                 onChange={handleChange}
                 size="small"
@@ -235,20 +389,20 @@ const SwapTeacherPopus = ({
           {"-"}
           {classdeatails?.division} standard session- {whoWantSwap?.session + 1}{" "}
           on {selectedDate?.getDate()}{" "}
-          {selectedDate?.toLocaleString("default", { month: "long" })}{" "}
-          from {whoWantSwap?.subject} with {teacher1?.instructor?.name} to{" "}
-          {seconTeacherSubject} with {teacher2?.instructor?.name}?
+          {selectedDate?.toLocaleString("default", { month: "long" })} from{" "}
+          {whoWantSwap?.subject} with {teacher1?.instructor?.name} to{" "}
+          {seconTeacherSubject.name} with {teacher2?.instructor?.name}?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setSwapPopup(false)}>Cancel</Button>
         <Button
-          disabled={seconTeacherSubject === -1 ? true : false}
+          disabled={seconTeacherSubject.index === -1 ? true : false}
           onClick={() =>
             onSwapSubmit({
               class_id: whoWantSwap.class_id,
               session: whoWantSwap.session,
-              subject_ind: seconTeacherSubject,
+              subject_ind: seconTeacherSubject.index,
             })
           }
         >

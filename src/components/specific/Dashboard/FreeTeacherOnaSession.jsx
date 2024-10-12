@@ -5,20 +5,18 @@ import { RiSwap2Line } from "react-icons/ri";
 import { useAuth } from "../../../context/Authcontext";
 
 const FreeTeacherOnaSession = ({
-  findClassById,
   toggleDrawer,
   selectedSession,
   whoWantSwap,
   teachers,
   setSwapPopup,
   setWhichOnSwap,
-  findTaecherById,
 }) => {
   const { apiDomain } = useAuth();
   const openSwapConfirmation = (teacherDetails) => {
     // const teacher2=findTaecherById(teacher_id)
     // const teacher1=findTaecherById(whoWantSwap.teacher_id)
-    setWhichOnSwap((prev) => ({...prev,teacherDetails:teacherDetails}));
+    setWhichOnSwap((prev) => ({ ...prev, teacherDetails: teacherDetails }));
     setSwapPopup(true);
   };
 
@@ -57,7 +55,7 @@ const FreeTeacherOnaSession = ({
                     }}
                     src={
                       teacher?.instructor?.profile_image
-                        ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
+                        ? `${apiDomain}/${teacher?.instructor?.profile_image}`
                         : undefined
                     }
                     variant=""
@@ -107,11 +105,39 @@ const FreeTeacherOnaSession = ({
           </p>
           <div className="overflow-y-auto w-full">
             {teachers
-              ?.filter(
-                (teacher) =>
-                  teacher?.sessions[whoWantSwap.session]?.subject === null &&
-                  teacher?.instructor.present[whoWantSwap.session]
-              )
+              ?.filter((teacher) => {
+                const sessionType =
+                  whoWantSwap.teacherDetails.sessions[whoWantSwap.session]
+                    ?.type;
+                const sessionSubject =
+                  whoWantSwap.teacherDetails.sessions[whoWantSwap.session]
+                    ?.subject;
+                console.log(sessionType);
+                const isCoreSession = sessionType === "Elective";
+                const teacherQualifiedSubjects =
+                  teacher?.instructor?.qualified_subjects?.map(
+                    (sub) => sub.name
+                  ) || [];
+
+                // Basic conditions
+                const isSubjectNull =
+                  teacher?.sessions[whoWantSwap.session]?.subject === null;
+                const isTeacherPresent =
+                  teacher?.instructor?.present[whoWantSwap.session];
+
+                // Apply additional filter only if it's a "Core" session
+                if (isCoreSession) {
+                  return (
+                    isSubjectNull &&
+                    isTeacherPresent &&
+                    teacherQualifiedSubjects.includes(sessionSubject)
+                  );
+                }
+
+                // If not a core session, just apply the basic conditions
+                return isSubjectNull && isTeacherPresent;
+              })
+
               ?.sort((a, b) => {
                 const aPriority = a?.qualified_subjects?.includes(
                   whoWantSwap?.subject
@@ -158,12 +184,14 @@ const FreeTeacherOnaSession = ({
                       >
                         <Avatar
                           sx={{
-                            height: "100%",
-                            border: "0.1px solid lightgray",
+                            width: 40,
+                            height: 40,
+                            boxShadow: 1,
+                            border: "2px solid #fff",
                           }}
                           src={
                             teacher?.instructor?.profile_image
-                              ? `${apiDomain}/media/${teacher?.instructor?.profile_image}`
+                              ? `${apiDomain}/${teacher?.instructor?.profile_image}`
                               : undefined
                           }
                           variant=""

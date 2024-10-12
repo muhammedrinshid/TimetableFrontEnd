@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import TeacherTimeTableComponent from "./TimeTableforTeacher";
 
 import { toast } from "react-toastify";
-import { Typography, Switch, FormControlLabel } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import axios from "axios";
 import StudentTimeTableComponent from "./TimeTableforStudent";
 import TimetableControlPanel from "../BuildSchedule/TimetableControlPanel";
 
-const SavedTimeTableViewer = ({}) => {
+const SavedTimeTableViewer = ({ timeTableId }) => {
   const { headers, apiDomain } = useAuth();
 
   const [selectedDay, setSelectedDay] = useState("MON");
   const [isTeacherView, setIsTeacherView] = useState(true);
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState({});
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
+  const [lessonsPerDay, setLessonsPerDay] = useState(5);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleDayClick = (day) => {
@@ -32,7 +32,8 @@ const SavedTimeTableViewer = ({}) => {
           headers,
         }
       );
-      setTeacherWeekTimetable(response.data);
+      setTeacherWeekTimetable(response.data.week_timetable);
+      setLessonsPerDay(response.data.lessons_per_day);
     } catch (error) {
       console.error(
         `Error fetching teacher timetable: ${
@@ -52,8 +53,6 @@ const SavedTimeTableViewer = ({}) => {
         }
       );
       setStudentWeekTimetable(response.data);
-      
-      
     } catch (error) {
       console.error(
         `Error fetching student timetable: ${
@@ -70,13 +69,13 @@ const SavedTimeTableViewer = ({}) => {
     fetchStudentTimetable();
   }, []);
 
-  const days = Object.keys(teacherWeekTimetable).map((day) => day)
+  const days = Object.keys(teacherWeekTimetable).map((day) => day);
   const handleDayChange = (event) => {
     setSelectedDay(event.target.value);
   };
-     const handleSearch = (event) => {
-       setSearchTerm(event.target.value);
-     };
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
   return (
     <div className="mt-8">
       <TimetableControlPanel
@@ -87,8 +86,8 @@ const SavedTimeTableViewer = ({}) => {
         handleSearch={handleSearch}
         isTeacherView={isTeacherView}
         handleViewToggle={handleViewToggle}
+        timeTableId={timeTableId}
       />
-
 
       <div className="w-full flex justify-center mb-4">
         {Object.keys(teacherWeekTimetable).map((day) => (
@@ -112,7 +111,6 @@ const SavedTimeTableViewer = ({}) => {
         <TeacherTimeTableComponent
           teacherTimetable={teacherWeekTimetable[selectedDay]}
           searchTerm={searchTerm}
-
         />
       ) : (
         <StudentTimeTableComponent
