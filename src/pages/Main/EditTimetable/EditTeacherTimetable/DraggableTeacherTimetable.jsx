@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Tooltip, IconButton } from "@mui/material";
+import { Tooltip, IconButton, Avatar } from "@mui/material";
 import {
   CheckIcon,
   CancelPresentationIcon,
@@ -9,6 +9,8 @@ import {
   CopyAllIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../../../../context/Authcontext";
+import EditTeacherListCard from "./EditTeacherListCard";
+import { useConflictChecker } from "../../../../hooks/useConflictChecker";
 
 const DraggableColumn = ({ columnIndex, children, moveColumn }) => {
   const [, drag] = useDrag({
@@ -27,13 +29,19 @@ const DraggableColumn = ({ columnIndex, children, moveColumn }) => {
   });
 
   return (
-    <div ref={(node) => drag(drop(node))} className="column">
+    <th ref={(node) => drag(drop(node))} className=" p-4 font-semibold">
       {children}
-    </div>
+    </th>
   );
 };
 
-const DraggableCell = ({ rowIndex, columnIndex, children, moveCell }) => {
+const DraggableCell = ({
+  rowIndex,
+  columnIndex,
+  children,
+  moveCell,
+  hasConflict,
+}) => {
   const [{ isDragging }, drag] = useDrag({
     type: "CELL",
     item: { rowIndex, columnIndex, type: "CELL" },
@@ -60,47 +68,37 @@ const DraggableCell = ({ rowIndex, columnIndex, children, moveCell }) => {
   });
 
   return (
-    <div
+    <td
       ref={(node) => drag(drop(node))}
-      className="cell"
-      style={{ opacity: isDragging ? 0.5 : 1 }}
+      className={`border p-2  ${
+        hasConflict(rowIndex, columnIndex) ? "bg-red-200 error" : ""
+      }`}
+      style={{
+        opacity: isDragging ? 0.5 : 1,
+        minWidth: "180px",
+        height: "160px",
+      }}
     >
       {children}
-    </div>
+    </td>
   );
 };
 
-const getSessionColor = (session, teacher, index) => {
-  let colorClass = "";
-
+const getSessionColor = (session) => {
   if (!session.subject) {
-    colorClass =
-      "bg-gradient-to-b from-green-200 via-white to-green-200 text-green-90 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400 bg-gradient-moving";
-  } else {
-    switch (session.type) {
-      case "Core":
-        colorClass =
-          "from-blue-200 bg-gradient-to-b via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200";
-        break;
-      case "Elective":
-        colorClass =
-          "from-purple-300 bg-gradient-to-b via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300";
-        break;
-      default:
-        colorClass =
-          "bg-gradient-moving bg-gradient-to-b from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400";
-        break;
-    }
+    return "bg-gradient-to-b from-green-200 via-white to-green-200 text-green-900 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400";
   }
-
-  if (teacher?.sessions[index]?.subject !== null) {
-    colorClass += " blinking-top-border leave__card";
+  switch (session.type) {
+    case "Core":
+      return "bg-gradient-to-b from-blue-200 via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200";
+    case "Elective":
+      return "bg-gradient-to-b from-purple-300 via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300";
+    default:
+      return "bg-gradient-to-b from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400";
   }
-
-  return colorClass;
 };
 
-const getSessionBorderColor = (session) => {
+const getSessionBorderColor = (session, hasError = false) => {
   switch (session.type) {
     case "Core":
       return "border-blue-500 dark:border-gray-800";
@@ -111,13 +109,18 @@ const getSessionBorderColor = (session) => {
   }
 };
 
+
 const DraggableTeacherTimetable = ({
   teacherTimetable,
   selectedDay,
   setTeacherWeekTimetable,
   NumberOfPeriodsInAday,
+  searchTerm,
+  setConflicts,
+  conflicts
 }) => {
-  const { darkMode } = useAuth();
+  const { darkMode, apiDomain } = useAuth();
+  const [filteredTimetable, setFilteredTimetable] = useState(teacherTimetable);
 
   const [columns, setColumns] = useState(
     Array.from({ length: NumberOfPeriodsInAday }, (_, i) => `Period ${i + 1}`)
@@ -172,43 +175,49 @@ const DraggableTeacherTimetable = ({
     [selectedDay, setTeacherWeekTimetable]
   );
 
+
+
+  
+
   const renderSessionContent = (session) => {
     if (session.subject) {
       return (
-        <div className="session-card flex flex-col h-full p-3">
-          <div className="flex justify-between items-start mb-3">
-            <h3 className="font-bold text-sm text-gray-900 dark:text-white leading-tight">
-              {session.subject || session.elective_subject_name}
-            </h3>
+        <div className="h-full flex flex-col">
+          <div className="flex justify-between items-start mb-2">
+            <Tooltip title={session.subject || session.elective_subject_name}>
+              <h3 className="font-bold text-sm leading-tight truncate max-w-[70%]">
+                {session.subject || session.elective_subject_name}
+              </h3>
+            </Tooltip>
             <div
               className={`${
                 session.type === "Core"
                   ? "bg-green-500 dark:bg-green-400 text-white"
                   : "bg-yellow-500 dark:bg-yellow-400 text-gray-900 dark:text-white"
-              } text-vs font-semibold uppercase rounded-full tracking-wider py-1 px-2`}
+              } text-xs font-semibold uppercase rounded-full tracking-wider py-1 px-2`}
             >
               {session.type?.charAt(0)}
             </div>
           </div>
           {session.room && (
-            <p className="room text-xs mb-3 flex justify-between items-center text-gray-500 dark:text-gray-400">
+            <p className="text-xs mb-2 flex justify-between items-center text-gray-500 dark:text-gray-400">
               <span className="font-medium">
                 Room {session.room.room_number}
               </span>
             </p>
           )}
           {session.class_details && (
-            <div className="class-details text-sm flex-grow">
+            <div className="text-xs flex-grow overflow-y-auto">
               {session.class_details.map((classDetail, index) => (
                 <div
                   key={index}
-                  className="class-info flex justify-between items-center mb-2 bg-gray-100 dark:bg-gray-600 bg-opacity-50 rounded-md p-2"
+                  className="flex justify-between items-center mb-1 bg-gray-100 dark:bg-gray-600 bg-opacity-50 rounded-md p-1"
                 >
-                  <span className="class-name font-semibold text-gray-900 dark:text-white text-sm text-nowrap">
+                  <span className="font-semibold text-nowrap">
                     {classDetail.standard} {classDetail.division}
                   </span>
                   {session.type === "Elective" && (
-                    <span className="student-count text-gray-500 dark:text-gray-400 text-vs text-nowrap justify-self-end">
+                    <span className="text-gray-500 dark:text-gray-400 text-nowrap">
                       {classDetail.number_of_students} cadet
                     </span>
                   )}
@@ -220,92 +229,120 @@ const DraggableTeacherTimetable = ({
       );
     } else {
       return (
-        <div className="free-period text-center py-8">
-          <p className="font-semibold text-xl text-gray-500 dark:text-gray-400">
-            Free Period
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            Time to recharge!
-          </p>
+        <div className="h-full flex items-center justify-center">
+          <div className="text-center">
+            <p className="font-semibold text-lg text-gray-500 dark:text-gray-400">
+              Free Period
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Time to recharge!
+            </p>
+          </div>
         </div>
       );
     }
   };
 
+  useEffect(() => {
+    if (searchTerm) {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = teacherTimetable?.filter((teacher) => {
+        const nameMatch = teacher.instructor.name
+          .toLowerCase()
+          .includes(lowercasedSearch);
+        const sessionMatch = teacher.sessions.some((session) => {
+          const subjectMatch = (
+            session?.subject ||
+            session?.elective_subject_name ||
+            ""
+          )
+            .toLowerCase()
+            .includes(lowercasedSearch);
+          const roomMatch = session?.room?.room_number
+            ?.toString()
+            .toLowerCase()
+            .includes(lowercasedSearch);
+          return subjectMatch || roomMatch;
+        });
+        return nameMatch || sessionMatch;
+      });
+      setFilteredTimetable(filtered);
+    } else {
+      setFilteredTimetable(teacherTimetable);
+    }
+  }, [searchTerm, teacherTimetable]);
+
+  const checkedConflicts = useConflictChecker(teacherTimetable, "teacher");
+ useEffect(() => {
+   setConflicts(checkedConflicts);
+   console.log(checkedConflicts)
+ }, [checkedConflicts]);
+
+const hasConflict = (teacherIndex, sessionIndex) => {
+  return (
+    conflicts?.length > 0 &&
+    conflicts.some(
+      (conflict) =>
+        conflict.session === sessionIndex + 1 &&
+        conflict.teachers.some(
+          (teacher) =>
+            teacher.id === filteredTimetable[teacherIndex].instructor.id
+        )
+    )
+  );
+};
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 max-h-full max-w-full overflow-scroll">
-        <div
-          className="flex relative"
-          style={{
-            minWidth: `${150 + NumberOfPeriodsInAday * 180}px`,
-          }}
-        >
-          <div className="sticky left-0 top-0 z-20" style={{ width: "150px" }}>
-            <div className="bg-gradient-to-r sticky left-0 top-0 z-20 from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200 p-4 font-semibold h-16 flex items-center">
-              Teacher
-            </div>
-            {teacherTimetable?.map((teacher, teacherIndex) => (
-              <div
-                key={teacherIndex}
-                className="border-b p-4 h-32 flex items-center"
-              >
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={teacher.instructor.profile_image}
-                    alt={`${teacher.instructor.name} ${teacher.instructor.surname}`}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span className="font-medium text-sm">
-                    {teacher.instructor.name} {teacher.instructor.surname}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-          {columns.map((header, columnIndex) => (
-            <DraggableColumn
-              key={columnIndex}
-              columnIndex={columnIndex}
-              moveColumn={moveColumn}
-            >
-              <div className="w-[180px]">
-                <div className="sticky top-0 z-10 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200 p-4 font-semibold h-16 flex items-center justify-center">
+      <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-[88%] w-full">
+        {/* Table that should scroll */}
+        <table className="border-collapse w-full hf">
+          <thead>
+            <tr className="sticky left-0 top-0 z-20 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200 p-4 font-semibold">
+              <th className="p-4 font-semibold">Teacher</th>
+              {columns.map((header, index) => (
+                <DraggableColumn
+                  key={index}
+                  columnIndex={index}
+                  moveColumn={moveColumn}
+                >
                   {header}
-                </div>
-                {teacherTimetable?.map((teacher, teacherIndex) => {
-                  const session = teacher.sessions[columnIndex];
-                  return (
-                    <DraggableCell
-                      key={`${teacherIndex}-${columnIndex}`}
-                      rowIndex={teacherIndex}
-                      columnIndex={columnIndex}
-                      moveCell={moveCell}
+                </DraggableColumn>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredTimetable?.map((teacher, teacherIndex) => (
+              <tr key={teacherIndex}>
+                <td className="sticky left-0 bg-white dark:bg-gray-800 border p-4 z-10 backdrop-blur-md bg-opacity-50">
+                  <EditTeacherListCard
+                    sessions={teacher?.sessions || []}
+                    teacher={teacher.instructor}
+                  />
+                </td>
+                {teacher.sessions.map((session, columnIndex) => (
+                  <DraggableCell
+                    key={columnIndex}
+                    rowIndex={teacherIndex}
+                    columnIndex={columnIndex}
+                    moveCell={moveCell}
+                    hasConflict={hasConflict}
+                  >
+                    <div
+                      className={`rounded-lg h-full ${getSessionColor(
+                        session
+                      )} transition-all duration-300 hover:shadow-lg relative overflow-hidden border-t-4 ${getSessionBorderColor(
+                        session
+                      )} p-2`}
                     >
-                      <div className="border-b p-2 h-32">
-                        <div
-                          className={`rounded-lg h-full ${getSessionColor(
-                            session,
-                            teacher,
-                            columnIndex
-                          )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden`}
-                          style={{
-                            borderTop: `4px solid ${getSessionBorderColor(
-                              session
-                            )}`,
-                          }}
-                        >
-                          {renderSessionContent(session)}
-                          {/* Action buttons can be added here if needed */}
-                        </div>
-                      </div>
-                    </DraggableCell>
-                  );
-                })}
-              </div>
-            </DraggableColumn>
-          ))}
-        </div>
+                      {renderSessionContent(session)}
+                    </div>
+                  </DraggableCell>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </DndProvider>
   );
