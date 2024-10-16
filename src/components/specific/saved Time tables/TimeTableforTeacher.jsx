@@ -5,7 +5,6 @@ import { Avatar, Chip } from "@mui/material";
 const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
   const { apiDomain, NumberOfPeriodsInAday } = useAuth();
   const [filteredTimetable, setFilteredTimetable] = useState(teacherTimetable);
-
   const teacherRow1 = [
     "Instructor",
     ...Array(NumberOfPeriodsInAday)
@@ -20,20 +19,25 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
         const nameMatch = teacher.instructor.name
           .toLowerCase()
           .includes(lowercasedSearch);
-        const sessionMatch = teacher.sessions.some((session) => {
-          const subjectMatch = (
-            session?.subject ||
-            session?.elective_subject_name ||
-            ""
-          )
-            .toLowerCase()
-            .includes(lowercasedSearch);
-          const roomMatch = session?.room?.room_number
-            ?.toString()
-            .toLowerCase()
-            .includes(lowercasedSearch);
-          return subjectMatch || roomMatch;
-        });
+
+        // Handle nested session arrays
+        const sessionMatch = teacher.sessions.some((sessionGroup) =>
+          sessionGroup.some((session) => {
+            const subjectMatch = (
+              session?.subject ||
+              session?.elective_subject_name ||
+              ""
+            )
+              .toLowerCase()
+              .includes(lowercasedSearch);
+            const roomMatch = session?.room?.room_number
+              ?.toString()
+              .toLowerCase()
+              .includes(lowercasedSearch);
+            return subjectMatch || roomMatch;
+          })
+        );
+
         return nameMatch || sessionMatch;
       });
       setFilteredTimetable(filtered);
@@ -64,7 +68,7 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
         return "#f0f0f0";
     }
   };
-
+  console.log(filteredTimetable);
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
@@ -90,7 +94,7 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
                 key={teacherIndex}
                 className="bg-white hover:bg-gray-50 transition-colors duration-300"
               >
-                <td className="border-b p-4">
+                <td className="border-b p-4 ">
                   <div className="flex items-center space-x-3">
                     <Avatar
                       src={
@@ -115,73 +119,89 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
                 </td>
                 {teacher?.sessions
                   ?.slice(0, NumberOfPeriodsInAday)
-                  .map((session, sessionIndex) => (
-                    <td key={sessionIndex} className="border-b p-2">
-                      <div
-                        className={`rounded-lg p-3 h-full ${getSessionColor(
-                          session
-                        )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden`}
-                        style={{
-                          borderTop: `4px solid ${getSessionBorderColor(
-                            session
-                          )}`,
-                        }}
-                      >
-                        {session?.subject ? (
-                          <div className="session-card flex flex-col jus h-full">
-                            <div className="flex flex-col justify-between items-start mb-3">
-                              <div
-                                className={`${
-                                  session?.type === "Core"
-                                    ? "bg-blue-200 text-blue-700"
-                                    : "bg-pink-100 text-pink-700"
-                                } text-xs font-normal capitalize px-1 py-1 rounded-full tracking-wider mb-2`}
-                              >
-                                {session?.type}
-                              </div>
-                              <h3 className="font-semibold text-base text-gray-800 leading-tight">
-                                {session?.subject ||
-                                  session?.elective_subject_name}
-                              </h3>
-                            </div>
-                            <p className="room text-xs mb-2 flex justify-between items-center text-gray-600">
-                              <span className="font-medium">
-                                Room {session?.room?.room_number}
-                              </span>
-                            </p>
-                            <div className="class-details text-sm flex-grow">
-                              {session?.class_details?.map(
-                                (classDetail, index) => (
+                  .map((sessionGroup, sessionGroupIndex) => (
+                    <td key={sessionGroupIndex} className="border-b p-2">
+                      {sessionGroup.length > 0 ? (
+                        sessionGroup.map((session, sessionIndex) => (
+                          <div
+                            key={sessionIndex}
+                            className={`rounded-lg p-3 h-full ${getSessionColor(
+                              session
+                            )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden  ${
+                              sessionIndex > 0 ? "mt-2" : ""
+                            }`}
+                            style={{
+                              borderTop: `4px solid ${getSessionBorderColor(
+                                session
+                              )}`,
+                            }}
+                          >
+                            {session?.subject ? (
+                              <div className="session-card flex flex-col jus h-full">
+                                <div className="flex flex-col justify-between items-start mb-3">
                                   <div
-                                    key={index}
-                                    className="class-info flex justify-between items-center mb-2 bg-white bg-opacity-50 rounded-md p-2"
+                                    className={`${
+                                      session?.type === "Core"
+                                        ? "bg-blue-200 text-blue-700"
+                                        : "bg-pink-100 text-pink-700"
+                                    } text-xs font-normal capitalize px-1 py-1 rounded-full tracking-wider mb-2`}
                                   >
-                                    <span className="class-name text-xs font-semibold text-gray-700">
-                                      {classDetail?.standard}{" "}
-                                      {classDetail?.division}
-                                    </span>
-                                    {session?.type === "Elective" && (
-                                      <span className="student-count text-gray-500 text-vs">
-                                        {classDetail?.number_of_students}{" "}
-                                        students
-                                      </span>
-                                    )}
+                                    {session?.type}
                                   </div>
-                                )
-                              )}
-                            </div>
+                                  <h3 className="font-semibold text-base text-gray-800 leading-tight">
+                                    {session?.subject ||
+                                      session?.elective_subject_name}
+                                  </h3>
+                                </div>
+                                <p className="room text-xs mb-2 flex justify-between items-center text-gray-600">
+                                  <span className="font-medium">
+                                    Room {session?.room?.room_number}
+                                  </span>
+                                </p>
+                                <div className="class-details text-sm flex-grow">
+                                  {session?.class_details?.map(
+                                    (classDetail, index) => (
+                                      <div
+                                        key={index}
+                                        className="class-info flex justify-between items-center mb-2 bg-white bg-opacity-50 rounded-md p-2"
+                                      >
+                                        <span className="class-name text-xs font-semibold text-gray-700">
+                                          {classDetail?.standard}{" "}
+                                          {classDetail?.division}
+                                        </span>
+                                        {session?.type === "Elective" && (
+                                          <span className="student-count text-gray-500 text-vs">
+                                            {classDetail?.number_of_students}{" "}
+                                            students
+                                          </span>
+                                        )}
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="free-period text-center py-8">
+                                <p className="font-semibold text-xl text-gray-600">
+                                  Free Period
+                                </p>
+                                <p className="text-sm text-gray-400 mt-2">
+                                  Time to recharge!
+                                </p>
+                              </div>
+                            )}
                           </div>
-                        ) : (
-                          <div className="free-period text-center py-8">
-                            <p className="font-semibold text-xl text-gray-600">
-                              Free Period
-                            </p>
-                            <p className="text-sm text-gray-400 mt-2">
-                              Time to recharge!
-                            </p>
-                          </div>
-                        )}
-                      </div>
+                        ))
+                      ) : (
+                        <div className="free-period text-center py-8">
+                          <p className="font-semibold text-xl text-gray-600">
+                            Free Period
+                          </p>
+                          <p className="text-sm text-gray-400 mt-2">
+                            Time to recharge!
+                          </p>
+                        </div>
+                      )}
                     </td>
                   ))}
               </tr>
