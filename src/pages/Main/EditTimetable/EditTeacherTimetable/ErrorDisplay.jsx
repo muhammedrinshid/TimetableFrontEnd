@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { AlertTriangle, Sun, Moon, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  AlertTriangle,
+  Sun,
+  Moon,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+} from "lucide-react";
 
 const ErrorDisplay = ({ errors }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -7,101 +14,170 @@ const ErrorDisplay = ({ errors }) => {
 
   const errorTypeDetails = {
     "Unqualified Teacher": {
-      symbol: "❌",
+      symbol: "👩‍🏫",
       color: "text-red-500",
-      bgColor: isDarkMode ? "bg-red-900/20" : "bg-red-100",
-      description: "The assigned teacher lacks the necessary qualifications for this subject. This could lead to subpar instruction and potential accreditation issues.",
-      solution: "Review the teacher's credentials and reassign a qualified instructor for this subject.",
+      bgColor: isDarkMode ? "bg-red-900/10" : "bg-red-50",
+      description:
+        "Teacher does not meet the required certification standards for this course.",
+      solution:
+        "Assign a certified instructor or provide necessary certification training.",
     },
     "Room Conflict": {
-      symbol: "🚪",
-      color: "text-yellow-500",
-      bgColor: isDarkMode ? "bg-yellow-900/20" : "bg-yellow-100",
-      description: "Multiple classes are scheduled in the same room at overlapping times. This will cause disruption and confusion for students and teachers.",
-      solution: "Relocate one of the conflicting classes to an available room or adjust the class schedule.",
+      symbol: "🏪",
+      color: "text-amber-500",
+      bgColor: isDarkMode ? "bg-amber-900/10" : "bg-amber-50",
+      description: "Room is double-booked for this time slot.",
+      solution:
+        "Check available rooms in building B or C during this time slot.",
     },
     "Class Conflict": {
-      symbol: "📚",
-      color: "text-orange-500",
-      bgColor: isDarkMode ? "bg-orange-900/20" : "bg-orange-100",
-      description: "A student or teacher is scheduled for multiple classes at the same time. This makes it impossible for them to attend all assigned sessions.",
-      solution: "Adjust the class schedule to eliminate overlaps. For elective conflicts, consider offering alternative time slots.",
+      symbol: "📅",
+      color: "text-blue-500",
+      bgColor: isDarkMode ? "bg-blue-900/10" : "bg-blue-50",
+      description: "Schedule overlap detected for student or instructor.",
+      solution:
+        "Review alternative time slots or consider remote learning options.",
     },
+    "Concurrent Sessions": {
+      symbol: "⏰",
+      color: "text-purple-500",
+      bgColor: isDarkMode ? "bg-purple-900/10" : "bg-purple-50",
+      description: "Instructor scheduled for multiple classes simultaneously.",
+      solution: "Adjust session timing or assign an additional instructor.",
+    },
+  };
+
+  // Helper function to format session time
+  const formatSessionTime = (sessionGroup) => {
+    const sessionTimes = {
+      AM: "9:00 AM - 12:00 PM",
+      PM: "1:00 PM - 4:00 PM",
+      EVE: "6:00 PM - 9:00 PM",
+    };
+    return sessionTimes[sessionGroup] || sessionGroup;
   };
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
   const toggleErrorExpand = (index) => {
-    setExpandedErrors(prev => ({ ...prev, [index]: !prev[index] }));
+    setExpandedErrors((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
   return (
-    <div className={`max-w-3xl mx-auto rounded-lg shadow-custom-3 font-Inter text-sm transition-colors duration-300 overflow-hidden ${
-      isDarkMode ? "bg-dark-background text-dark-text" : "bg-white text-gray-800"
-    }`}>
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        <div className="flex items-center">
-          <AlertTriangle className="mr-2 text-red-500" size={24} />
-          <h2 className="text-xl font-semibold">Scheduling Conflicts</h2>
+    <div
+      className={`max-w-2xl mx-auto rounded-xl shadow-lg font-sans transition-colors duration-300 w-full h-full ${
+        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-800"
+      }`}
+    >
+      <div className="flex items-center justify-between p-3 border-b border-gray-700/50">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="text-red-500" size={18} />
+          <h2 className="text-base font-medium">Schedule Alerts</h2>
+          <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/10 text-red-500">
+            {errors.length} issues found
+          </span>
         </div>
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
+          className="p-1.5 rounded-lg hover:bg-gray-800/50 transition-colors duration-200"
+          aria-label="Toggle theme"
         >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
         </button>
       </div>
-      <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
+
+      <div className="p-3 space-y-2 max-h-[600px] overflow-y-auto">
         {errors.map((error, index) => {
-          const { symbol, color, bgColor, description, solution } = errorTypeDetails[error.type] || {};
+          const { symbol, color, bgColor, description, solution } =
+            errorTypeDetails[error.type] || {};
           const isExpanded = expandedErrors[index];
+
           return (
             <div
               key={index}
-              className={`rounded-md overflow-hidden transition-all duration-300 ${bgColor}`}
+              className={`rounded-lg border ${
+                isDarkMode ? "border-gray-800" : "border-gray-100"
+              } ${bgColor} transition-all duration-200 hover:shadow-md`}
             >
-              <div 
-                className="p-4 cursor-pointer flex items-center justify-between"
+              <button
+                className="w-full p-3 cursor-pointer flex items-center justify-between"
                 onClick={() => toggleErrorExpand(index)}
               >
-                <div className="flex items-center space-x-3">
-                  <span className={`${color} text-2xl`}>{symbol}</span>
-                  <div>
-                    <h3 className="font-bold text-lg">{error.type}</h3>
-                    <p className="text-sm opacity-80">Session {error.session}</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">{symbol}</span>
+                  <div className="text-left">
+                    <h3 className="text-sm font-semibold">{error.type}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Clock size={12} className="opacity-60" />
+                      <p className="text-xs opacity-75">
+                        {formatSessionTime(error.sessionGroup)}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </div>
+                {isExpanded ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                )}
+              </button>
+
               {isExpanded && (
-                <div className={`p-4 ${isDarkMode ? "bg-dark-secondary" : "bg-white"}`}>
-                  <p className="mb-3 text-sm">{description}</p>
-                  <div className="mb-3 text-sm">
-                    <h4 className="font-semibold mb-1">Details:</h4>
-                    {error.type === "Unqualified Teacher" && (
-                      <>
-                        <p><strong>Subject:</strong> {error.subject}</p>
-                        <p><strong>Teacher(s):</strong> {error.teachers.map((t) => t.name).join(", ")}</p>
-                      </>
-                    )}
-                    {error.type === "Room Conflict" && (
-                      <>
-                        <p><strong>Room:</strong> {error.room}</p>
-                        <p><strong>Conflicting Teachers:</strong> {error.teachers.map((t) => t.name).join(", ")}</p>
-                      </>
-                    )}
-                    {error.type === "Class Conflict" && (
-                      <>
-                        <p><strong>Class:</strong> {error.class}</p>
-                        <p><strong>Conflicting Teachers:</strong> {error.teachers.map((t) => t.name).join(", ")}</p>
-                        {error.isElectiveConflict && (
-                          <p className="mt-1 font-semibold text-dark-warning">⚠️ This involves an elective course</p>
-                        )}
-                      </>
-                    )}
+                <div
+                  className={`p-3 border-t ${
+                    isDarkMode
+                      ? "border-gray-800 bg-gray-800/50"
+                      : "border-gray-100 bg-gray-50"
+                  }`}
+                >
+                  <div
+                    className={`p-2 rounded-md mb-2 text-xs ${
+                      isDarkMode ? "bg-gray-800" : "bg-white"
+                    } ${color}`}
+                  >
+                    <p>{description}</p>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-sm mb-1">Recommended Action:</h4>
-                    <p className="text-sm italic">{solution}</p>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="grid grid-cols-[auto,1fr] gap-2">
+                      <span className="font-medium">Session:</span>
+                      <span>{formatSessionTime(error.sessionGroup)}</span>
+
+                      {error.type === "Unqualified Teacher" && (
+                        <>
+                          <span className="font-medium">Course:</span>
+                          <span>{error.subject}</span>
+                          <span className="font-medium">Staff:</span>
+                          <span>
+                            {error.teachers.map((t) => t.name).join(", ")}
+                          </span>
+                        </>
+                      )}
+                      {error.type === "Room Conflict" && (
+                        <>
+                          <span className="font-medium">Location:</span>
+                          <span>{error.room}</span>
+                          <span className="font-medium">Instructors:</span>
+                          <span>
+                            {error.teachers.map((t) => t.name).join(", ")}
+                          </span>
+                        </>
+                      )}
+                      {error.type === "Class Conflict" && (
+                        <>
+                          <span className="font-medium">Class:</span>
+                          <span>{error.class}</span>
+                          <span className="font-medium">Instructors:</span>
+                          <span>
+                            {error.teachers.map((t) => t.name).join(", ")}
+                          </span>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-dashed border-gray-700/50">
+                      <p className="font-medium mb-1">Suggested Resolution:</p>
+                      <p className="italic opacity-75">{solution}</p>
+                    </div>
                   </div>
                 </div>
               )}

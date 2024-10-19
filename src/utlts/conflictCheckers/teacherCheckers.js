@@ -127,10 +127,41 @@ export function checkTeacherQualifications(teacherTimetable) {
 
   return errors;
 }
+export function checkConcurrentSessions(teacherTimetable) {
+  const errors = [];
 
+  teacherTimetable.forEach((teacher) => {
+    teacher.sessions.forEach((sessionGroup, sessionGroupIndex) => {
+      if (sessionGroup.length > 1) {
+        errors.push({
+          type: "Concurrent Sessions",
+          sessionGroup: sessionGroupIndex + 1,
+          teachers: [{
+            id: teacher.instructor.id,
+            name: teacher.instructor.name,
+          }],
+          sessions: sessionGroup.map((session) => ({
+            subject: session.subject,
+            subjectId: session.subject_id,
+            class: session.class_details
+              .map(
+                (classDetail) =>
+                  `${classDetail.standard}-${classDetail.division}`
+              )
+              .join(", "),
+          })),
+        });
+      }
+    });
+  });
+
+  return errors;
+}
 export function checkTeacherConflicts(timetable) {
   let conflicts = [];
   conflicts = conflicts.concat(checkTeacherQualifications(timetable));
   conflicts = conflicts.concat(checkRoomAndClassConflicts(timetable));
+  conflicts = conflicts.concat(checkConcurrentSessions(timetable));
+
   return conflicts;
 }

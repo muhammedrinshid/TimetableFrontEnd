@@ -1,70 +1,99 @@
 import React from "react";
-
-import { Avatar, } from "@mui/material";
 import { useAuth } from "../../../../context/Authcontext";
 
-
-const EditTeacherListCard = ({
-  teacher,
-  sessions,
-}) => {
+const EditTeacherListCard = ({ teacher, sessions }) => {
   const { apiDomain } = useAuth();
-  const teachingPeriods = sessions.filter(
-    (session) => session.subject !== null
-  ).length;
-  const planningPeriods = sessions.filter(
-    (session) => session.subject === null
-  ).length;
-  return (
-    <div className=" bg-light-secondary bg-opacity-20 rounded-lg p-2 shadow-custom-10 ">
-      <div className="flex ">
-        <div className="basis-1/3 flex flex-col justify-start gap-2 items-center">
-          <Avatar
-            src={
-              teacher?.profile_image
-                ? `${apiDomain}/${teacher?.profile_image}`
-                : undefined
-            }
-            sx={{
-              width: 55,
-              height: 55,
-              boxShadow: 1,
-              border: "2px solid #fff",
-            }}
-          />
-          <p className="text-vs font-bold text-text_2">{teacher.teacher_id}</p>
-   
-        </div>
-        <div className=" flex flex-col pl-3 capitalize texlg py-4">
-          <h3 className="font-medium text-base">{teacher.name} </h3>
-          <h4 className="font-normal text-xs">{teacher.surname}</h4>
+ const teachingPeriods = sessions.filter(
+   (sessionGrp) => sessionGrp[0].subject !== null
+ ).length;
 
-          {/* subject hast tags */}
-          <div className="flex flex-row gap-1 mt-1 flex-wrap border-t border-white pt-2">
-            {teacher?.qualified_subjects.map((sub) => (
-              <p className="text-[10px] p-[2px] px-2 text-nowrap font-semibold  bg-pale_orange bg-opacity-60 text-white first:bg-purple-500 last:bg-blue-500  font-sans rounded-lg">
-                {sub.name}
+ const planningPeriods = sessions.filter(
+   (sessionGrp) => sessionGrp[0].subject === null
+ ).length;
+
+  return (
+    <td className="sticky left-0 bg-white dark:bg-gray-800 p-2 z-10">
+      <div className="w-56 backdrop-blur-md bg-light-background1/50 dark:bg-gray-900/70 rounded-lg shadow hover:shadow-md transition-shadow duration-300">
+        <div className="p-3 space-y-2">
+          {/* Header Section */}
+          <div className="flex items-center gap-3">
+            {/* Avatar Section */}
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-0.5">
+                <img
+                  src={
+                    teacher?.profile_image
+                      ? `${apiDomain}/${teacher?.profile_image}`
+                      : "/api/placeholder/48/48"
+                  }
+                  alt={teacher.name}
+                  className="w-full h-full rounded-full object-cover border-2 border-white dark:border-gray-800"
+                />
+              </div>
+              <div className="mt-0.5 text-center">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {teacher.teacher_id}
+                </span>
+              </div>
+            </div>
+
+            {/* Info Section */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                {teacher.name}
+              </h3>
+              <p className="text-xs text-gray-600 dark:text-gray-300 truncate">
+                {teacher.surname}
               </p>
-            ))}
+            </div>
+          </div>
+
+          {/* Subject Tags */}
+          <div className="relative">
+            <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+              {teacher?.qualified_subjects.map((sub, index) => (
+                <span
+                  key={index}
+                  className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                    index % 3 === 0
+                      ? "bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200"
+                      : index % 3 === 1
+                      ? "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200"
+                      : "bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200"
+                  }`}
+                >
+                  {sub.name}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-1.5 p-1.5 rounded-md bg-slate-200 dark:bg-gray-700/50">
+              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30">
+                <span className="text-xs font-bold text-red-600 dark:text-red-400">
+                  {teachingPeriods}
+                </span>
+              </div>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                Teaching
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 p-1.5 rounded-md bg-slate-200 dark:bg-gray-700/50">
+              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                  {planningPeriods}
+                </span>
+              </div>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                Planning
+              </span>
+            </div>
           </div>
         </div>
       </div>
-      <div className="flex flex-row pt-2 justify-evenly pr-2">
-        <div className="flex flex-col justify- items-center">
-          <h3 className="text-sm font-semibold text-red-500 font-sans">
-            {teachingPeriods}
-          </h3>
-          <p className="text-vs font-sans text-red-300">Teaching</p>
-        </div>
-
-        <div className="flex flex-col justify- items-center">
-          <h3 className="text-sm font-semibold text-blue-500 font-sans">
-            {planningPeriods}
-          </h3>
-          <p className="text-vs font-sans text-blue-300">Planning</p>
-        </div>
-      </div>
-    </div>
+    </td>
   );
 };
 

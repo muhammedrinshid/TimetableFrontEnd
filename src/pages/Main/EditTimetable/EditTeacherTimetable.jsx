@@ -7,6 +7,8 @@ import { Loadings } from "../../../components/common";
 import EditTeacherTimetableControlePanel from "./EditTeacherTimetable/EditTeacherTimetableControlePanel";
 import { TfiAngleDoubleLeft, TfiAngleDoubleRight } from "react-icons/tfi";
 import ErrorDisplay from "./EditTeacherTimetable/ErrorDisplay";
+import RoomAvailabilityDisplayer from "./EditTeacherTimetable/RoomAvailabilityDisplayer";
+import RoomChangeDialog from "./EditTeacherTimetable/RoomChangeDialog";
 
 const EditTeacherTimetable = ({ timeTableId }) => {
   const { apiDomain, headers } = useAuth();
@@ -16,6 +18,15 @@ const EditTeacherTimetable = ({ timeTableId }) => {
   const [loading, setLoading] = useState(true); // Loading state
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [conflicts, setConflicts] = useState([]);
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const [selectedSessionForRoomNumber, setSelectedSessionForRoomNumber] =
+    useState(0);
+  const [roomChangeDialogOpen, setRoomChangeDialogOpen] = useState({
+    isOpen: false,
+    fromRoom: null,
+    toRoom: null,
+    type: null,
+  });
 
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState({});
 
@@ -39,10 +50,22 @@ const EditTeacherTimetable = ({ timeTableId }) => {
       setLoading(false); // Set loading to false after fetch
     }
   };
+  const fetchAvailableRooms = async () => {
+    try {
+      const response = await axios.get(`${apiDomain}/api/room/rooms/`, {
+        headers,
+      });
+      setAvailableRooms(response.data);
+    } catch (err) {
+      toast.error("Failed to fetch available rooms");
+      console.error("Error fetching available rooms:", err);
+    }
+  };
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
   useEffect(() => {
     fetchTeacherTimetable();
+    fetchAvailableRooms();
   }, [timeTableId]);
   const days = Object.keys(teacherWeekTimetable).map((day) => day);
   const handleDayChange = (event) => {
@@ -52,16 +75,40 @@ const EditTeacherTimetable = ({ timeTableId }) => {
     setSearchTerm(event.target.value);
   };
 
-    if (loading) {
-      return (
-        <div className="flex justify-center items-center h-64">
-          <Loadings.ThemedMiniLoader />
-        </div>
-      );
-    }
+  const onChangesetSelectedSessionForRoomNumber = (index) => {
+    setSelectedSessionForRoomNumber(index);
+    console.log(index);
+  };
+
+  const handleOpenRoomChangeDialog = (
+    teacherId,
+    sessionGrpIdx,
+    sessionIndex,
+    room
+  ) => {
+    const newValue = {
+      isOpen: true,
+      fromRoom: {
+        teacherId: teacherId,
+        sessionGrpIdx: sessionGrpIdx,
+        sessionIndex: sessionIndex,
+        room: room,
+      },
+      toRoom: {},
+      type: null,
+    };
+    setRoomChangeDialogOpen(newValue);
+  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loadings.ThemedMiniLoader />
+      </div>
+    );
+  }
   return (
     <div
-      className={`grid grid-rows-[1fr_4fr] box-border gap-4 h-full w-full overflow-hidden pr-5 transition-all relative`}
+      className={`grid grid-rows-[3fr_2fr] grid-cols-[3fr_1fr] box-border gap-4 h-full w-full overflow-hidden pr-5 transition-all relative`}
     >
       <div
         className="absolute top-1/2 -right-0 m-2 px-1 py-3 bg-opacity-65    "
@@ -74,7 +121,11 @@ const EditTeacherTimetable = ({ timeTableId }) => {
         )}
       </div>
       {/* Large Left Panel */}
-      <div className="col-start-1 col-end-2 row-start-1 row-end-3 p-3 overflow-hidden ">
+      <div
+        className={`col-start-1 col-end-2 row-start-1 row-end-3 p-3 overflow-hidden ${
+          isCollapsed ? "col-end-3" : ""
+        } `}
+      >
         <EditTeacherTimetableControlePanel
           days={days}
           handleDayChange={handleDayChange}
@@ -87,30 +138,59 @@ const EditTeacherTimetable = ({ timeTableId }) => {
           selectedDay={selectedDay}
           setTeacherWeekTimetable={setTeacherWeekTimetable}
           NumberOfPeriodsInAday={lessonsPerDay}
-          teacherTimetable={teacherWeekTimetable[selectedDay]}
+          teacherWeekTimetable={teacherWeekTimetable}
           searchTerm={searchTerm}
           conflicts={conflicts}
           setConflicts={setConflicts}
+          onChangesetSelectedSessionForRoomNumber={
+            onChangesetSelectedSessionForRoomNumber
+          }
+          handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
         />
         {/* Collapse/Expand Icon Button */}
       </div>
 
       {/* Right Panels with smooth collapse/expand */}
-      <div
-        className={`col-start-2 col-end-3 row-start-1 row-end-3 transition-[max-width] duration-500 ease-in-out overflow-hidden  pb-3${
-          isCollapsed ? "max-w-0" : "max-w-[300px]" // Use 'max-w' for smooth transitions
-        }`}
-      >
-        <div className=" row-start-1 row-end-2 h-full">
-          <ErrorDisplay errors={conflicts}/>
-        </div>
-        <div className="bg-green-500 row-start-2 row-end-3 h-full">
-          Row 2, Column 2 (2fr Width, 4fr Height)
-        </div>
-      </div>
+      {!isCollapsed && (
+        <>
+          <div
+            className={`col-start-2 col-end-3 row-start-1 row-end-2 transition-[max-width] duration-500 ease-in-out overflow-hidden pb-3 w-full h-full`}
+          >
+            <ErrorDisplay errors={conflicts} />
+          </div>
+          <div className=" col-start-2 col-end-3 row-start-2 row-end-3 h-full overflow-hidden pb-2">
+            <RoomAvailabilityDisplayer
+              availableRooms={availableRooms}
+              teacherWeekTimetable={teacherWeekTimetable}
+              selectedDay={selectedDay}
+              selectedSessionForRoomNumber={selectedSessionForRoomNumber}
+              onChangesetSelectedSessionForRoomNumber={
+                onChangesetSelectedSessionForRoomNumber
+              }
+              roomChangeDialogOpen={roomChangeDialogOpen}
+            />
+          </div>
+        </>
+      )}
+      <RoomChangeDialog
+        open={roomChangeDialogOpen.isOpen}
+        onClose={() =>
+          setRoomChangeDialogOpen({
+            isOpen: false,
+            fromRoom: null,
+            toRoom: null,
+            type: null,
+          })
+        }
+        availableRooms={availableRooms}
+        teacherWeekTimetable={teacherWeekTimetable}
+        selectedDay={selectedDay}
+        selectedSessionForRoomNumber={selectedSessionForRoomNumber}
+        roomChangeDialogOpen={roomChangeDialogOpen}
+        setRoomChangeDialogOpen={setRoomChangeDialogOpen}
+      />
     </div>
   );
-
 };
 
 export default EditTeacherTimetable;
