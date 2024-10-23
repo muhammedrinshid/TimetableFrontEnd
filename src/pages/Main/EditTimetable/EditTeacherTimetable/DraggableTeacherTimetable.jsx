@@ -264,7 +264,7 @@ const DraggableTeacherTimetable = ({
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-[88%] w-full">
-        <table className="border-collapse w-full hf">
+        <table className="border-collapse w-full h-full">
           <thead>
             <tr className="sticky left-0 top-0 z-20 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200 p-4 font-semibold">
               <th className="p-4 font-semibold">Teacher</th>

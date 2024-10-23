@@ -32,7 +32,7 @@ const TimeTableSortMenu = ({ setSortType }) => {
   return (
     <div>
       <IconButton onClick={handleClick}>
-        <FilterListIcon color="primary" />
+        <FilterListIcon color="primary dark:text-gray-900" />
       </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         <MenuItem onClick={() => handleSort("Name A-Z")}>

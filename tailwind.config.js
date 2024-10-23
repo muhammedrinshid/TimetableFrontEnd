@@ -82,28 +82,75 @@ module.exports = {
       },
       colors: {
         light: {
-          primary: "#312ECB",
-          secondary: "#7874E0",
+          primary: "#312ECB", // Original color (unchanged)
+          primaryShades: {
+            100: "#e7e7f8",
+            200: "#cfcff1",
+            300: "#b7b7eb",
+            400: "#9f9fe4",
+            500: "#8787de", // Close to the original primary color
+            600: "#5e5eb3",
+            700: "#464691",
+            800: "#312ECB", // Matches your original light.primary
+            900: "#1b1b8b",
+          },
+          secondary: "#7874E0", // Original color (unchanged)
+          secondaryShades: {
+            100: "#e6e5f7",
+            200: "#cdccec",
+            300: "#b3b2e0",
+            400: "#9a99d5",
+            500: "#7874E0", // Close to the original secondary color
+            600: "#6666d2",
+            700: "#5353b4",
+            800: "#414196",
+            900: "#2e2e78",
+          },
+          // Similarly, define accent and highlight shades
           accent: "#715DF1",
           highlight: "#ff8c42",
           background: "#DFDFDF",
           background1: "#ecf3fa",
         },
         dark: {
-          primary: "#1c1c1c", // Dark gray for primary elements
-          secondary: "#2a2a2a", // Slightly lighter gray for secondary elements
+          primary: "#1f1f1f", // Use gray-900 for primary
+          primaryShades: {
+            100: "#e5e7eb", // gray-100 (Light gray)
+            200: "#d1d5db", // gray-200 (Light gray)
+            300: "#9ca3af", // gray-300 (Gray)
+            400: "#6b7280", // gray-400 (Medium gray)
+            500: "#4b5563", // gray-500 (Dark gray)
+            600: "#374151", // gray-600 (Darker gray)
+            700: "#1f2937", // gray-700 (Very dark gray)
+            800: "#111827", // gray-800 (Almost black)
+            900: "#0f172a", // gray-900 (Black)
+          },
+          secondary: "#2a2a2a", // A slightly lighter gray for secondary elements
+          secondaryShades: {
+            100: "#e5e7eb", // gray-100 (Light gray)
+            200: "#d1d5db", // gray-200 (Light gray)
+            300: "#9ca3af", // gray-300 (Gray)
+            400: "#6b7280", // gray-400 (Medium gray)
+            500: "#4b5563", // gray-500 (Dark gray)
+            600: "#374151", // gray-600 (Darker gray)
+            700: "#1f2937", // gray-700 (Very dark gray)
+            800: "#111827", // gray-800 (Almost black)
+            900: "#0f172a", // gray-900 (Black)
+          },
           accent: "#4b86f5", // Bright blue for accent elements
           highlight: "#ffcc00", // Golden yellow for highlights
           background: "#121212", // Very dark gray for background
-          background1: "#1f1f1f", // Darker background for sections
+          background1: "#1e1e1e", // Slightly lighter dark gray for sections
           text: "#e0e0e0", // Light gray for text
           muted: "#b0b0b0", // Muted gray for less prominent text
           border: "#333333", // Dark border for separation
           shadow: "#000000", // Black for shadows
           success: "#4caf50", // Green for success messages
           error: "#f44336", // Red for error messages
-          warning: "#ff9800",
+          warning: "#ff9800", // Orange for warning messages
         },
+
+        // Extra colors (unchanged)
         text_1: "#818181",
         text_2: "#a6a6a6",
         lightGreen: "#90EE90",

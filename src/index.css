@@ -228,3 +228,55 @@ html, body {
   background-size: 200% 200%;
   animation: gradient-move 2s linear infinite;
 }
+
+/* Base button styles */
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm;
+}
+
+/* Primary gradient button */
+.btn-gradient-primary {
+  /* Adjusted the via and to colors to match the theme better */
+  @apply text-white bg-gradient-to-r from-[#312ECB] via-[#5A4ED6] to-[#312ECB]; 
+  @apply hover:bg-[length:200%_100%] bg-[length:100%_100%];
+  @apply shadow-lg hover:shadow-[#312ECB]/20;
+  @apply focus:ring-[#312ECB];
+}
+
+/* Secondary gradient button (gray version) */
+.btn-gradient-secondary {
+  /* Adjusted the gradient to a dark theme-compatible palette */
+  @apply text-white bg-gradient-to-r from-gray-600 via-gray-700 to-gray-600; 
+  @apply hover:bg-[length:200%_100%] bg-[length:100%_100%];
+  @apply shadow-lg hover:shadow-gray-700/20;
+  @apply focus:ring-gray-600;
+}
+
+/* Disabled button */
+.btn-disabled {
+  @apply cursor-not-allowed bg-gradient-to-r from-gray-100 to-gray-200 text-gray-400;
+  @apply dark:from-gray-700 dark:to-gray-800 dark:text-gray-500;
+  @apply shadow-none pointer-events-none;
+}
+
+/* Button sizes */
+.btn-sm {
+  @apply px-3 py-2 text-sm;
+}
+
+.btn-lg {
+  @apply px-6 py-3 text-base;
+}
+
+/* Icon button modifiers */
+.btn-icon {
+  @apply space-x-2;
+}
+
+.btn-icon-left svg {
+  @apply -ml-0.5 mr-2 w-4 h-4;
+}
+
+.btn-icon-right svg {
+  @apply -mr-0.5 ml-2 w-4 h-4;
+}

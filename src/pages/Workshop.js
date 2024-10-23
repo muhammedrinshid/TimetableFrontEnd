@@ -123,59 +123,99 @@
        
 //     ],.......
 // }
-[
-  {
-    id: "38b42e4b-7cf6-4866-8ed9-ba7f95cef619",
-    name: "study room",
-    room_number: "101",
-    capacity: 50,
-    occupied: false,
-    room_type: "STUDY_AREA",
-    school: "a1c289e9-80af-41ab-b2ec-b4a2528de686",
-  },
-  {
-    id: "5425428f-3be3-405c-b438-fb2354ad3cde",
-    name: "study room 2",
-    room_number: "102",
-    capacity: 50,
-    occupied: false,
-    room_type: "STUDY_AREA",
-    school: "a1c289e9-80af-41ab-b2ec-b4a2528de686",
-  },
-  {
-    id: "025e1609-83aa-4832-811a-4a8e8c18e80c",
-    name: "study room 3",
-    room_number: "103",
-    capacity: 50,
-    occupied: false,
-    room_type: "STUDY_AREA",
-    school: "a1c289e9-80af-41ab-b2ec-b4a2528de686",
-  },
-  {
-    id: "0d22a7dd-e148-44c7-b23c-efb5dde9374e",
-    name: "computer lab 1",
-    room_number: "506",
-    capacity: 30,
-    occupied: false,
-    room_type: "COMPUTER_LAB",
-    school: "a1c289e9-80af-41ab-b2ec-b4a2528de686",
-  },
-  {
-    id: "ed3f1c46-ec17-4dfb-b1dd-a3fcaf2c0896",
-    name: "room 1 Division B",
-    room_number: "105",
-    capacity: 0,
-    occupied: true,
-    room_type: "CLASSROOM",
-    school: "a1c289e9-80af-41ab-b2ec-b4a2528de686",
-  },
-  {
-    id: "ff2b6702-ab3a-44b9-afbf-c5f4e409dffd",
-    name: "room 1 Division A",
-    room_number: "501",
-    capacity: 0,
-    occupied: true,
-    room_type: "CLASSROOM",
-    school: "a1c289e9-80af-41ab-b2ec-b4a2528de686",
-  },
-];
+// {
+//     "MON": [
+//         {
+//             "classroom": {
+//                 "id": "d2b47f1f-6d97-4539-bae3-7ad5101c1883",
+//                 "standard": "1",
+//                 "division": "A",
+//                 "room": {
+//                     "name": "room 1 Division A",
+//                     "room_number": "501",
+//                     "room_type": "CLASSROOM",
+//                     "id": "ff2b6702-ab3a-44b9-afbf-c5f4e409dffd"
+//                 },
+//                 "total_students": "40",
+//                 "class_id": "CR0001"
+//             },
+//             "sessions": [
+//                 [{
+//                     "name": "Second Language",
+//                     "type": "Elective",
+//                     "class_distribution": [
+//                         {
+//                             "subject": "Arabic",
+//                             "teacher": {
+//                                 "name": "Adam bisily",
+//                                 "profile_image": "/media/teacher_profiles/teacher09_q1iAe9U.jpg",
+//                                 "id": "641c20c6-0d24-4eda-adac-52f742e90738"
+//                             },
+//                             "number_of_students_from_this_class": 12,
+//                             "room": {
+//                                 "name": "room 1 Division A",
+//                                 "number": "501",
+//                                 "type": "Classroom"
+//                             }
+//                         },
+//                         {
+//                             "subject": "French",
+//                             "teacher": {
+//                                 "name": "Jouhar hashim",
+//                                 "profile_image": "/media/teacher_profiles/teacher05_YTSyBvl.jpg",
+//                                 "id": "9a5e0d8d-3723-4009-ab66-148232bf151c"
+//                             },
+//                             "number_of_students_from_this_class": 18,
+//                             "room": {
+//                                 "name": "room 1 Division B",
+//                                 "number": "105",
+//                                 "type": "Classroom"
+//                             }
+//                         },
+//                         {
+//                             "subject": "Urdu",
+//                             "teacher": {
+//                                 "name": "Adam Johnson",
+//                                 "profile_image": "/media/teacher_profiles/teacher11_6E24WB7.jpg",
+//                                 "id": "3cabd5e7-6f35-4c0e-8f0a-0b2e73859d88"
+//                             },
+//                             "number_of_students_from_this_class": 10,
+//                             "room": {
+//                                 "name": "study room",
+//                                 "number": "101",
+//                                 "type": "Study Area"
+//                             }
+//                         }
+//                     ]
+//                 },],
+//                 [{
+//                     "name": "Basic Scienc",
+//                     "type": "Core",
+//                     "class_distribution": [
+//                         {
+//                             "subject": "Basic Scienc",
+//                             "teacher": {
+//                                 "name": "Joen doe",
+//                                 "profile_image": "/media/teacher_profiles/teacher01_RPyYJ2p.jpg",
+//                                 "id": "99fcec3e-3e96-4679-9915-a5338274d24c"
+//                             },
+//                             "number_of_students_from_this_class": 0,
+//                             "room": {
+//                                 "name": "room 1 Division A",
+//                                 "number": "501",
+//                                 "type": "Classroom"
+//                             }
+//                         }
+//                     ]
+//                 },],
+//                .........
+//             ]
+//         },
+//         .......
+//     ],
+//     "TUE": [
+       
+//     ],
+//     ........
+    
+// }

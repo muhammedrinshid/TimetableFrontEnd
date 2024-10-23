@@ -77,7 +77,6 @@ const EditTeacherTimetable = ({ timeTableId }) => {
 
   const onChangesetSelectedSessionForRoomNumber = (index) => {
     setSelectedSessionForRoomNumber(index);
-    console.log(index);
   };
 
   const handleOpenRoomChangeDialog = (
@@ -86,6 +85,8 @@ const EditTeacherTimetable = ({ timeTableId }) => {
     sessionIndex,
     room
   ) => {
+
+    onChangesetSelectedSessionForRoomNumber(sessionGrpIdx)
     const newValue = {
       isOpen: true,
       fromRoom: {
@@ -188,6 +189,7 @@ const EditTeacherTimetable = ({ timeTableId }) => {
         selectedSessionForRoomNumber={selectedSessionForRoomNumber}
         roomChangeDialogOpen={roomChangeDialogOpen}
         setRoomChangeDialogOpen={setRoomChangeDialogOpen}
+        setTeacherWeekTimetable={setTeacherWeekTimetable}
       />
     </div>
   );

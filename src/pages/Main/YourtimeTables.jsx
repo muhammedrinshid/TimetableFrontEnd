@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Chip } from "@mui/material";
+import { motion } from "framer-motion";
 
 import RoundButton from "../../components/common/RoundButton";
 import { useAuth } from "../../context/Authcontext";
@@ -9,12 +10,10 @@ import SavedTimeTableCard from "../../components/specific/saved Time tables/Save
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
 import SavedTimeTableViewer from "../../components/specific/saved Time tables/SavedTimeTableViewer";
 import { SearchInput } from "../../components/Mui components";
-import { SortMenu } from "../../components/specific/Teachers";
 import TimeTableSortMenu from "../../components/specific/saved Time tables/TimeTableSortMenu";
-import { motion } from "framer-motion";
 
 const SavedTimeTables = () => {
-  const {  apiDomain, headers } = useAuth();
+  const { apiDomain, headers } = useAuth();
   const [savedTables, setSavedTables] = useState([]);
   const [scheduleErrorList, setScheduleErrorList] = useState([]);
   const [editingTableId, setEditingTableId] = useState(null);
@@ -23,9 +22,9 @@ const SavedTimeTables = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteTimeTableDialogOpen, setDeleteTimeTableDialogOpen] =
     useState(false);
-    const [defaultTableId, setDefaultTableId] = useState(null);
-
+  const [defaultTableId, setDefaultTableId] = useState(null);
   const [visibleTables, setVisibleTables] = useState(4);
+  const [loadingDefault, setLoadingDefault] = useState(null);
 
   const loadMore = () => {
     setVisibleTables((prevVisible) => prevVisible + 4);
@@ -35,19 +34,15 @@ const SavedTimeTables = () => {
     try {
       const response = await axios.get(
         `${apiDomain}/api/time-table/timetables/`,
-        {
-          headers,
-        }
+        { headers }
       );
-      setSavedTables(response.data); // Assuming response.data is an array of timetables
-        const defaultTable = response.data.find((table) => table.is_default);
-        if (defaultTable) {
-          setDefaultTableId(defaultTable.id);
-        }
+      setSavedTables(response.data);
+      const defaultTable = response.data.find((table) => table.is_default);
+      if (defaultTable) {
+        setDefaultTableId(defaultTable.id);
+      }
     } catch (error) {
       if (error.response) {
-        // The request was made, and the server responded with a status code
-        // that falls out of the range of 2xx
         console.error(
           "Server responded with an error:",
           error.response.status,
@@ -59,11 +54,9 @@ const SavedTimeTables = () => {
           }`
         );
       } else if (error.request) {
-        // The request was made, but no response was received
         console.error("No response received:", error.request);
         toast.error("Failed to retrieve timetables: No response from server");
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.error("Error setting up request:", error.message);
         toast.error("Failed to retrieve timetables: Network error");
       }
@@ -74,20 +67,14 @@ const SavedTimeTables = () => {
     fetchTimetables();
   }, []);
 
-  const [loadingDefault, setLoadingDefault] = useState(null);
-
   const handleSetDefault = async (id) => {
     setLoadingDefault(id);
-
     try {
-      // Call the API to set the timetable as default
       const response = await axios.patch(
         `${apiDomain}/api/time-table/set-default/${id}/`,
-        {}, // No body needed if only updating default status
+        {},
         { headers }
       );
-
-      // Assuming response.data.timetables contains the updated list of timetables
       setSavedTables(response.data.timetables);
       toast.success("Timetable set as default successfully");
     } catch (error) {
@@ -97,29 +84,26 @@ const SavedTimeTables = () => {
       setLoadingDefault(null);
     }
   };
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
+
   const handleDelete = async () => {
     let timetable = savedTables.find(
       (table) => table.id == deleteTimeTableDialogOpen
     );
-    console.log(timetable);
     if (timetable?.is_default) {
-      toast.info("change the default");
+      toast.info("Change the default timetable first");
     } else {
       try {
-        // Call the API to delete the timetable
         await axios.delete(
           `${apiDomain}/api/time-table/timetables/${deleteTimeTableDialogOpen}/`,
           { headers }
         );
-
-        // Remove the timetable from the list in the state
         setSavedTables((prevTables) =>
           prevTables.filter((table) => table.id !== deleteTimeTableDialogOpen)
         );
-
         setDeleteTimeTableDialogOpen(false);
         toast.success("Timetable deleted successfully");
       } catch (error) {
@@ -128,12 +112,11 @@ const SavedTimeTables = () => {
       }
     }
   };
+
   const sortTimetables = (a, b) => {
-    // Always prioritize the default timetable first
     if (a.is_default && !b.is_default) return -1;
     if (!a.is_default && b.is_default) return 1;
 
-    // Sorting logic based on sortType
     switch (sortType) {
       case "Name A-Z":
         return a.name.localeCompare(b.name);
@@ -147,6 +130,7 @@ const SavedTimeTables = () => {
         return 0;
     }
   };
+
   const onSubmitEdit = async (id, name) => {
     try {
       const response = await axios.put(
@@ -154,42 +138,43 @@ const SavedTimeTables = () => {
         { name },
         { headers }
       );
-
       console.log("Timetable updated successfully:", response.data);
       fetchTimetables();
-      // You can add additional logic here, such as updating the UI or state
     } catch (error) {
       console.error("Error updating timetable:", error);
-      // Handle the error appropriately (e.g., show an error message to the user)
       throw error;
     }
   };
- const filteredAndSortedTimetables = savedTables
-   .filter((table) =>
-     table.name.toLowerCase().includes(searchTerm.toLowerCase())
-   )
-   .sort(sortTimetables);
+
+  const filteredAndSortedTimetables = savedTables
+    .filter((table) =>
+      table.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort(sortTimetables);
+
   return (
-     <motion.div
+    <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
-      }} className="w-full h-full px-6 pb-6  overflow-auto ">
+      }}
+      className="w-full h-full px-6 pb-6 overflow-auto"
+    >
       <div className="relative">
-        <div className=" flex flex-row justify-start items-center gap-10 p-3 mb-5 sticky top-0 bg-light-background1 shadow-custom-2 rounded-lg z-20">
-          <h3 className="text-gray-800 font-semibold text-2xl flex-grow">
-            {" "}
+        <div className="flex flex-row justify-start items-center gap-10 p-3 mb-5 sticky top-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg transition-all duration-300  z-20">
+          <h3 className="text-gray-800 dark:text-dark-text font-semibold text-2xl flex-grow">
             Saved Timetables
           </h3>
-          <div className="p-1 bg-white rounded-2xl basis-2/5 h-fit shadow-custom-8">
+          <div className="p-1 rounded-2xl basis-2/5 h-fit shadow-custom-8 ">
             <SearchInput value={searchTerm} onChange={handleSearchChange} />
           </div>
-          <div className="p-1 bg-white rounded-2xl  shadow-custom-8">
+          <div className="p-1 bg-white dark:bg-gray-700 rounded-2xl ">
             <TimeTableSortMenu setSortType={setSortType} />
           </div>
         </div>
+
         <div className="space-y-4">
           <div className="space-y-4 2xl:space-y-0 2xl:grid 2xl:grid-cols-2 2xl:gap-4">
             {filteredAndSortedTimetables
@@ -215,7 +200,7 @@ const SavedTimeTables = () => {
             <div className="flex justify-center mt-4">
               <button
                 onClick={loadMore}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+                className="px-4 py-2 bg-blue-500 dark:bg-dark-accent text-white rounded hover:bg-blue-600 dark:hover:bg-dark-accent/90 transition duration-300"
               >
                 Load More
               </button>
@@ -225,14 +210,14 @@ const SavedTimeTables = () => {
           <div className="col-span-2 flex flex-col items-center space-y-4 mt-4">
             {scheduleErrorList.length > 0 && (
               <div className="w-full">
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className="text-lg font-semibold mb-2 dark:text-dark-text">
                   Available Schedules:
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {scheduleErrorList.map((schedule, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 cursor-pointer hover:bg-blue-200"
+                      className="px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-dark-accent/20 text-blue-800 dark:text-dark-accent cursor-pointer hover:bg-blue-200 dark:hover:bg-dark-accent/30"
                     >
                       {schedule}
                     </span>
@@ -243,7 +228,7 @@ const SavedTimeTables = () => {
           </div>
         </div>
       </div>
-      
+
       <SavedTimeTableViewer timeTableId={defaultTableId} />
 
       <DeleteConfirmationPopup

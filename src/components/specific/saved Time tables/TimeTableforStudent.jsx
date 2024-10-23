@@ -14,38 +14,45 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
       .map((_, i) => `Session${i + 1}`),
   ];
 
-  useEffect(() => {
-    if (searchTerm) {
-      const lowercasedSearch = searchTerm.toLowerCase();
-      const filtered = StudentTimeTable?.filter((classData) => {
-        const classMatch =
-          `${classData?.classroom?.standard}${classData?.classroom?.division}`
-            .toLowerCase()
-            .includes(lowercasedSearch);
-        const roomMatch =
-          `${classData?.classroom?.room?.name} (Room ${classData?.classroom?.room?.room_number})`
-            .toLowerCase()
-            .includes(lowercasedSearch);
-        const sessionMatch = classData?.sessions?.some(
-          (session) =>
-            session?.name?.toLowerCase().includes(lowercasedSearch) ||
-            session?.class_distribution?.some(
-              (distribution) =>
-                distribution?.subject
-                  ?.toLowerCase()
-                  .includes(lowercasedSearch) ||
-                distribution?.teacher?.name
-                  ?.toLowerCase()
-                  .includes(lowercasedSearch)
-            )
-        );
-        return classMatch || roomMatch || sessionMatch;
-      });
-      setFilteredTimetable(filtered);
-    } else {
-      setFilteredTimetable(StudentTimeTable);
-    }
-  }, [searchTerm, StudentTimeTable]);
+   useEffect(() => {
+     if (searchTerm) {
+       const lowercasedSearch = searchTerm.toLowerCase();
+       const filtered = StudentTimeTable?.filter((classData) => {
+         // Check class and room matches (unchanged)
+         const classMatch =
+           `${classData?.classroom?.standard}${classData?.classroom?.division}`
+             .toLowerCase()
+             .includes(lowercasedSearch);
+
+         const roomMatch =
+           `${classData?.classroom?.room?.name} (Room ${classData?.classroom?.room?.room_number})`
+             .toLowerCase()
+             .includes(lowercasedSearch);
+
+         // Check nested sessions structure
+         const sessionMatch = classData?.sessions?.some(
+           (sessionGrp) =>
+             sessionGrp?.session?.name
+               ?.toLowerCase()
+               .includes(lowercasedSearch) ||
+             sessionGrp?.session?.class_distribution?.some(
+               (distribution) =>
+                 distribution?.subject
+                   ?.toLowerCase()
+                   .includes(lowercasedSearch) ||
+                 distribution?.teacher?.name
+                   ?.toLowerCase()
+                   .includes(lowercasedSearch)
+             )
+         );
+
+         return classMatch || roomMatch || sessionMatch;
+       });
+       setFilteredTimetable(filtered);
+     } else {
+       setFilteredTimetable(StudentTimeTable);
+     }
+   }, [searchTerm, StudentTimeTable, setFilteredTimetable]);
 
   const getSessionColor = (session) => {
     switch (session?.type) {
@@ -155,73 +162,75 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
                 </td>
                 {classData?.sessions
                   ?.slice(0, NumberOfPeriodsInAday)
-                  ?.map((session, sessionIndex) => (
-                    <td key={sessionIndex} className="border-b p-2">
-                      <div
-                        className={`rounded-lg p-3 h-full ${getSessionColor(
-                          session
-                        )} transition-all duration-300 hover:shadow-md`}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <p className="font-semibold text-sm truncate flex-grow">
-                            {session?.name}
-                          </p>
-                          <span
-                            className={`text-xs px-2 py-1 rounded-full ${
-                              session?.room_type === "Elective"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-green-100 text-green-800"
-                            }`}
-                          >
-                            {session?.type}
-                          </span>
-                        </div>
-                        {session?.class_distribution?.map(
-                          (distribution, distributionIndex) => (
-                            <div
-                              key={distributionIndex}
-                              className="mt-2 bg-white bg-opacity-50 rounded-md p-2"
+                  ?.map((sessionGrp, sessionGrpIndex) => (
+                    <td key={sessionGrpIndex} className="border-b p-2">
+                      {sessionGrp?.map((session, sessionIndex) => (
+                        <div
+                          className={`rounded-lg p-3 h-full ${getSessionColor(
+                            session
+                          )} transition-all duration-300 hover:shadow-md`}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <p className="font-semibold text-sm truncate flex-grow">
+                              {session?.name}
+                            </p>
+                            <span
+                              className={`text-xs px-2 py-1 rounded-full ${
+                                session?.room_type === "Elective"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : "bg-green-100 text-green-800"
+                              }`}
                             >
-                              <div className="flex items-center mb-1">
-                                <Avatar
-                                  alt={distribution?.teacher?.name}
-                                  src={
-                                    distribution?.teacher?.profile_image
-                                      ? `${apiDomain}/${distribution?.teacher?.profile_image}`
-                                      : undefined
-                                  }
-                                  className="w-8 h-8 rounded-full mr-2 border-2 border-white"
-                                >
-                                  {!distribution?.teacher?.profile_image &&
-                                    distribution?.teacher?.name?.charAt(0)}
-                                </Avatar>
-                                <div>
-                                  <p className="text-xs font-medium">
-                                    {distribution?.teacher?.name}
-                                  </p>
-                                  <p className="text-xs text-gray-500">
-                                    {distribution?.subject}
+                              {session?.type}
+                            </span>
+                          </div>
+                          {session?.class_distribution?.map(
+                            (distribution, distributionIndex) => (
+                              <div
+                                key={distributionIndex}
+                                className="mt-2 bg-white bg-opacity-50 rounded-md p-2"
+                              >
+                                <div className="flex items-center mb-1">
+                                  <Avatar
+                                    alt={distribution?.teacher?.name}
+                                    src={
+                                      distribution?.teacher?.profile_image
+                                        ? `${apiDomain}/${distribution?.teacher?.profile_image}`
+                                        : undefined
+                                    }
+                                    className="w-8 h-8 rounded-full mr-2 border-2 border-white"
+                                  >
+                                    {!distribution?.teacher?.profile_image &&
+                                      distribution?.teacher?.name?.charAt(0)}
+                                  </Avatar>
+                                  <div>
+                                    <p className="text-xs font-medium">
+                                      {distribution?.teacher?.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {distribution?.subject}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-xs">
+                                  {session?.type === "Elective" && (
+                                    <p className="text-gray-600">
+                                      Students:{" "}
+                                      {
+                                        distribution?.number_of_students_from_this_class
+                                      }
+                                    </p>
+                                  )}
+                                  <p className="text-gray-600">
+                                    Room: {distribution?.room?.name} (
+                                    {distribution?.room?.number})
                                   </p>
                                 </div>
                               </div>
-                              <div className="text-xs">
-                                {session?.type === "Elective" && (
-                                  <p className="text-gray-600">
-                                    Students:{" "}
-                                    {
-                                      distribution?.number_of_students_from_this_class
-                                    }
-                                  </p>
-                                )}
-                                <p className="text-gray-600">
-                                  Room: {distribution?.room?.name} (
-                                  {distribution?.room?.number})
-                                </p>
-                              </div>
-                            </div>
-                          )
-                        )}
-                      </div>
+                            )
+                          )}
+                        </div>
+                      ))}
                     </td>
                   ))}
               </tr>

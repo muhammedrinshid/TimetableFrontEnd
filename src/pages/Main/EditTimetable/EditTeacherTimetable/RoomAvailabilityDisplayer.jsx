@@ -67,7 +67,6 @@ const handleSwapRoom = (roomId) => {
   let toTeacherId = null;
   let toSessionIndex = null;
   let foundRoom =    availableRooms.find((room) => room.id === roomId);
-;
 
   // Only iterate through teachers and their sessions at the known sessionGrpIdx
   teacherWeekTimetable[selectedDay]?.forEach((teacher, teacherIdx) => {
@@ -79,14 +78,14 @@ const handleSwapRoom = (roomId) => {
       sessionGrp.forEach((session, sessionIdx) => {
 
         if (session.room && session.room.id === roomId) {
-          toTeacherId = teacher.id;
+          toTeacherId = teacher.instructor.id;
           toSessionIndex = sessionIdx;
         }
       });
     }
   });
 
-  if (toTeacherId !== null) {
+  if (toTeacherId != null) {
     setRoomChangeDialogOpen((prev) => ({
       ...prev,
       toRoom: {

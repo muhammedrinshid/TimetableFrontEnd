@@ -45,6 +45,23 @@ const ErrorDisplay = ({ errors }) => {
       description: "Instructor scheduled for multiple classes simultaneously.",
       solution: "Adjust session timing or assign an additional instructor.",
     },
+    // New error types for student timetable
+    "Empty Period": {
+      symbol: "⚠️",
+      color: "text-orange-500",
+      bgColor: isDarkMode ? "bg-orange-900/10" : "bg-orange-50",
+      description: "Free period detected in the schedule which is not allowed.",
+      solution: "Assign a subject or activity to fill the empty period.",
+    },
+    "Teacher Schedule Conflict": {
+      symbol: "👥",
+      color: "text-rose-500",
+      bgColor: isDarkMode ? "bg-rose-900/10" : "bg-rose-50",
+      description:
+        "Teacher is assigned to multiple classes in the same time slot.",
+      solution:
+        "Reassign one of the classes to a different teacher or time slot.",
+    },
   };
 
   // Helper function to format session time

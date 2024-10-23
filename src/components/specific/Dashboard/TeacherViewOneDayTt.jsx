@@ -121,93 +121,188 @@ const getSessionBorderColor = (session) => {
                   </td>
                   {teacher.sessions
                     .slice(0, NumberOfPeriodsInAday)
-                    .map((session, sessionIndex) => (
+                    .map((sessionGrp, sessionGrpIndex) => (
                       <td
-                        key={sessionIndex}
+                        key={sessionGrpIndex}
                         className="border-b border-r p-2 w-[180px] border-gray-300 dark:border-gray-600"
                       >
-                        <div
-                          className={`rounded-lg h-full ${getSessionColor(
-                            session,
-                            teacher,
-                            sessionIndex
-                          )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden`}
-                          style={{
-                            borderTop: `4px solid ${getSessionBorderColor(
-                              session
-                            )}`,
-                          }}
-                        >
-                          {session.subject ? (
-                            <div className="session-card flex flex-col h-full p-3">
-                              <div className="flex justify-between items-start mb-3">
-                                <h3 className="font-bold text-sm text-gray-900 dark:text-white leading-tight">
-                                  {session.subject ||
-                                    session.elective_subject_name}
-                                </h3>
-                                <div
-                                  className={`${
-                                    session.type === "Core"
-                                      ? "bg-green-500 dark:bg-green-400 text-white"
-                                      : "bg-yellow-500 dark:bg-yellow-400 text-gray-900 dark:text-white"
-                                  } text-vs font-semibold uppercase rounded-full tracking-wider py-1 px-2`}
-                                >
-                                  {session.type.charAt(0)}
+                        {sessionGrp.map((session, sessionIndex) => (
+                          <div
+                            className={`rounded-lg h-full ${getSessionColor(
+                              session,
+                              teacher,
+                              sessionIndex
+                            )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden`}
+                            style={{
+                              borderTop: `4px solid ${getSessionBorderColor(
+                                session
+                              )}`,
+                            }}
+                          >
+                            {session.subject ? (
+                              <div className="session-card flex flex-col h-full p-3">
+                                <div className="flex justify-between items-start mb-3">
+                                  <h3 className="font-bold text-sm text-gray-900 dark:text-white leading-tight">
+                                    {session.subject ||
+                                      session.elective_subject_name}
+                                  </h3>
+                                  <div
+                                    className={`${
+                                      session.type === "Core"
+                                        ? "bg-green-500 dark:bg-green-400 text-white"
+                                        : "bg-yellow-500 dark:bg-yellow-400 text-gray-900 dark:text-white"
+                                    } text-vs font-semibold uppercase rounded-full tracking-wider py-1 px-2`}
+                                  >
+                                    {session.type.charAt(0)}
+                                  </div>
+                                </div>
+
+                                <p className="room text-xs mb-3 flex justify-between items-center text-gray-500 dark:text-gray-400">
+                                  <span className="font-medium">
+                                    Room {session?.room?.room_number}
+                                  </span>
+                                </p>
+                                <div className="class-details text-sm flex-grow">
+                                  {session.class_details.map(
+                                    (classDetail, index) => (
+                                      <div
+                                        key={index}
+                                        className="class-info flex justify-between items-center mb-2 bg-gray-100 dark:bg-gray-600 bg-opacity-50 rounded-md p-2"
+                                      >
+                                        <span className="class-name font-semibold text-gray-900 dark:text-white text-sm text-nowrap">
+                                          {classDetail.standard}{" "}
+                                          {classDetail.division}
+                                        </span>
+                                        {session.type === "Elective" && (
+                                          <span className="student-count text-gray-500 dark:text-gray-400 text-vs text-nowrap justify-self-end">
+                                            {classDetail.number_of_students}{" "}
+                                            cadet
+                                          </span>
+                                        )}
+                                      </div>
+                                    )
+                                  )}
                                 </div>
                               </div>
-
-                              <p className="room text-xs mb-3 flex justify-between items-center text-gray-500 dark:text-gray-400">
-                                <span className="font-medium">
-                                  Room {session?.room?.room_number}
-                                </span>
-                              </p>
-                              <div className="class-details text-sm flex-grow">
-                                {session.class_details.map(
-                                  (classDetail, index) => (
-                                    <div
-                                      key={index}
-                                      className="class-info flex justify-between items-center mb-2 bg-gray-100 dark:bg-gray-600 bg-opacity-50 rounded-md p-2"
+                            ) : (
+                              <div
+                                className={`mb-2 last:mb-0 border-t-4 rounded-lg overflow-hidden py-4 ${getSessionColor(
+                                  session
+                                )} h-full flex items-center justify-center bg-opacity-50 backdrop-blur-sm`}
+                              >
+                                <div className="text-center p-4 space-y-2">
+                                  <p className="font-medium text-sm tracking-wide text-gray-500 dark:text-gray-400 uppercase">
+                                    Free Period
+                                  </p>
+                                  <div className="w-12 h-0.5 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full" />
+                                  <p className="text-[11px] text-gray-400 dark:text-gray-500 font-light tracking-wide">
+                                    Time to recharge!
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                            <div className="w-full flex flex-row justify-around self-end mt-2">
+                              <div className="basis-1/3 flex justify-center items-center p-1 border-t border-r border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
+                                {teacher.instructor.present[sessionIndex] ===
+                                false ? (
+                                  <Tooltip title="Present this period">
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        toggleDrawer("noToggle");
+                                        changeTecherStatus(
+                                          teacher.instructor.teacher_id,
+                                          sessionIndex
+                                        );
+                                      }}
                                     >
-                                      <span className="class-name font-semibold text-gray-900 dark:text-white text-sm text-nowrap">
-                                        {classDetail.standard}{" "}
-                                        {classDetail.division}
-                                      </span>
-                                      {session.type === "Elective" && (
-                                        <span className="student-count text-gray-500 dark:text-gray-400 text-vs text-nowrap justify-self-end">
-                                          {classDetail.number_of_students} cadet
-                                        </span>
-                                      )}
-                                    </div>
-                                  )
+                                      <CheckIcon
+                                        fontSize="small"
+                                        sx={{
+                                          color: darkMode
+                                            ? "#FFFFFF"
+                                            : "inherit",
+                                        }}
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                ) : (
+                                  <Tooltip title="Absent this period">
+                                    <IconButton
+                                      size="small"
+                                      onClick={() =>
+                                        changeTecherStatus(
+                                          teacher.instructor.teacher_id,
+                                          sessionIndex
+                                        )
+                                      }
+                                    >
+                                      <CancelPresentationIcon
+                                        fontSize="small"
+                                        sx={{
+                                          color: darkMode
+                                            ? "#FFFFFF"
+                                            : "inherit",
+                                        }} // White in dark mode, black in light mode
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
                                 )}
                               </div>
-                            </div>
-                          ) : (
-                            <div className="free-period text-center py-8">
-                              <p className="font-semibold text-xl text-gray-500 dark:text-gray-400">
-                                Free Period
-                              </p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                Time to recharge!
-                              </p>
-                            </div>
-                          )}
-                          <div className="w-full flex flex-row justify-around self-end mt-2">
-                            <div className="basis-1/3 flex justify-center items-center p-1 border-t border-r border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
-                              {teacher.instructor.present[sessionIndex] ===
-                              false ? (
-                                <Tooltip title="Present this period">
+
+                              <div
+                                className={`basis-1/3 flex justify-center items-center border-t border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200 ${
+                                  teacher.instructor.present[sessionIndex] ===
+                                    true && "cursor-not-allowed"
+                                }`}
+                              >
+                                <Tooltip title="Assign a free teacher">
                                   <IconButton
                                     size="small"
-                                    onClick={() => {
-                                      toggleDrawer("noToggle");
-                                      changeTecherStatus(
-                                        teacher.instructor.teacher_id,
+                                    onClick={() =>
+                                      toggleDrawer(
+                                        "toggle",
+                                        sessionIndex,
+                                        teacher.sessions[sessionIndex].subject,
+                                        teacher
+                                      )
+                                    }
+                                    disabled={
+                                      teacher.instructor.present[
                                         sessionIndex
-                                      );
+                                      ] ||
+                                      teacher?.sessions[sessionIndex]
+                                        ?.subject === null
+                                    }
+                                    sx={{
+                                      "& svg": {
+                                        color:
+                                          teacher.instructor.present[
+                                            sessionIndex
+                                          ] ||
+                                          teacher?.sessions[sessionIndex]
+                                            ?.subject === null
+                                            ? darkMode
+                                              ? "#A9A9A9" // Gray color in dark mode when teacher is present
+                                              : "gray" // Gray color in light mode when teacher is present
+                                            : darkMode
+                                            ? "#FFFFFF" // White color in dark mode when teacher is absent
+                                            : "inherit", // Default color in light mode when teacher is absent
+                                      },
                                     }}
                                   >
-                                    <CheckIcon
+                                    <ChangeCircleIcon
+                                      fontSize="small"
+                                      sx={{ color: "inherit" }}
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                              </div>
+
+                              <div className="basis-1/3 flex justify-center items-center border-t border-l border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
+                                <Tooltip title="Copy data">
+                                  <IconButton size="small">
+                                    <CopyAllIcon
                                       fontSize="small"
                                       sx={{
                                         color: darkMode ? "#FFFFFF" : "inherit",
@@ -215,89 +310,10 @@ const getSessionBorderColor = (session) => {
                                     />
                                   </IconButton>
                                 </Tooltip>
-                              ) : (
-                                <Tooltip title="Absent this period">
-                                  <IconButton
-                                    size="small"
-                                    onClick={() =>
-                                      changeTecherStatus(
-                                        teacher.instructor.teacher_id,
-                                        sessionIndex
-                                      )
-                                    }
-                                  >
-                                    <CancelPresentationIcon
-                                      fontSize="small"
-                                      sx={{
-                                        color: darkMode ? "#FFFFFF" : "inherit",
-                                      }} // White in dark mode, black in light mode
-                                    />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
-                            </div>
-
-                            <div
-                              className={`basis-1/3 flex justify-center items-center border-t border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200 ${
-                                teacher.instructor.present[sessionIndex] ===
-                                  true && "cursor-not-allowed"
-                              }`}
-                            >
-                              <Tooltip title="Assign a free teacher">
-                                <IconButton
-                                  size="small"
-                                  onClick={() =>
-                                    toggleDrawer(
-                                      "toggle",
-                                      sessionIndex,
-                                      teacher.sessions[sessionIndex].subject,
-                                      teacher
-                                    )
-                                  }
-                                  disabled={
-                                    teacher.instructor.present[sessionIndex] ||
-                                    teacher?.sessions[sessionIndex]?.subject ===
-                                      null
-                                  }
-                                  sx={{
-                                    "& svg": {
-                                      color:
-                                        teacher.instructor.present[
-                                          sessionIndex
-                                        ] ||
-                                        teacher?.sessions[sessionIndex]
-                                          ?.subject === null
-                                          ? darkMode
-                                            ? "#A9A9A9" // Gray color in dark mode when teacher is present
-                                            : "gray" // Gray color in light mode when teacher is present
-                                          : darkMode
-                                          ? "#FFFFFF" // White color in dark mode when teacher is absent
-                                          : "inherit", // Default color in light mode when teacher is absent
-                                    },
-                                  }}
-                                >
-                                  <ChangeCircleIcon
-                                    fontSize="small"
-                                    sx={{ color: "inherit" }}
-                                  />
-                                </IconButton>
-                              </Tooltip>
-                            </div>
-
-                            <div className="basis-1/3 flex justify-center items-center border-t border-l border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
-                              <Tooltip title="Copy data">
-                                <IconButton size="small">
-                                  <CopyAllIcon
-                                    fontSize="small"
-                                    sx={{
-                                      color: darkMode ? "#FFFFFF" : "inherit",
-                                    }}
-                                  />
-                                </IconButton>
-                              </Tooltip>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        ))}
                       </td>
                     ))}
                 </tr>

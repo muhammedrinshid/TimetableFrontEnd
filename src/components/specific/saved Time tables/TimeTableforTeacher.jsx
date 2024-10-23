@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/Authcontext";
-import { Avatar, Chip } from "@mui/material";
+import { Avatar, Chip, Tooltip } from "@mui/material";
+import SavedTimeTableTeacherListCard from "./SavedTimeTableTeacherListCard";
 
 const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
   const { apiDomain, NumberOfPeriodsInAday } = useAuth();
@@ -46,168 +47,175 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
     }
   }, [searchTerm, teacherTimetable]);
 
-  const getSessionColor = (session) => {
-    if (!session?.subject) return "bg-green-100 text-green-800";
-    switch (session?.type) {
-      case "Core":
-        return "bg-blue-100 text-blue-800";
-      case "Elective":
-        return "bg-purple-100 text-purple-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+const getSessionBorderColor = (session) => {
+  if (!session || !session.subject) {
+    return "border-gray-300 dark:border-gray-300";
+  }
+  switch (session.type) {
+    case "Core":
+      return "border-blue-500 ";
+    case "Elective":
+      return "border-purple-500 ";
+    default:
+      return "border-gray-300 ";
+  }
+};
 
-  const getSessionBorderColor = (session) => {
-    switch (session?.type) {
-      case "Core":
-        return "#1976d2";
-      case "Elective":
-        return "#9c27b0";
-      default:
-        return "#f0f0f0";
-    }
-  };
-  console.log(filteredTimetable);
+const getSessionColor = (session) => {
+  if (!session || !session.subject) {
+    return "bg-gradient-to-b from-green-200 via-white to-green-200 text-green-900 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400";
+  }
+  switch (session.type) {
+    case "Core":
+      return "bg-gradient-to-b from-blue-200 via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200";
+    case "Elective":
+      return "bg-gradient-to-b from-purple-300 via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300";
+    default:
+      return "bg-gradient-to-b from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400";
+  }
+};
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
         Teacher Timetable
       </h2>
-      <div className="overflow-x-auto shadow-xl rounded-lg">
-        <table className="w-full table-fixed">
-          <thead>
-            <tr className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-              <th className="w-1/6 p-4 text-left font-semibold">
-                {teacherRow1[0]}
-              </th>
-              {teacherRow1.slice(1).map((header, index) => (
-                <th key={index} className="w-1/12 p-4 text-left font-semibold">
-                  {header}
+      {/* Outer container with fixed height and vertical scroll */}
+      <div className="h-[calc(100vh-200px)] overflow-y-auto">
+        {/* Inner container for horizontal scroll */}
+        <div className="overflow-x-auto shadow-xl rounded-lg">
+          <table className="w-full border-collapse">
+            <thead className="sticky top-0">
+              <tr className="sticky left-0 top-0 z-20 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200">
+                <th className="w-[160px] min-w-[160px] p-4 text-left font-semibold border-r sticky left-0">
+                  {teacherRow1[0]}
                 </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTimetable?.map((teacher, teacherIndex) => (
-              <tr
-                key={teacherIndex}
-                className="bg-white hover:bg-gray-50 transition-colors duration-300"
-              >
-                <td className="border-b p-4 ">
-                  <div className="flex items-center space-x-3">
-                    <Avatar
-                      src={
-                        teacher?.instructor?.profile_image
-                          ? `${apiDomain}/${teacher?.instructor?.profile_image}`
-                          : undefined
-                      }
-                      className="w-10 h-10 rounded-full shadow-md transition-transform duration-300 hover:scale-110"
-                    >
-                      {!teacher?.instructor?.profile_image &&
-                        teacher?.instructor?.name?.[0]}
-                    </Avatar>
-                    <div className="overflow-hidden">
-                      <p className="font-bold text-sm text-gray-800 truncate">
-                        {teacher?.instructor?.name}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {teacher?.instructor?.teacher_id}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                {teacher?.sessions
-                  ?.slice(0, NumberOfPeriodsInAday)
-                  .map((sessionGroup, sessionGroupIndex) => (
-                    <td key={sessionGroupIndex} className="border-b p-2">
-                      {sessionGroup.length > 0 ? (
-                        sessionGroup.map((session, sessionIndex) => (
-                          <div
-                            key={sessionIndex}
-                            className={`rounded-lg p-3 h-full ${getSessionColor(
-                              session
-                            )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden  ${
-                              sessionIndex > 0 ? "mt-2" : ""
-                            }`}
-                            style={{
-                              borderTop: `4px solid ${getSessionBorderColor(
-                                session
-                              )}`,
-                            }}
-                          >
-                            {session?.subject ? (
-                              <div className="session-card flex flex-col jus h-full">
-                                <div className="flex flex-col justify-between items-start mb-3">
-                                  <div
-                                    className={`${
-                                      session?.type === "Core"
-                                        ? "bg-blue-200 text-blue-700"
-                                        : "bg-pink-100 text-pink-700"
-                                    } text-xs font-normal capitalize px-1 py-1 rounded-full tracking-wider mb-2`}
-                                  >
-                                    {session?.type}
-                                  </div>
-                                  <h3 className="font-semibold text-base text-gray-800 leading-tight">
-                                    {session?.subject ||
-                                      session?.elective_subject_name}
-                                  </h3>
-                                </div>
-                                <p className="room text-xs mb-2 flex justify-between items-center text-gray-600">
-                                  <span className="font-medium">
-                                    Room {session?.room?.room_number}
-                                  </span>
-                                </p>
-                                <div className="class-details text-sm flex-grow">
-                                  {session?.class_details?.map(
-                                    (classDetail, index) => (
+                {teacherRow1.slice(1).map((header, index) => (
+                  <th
+                    key={index}
+                    className="w-[140pxpx] min-w-[140px] p-4 text-left font-semibold border-r last:border-r-0"
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTimetable?.map((teacher, teacherIndex) => (
+                <tr
+                  key={teacherIndex}
+                  className="bg-white hover:bg-gray-50 transition-colors duration-300 dark:bg-gray-800"
+                >
+                  <td className="w-[160px] min-w-[160px] p-4 border-b border-r sticky left-0 bg-white dark:bg-gray-800">
+                    <SavedTimeTableTeacherListCard teacher={teacher} />
+                  </td>
+                  {teacher?.sessions
+                    ?.slice(0, NumberOfPeriodsInAday)
+                    .map((sessionGroup, sessionGroupIndex) => (
+                      <td
+                        key={sessionGroupIndex}
+                        className="w-[140px] min-w-[140px] border-b border-r p-3 last:border-r-0"
+                      >
+                        {sessionGroup.length > 0 ? (
+                          sessionGroup.map((session, sessionIndex) => (
+                            <div
+                              key={sessionIndex}
+                              className="h-[150px] mb-2 last:mb-0"
+                            >
+                              {session?.subject ? (
+                                <div
+                                  className={`h-full border-t-4 rounded-lg overflow-hidden ${getSessionBorderColor(
+                                    session
+                                  )} p-2 ${getSessionColor(session)}`}
+                                >
+                                  <div className="flex justify-between items-center mb-2">
+                                    <Tooltip
+                                      title={
+                                        session.subject ||
+                                        session.elective_subject_name
+                                      }
+                                    >
+                                      <h3 className="font-bold text-sm leading-tight truncate max-w-[70%]">
+                                        {session.subject ||
+                                          session.elective_subject_name ||
+                                          "Free Period"}
+                                      </h3>
+                                    </Tooltip>
+                                    {session.type && (
                                       <div
-                                        key={index}
-                                        className="class-info flex justify-between items-center mb-2 bg-white bg-opacity-50 rounded-md p-2"
+                                        className={`${
+                                          session.type === "Core"
+                                            ? "bg-blue-500 dark:bg-blue-400 text-white bg-opacity-30"
+                                            : "bg-purple-500 dark:bg-purple-400 text-gray-900 dark:text-white bg-opacity-30"
+                                        } text-xs font-semibold uppercase rounded-full tracking-wider py-1 px-2`}
                                       >
-                                        <span className="class-name text-xs font-semibold text-gray-700">
-                                          {classDetail?.standard}{" "}
-                                          {classDetail?.division}
-                                        </span>
-                                        {session?.type === "Elective" && (
-                                          <span className="student-count text-gray-500 text-vs">
-                                            {classDetail?.number_of_students}{" "}
-                                            students
-                                          </span>
-                                        )}
+                                        {session.type?.charAt(0)}
                                       </div>
-                                    )
+                                    )}
+                                  </div>
+
+                                  {session.class_details && (
+                                    <div className="text-xs overflow-y-auto max-h-[90px]">
+                                      {session.class_details.map(
+                                        (classDetail, classIndex) => (
+                                          <div
+                                            key={classIndex}
+                                            className="flex justify-between items-center mb-1 bg-gray-100 dark:bg-gray-600 bg-opacity-50 rounded-md p-1"
+                                          >
+                                            <span className="font-semibold text-nowrap">
+                                              {classDetail.standard}{" "}
+                                              {classDetail.division}
+                                            </span>
+                                            {session.type === "Elective" && (
+                                              <span className="text-gray-500 dark:text-gray-400 text-nowrap">
+                                                {classDetail.number_of_students}{" "}
+                                                cadet
+                                              </span>
+                                            )}
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
                                   )}
                                 </div>
-                              </div>
-                            ) : (
-                              <div className="free-period text-center py-8">
-                                <p className="font-semibold text-xl text-gray-600">
-                                  Free Period
-                                </p>
-                                <p className="text-sm text-gray-400 mt-2">
-                                  Time to recharge!
-                                </p>
-                              </div>
-                            )}
+                              ) : (
+                                <div
+                                  className={`h-full border-t-4 rounded-lg overflow-hidden ${getSessionColor(
+                                    session
+                                  )} flex items-center justify-center bg-opacity-50 backdrop-blur-sm`}
+                                >
+                                  <div className="text-center p-4 space-y-2">
+                                    <p className="font-medium text-sm tracking-wide text-gray-500 dark:text-gray-400 uppercase">
+                                      Free Period
+                                    </p>
+                                    <div className="w-12 h-0.5 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full" />
+                                    <p className="text-[11px] text-gray-400 dark:text-gray-500 font-light tracking-wide">
+                                      Time to recharge!
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="h-[150px] flex items-center justify-center">
+                            <div className="text-center">
+                              <p className="font-semibold text-gray-600 dark:text-gray-300">
+                                Free Period
+                              </p>
+                              <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                                Time to recharge!
+                              </p>
+                            </div>
                           </div>
-                        ))
-                      ) : (
-                        <div className="free-period text-center py-8">
-                          <p className="font-semibold text-xl text-gray-600">
-                            Free Period
-                          </p>
-                          <p className="text-sm text-gray-400 mt-2">
-                            Time to recharge!
-                          </p>
-                        </div>
-                      )}
-                    </td>
-                  ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                        )}
+                      </td>
+                    ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

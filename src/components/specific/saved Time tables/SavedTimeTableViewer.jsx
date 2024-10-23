@@ -52,7 +52,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
           headers,
         }
       );
-      setStudentWeekTimetable(response.data);
+      setStudentWeekTimetable(response.data.week_timetable);
     } catch (error) {
       console.error(
         `Error fetching student timetable: ${
@@ -96,9 +96,9 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
             onClick={() => handleDayClick(day)}
             className={`px-4 py-2 text-sm font-medium border ${
               selectedDay === day
-                ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-                : "bg-white text-blue-700 border-blue-300 hover:bg-blue-50 hover:text-blue-800"
-            } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-500 focus:text-white
+                ? "bg-light-primaryShades-800 text-white border-light-primaryShades-600 dark:border-dark-primaryShades-700 hover:bg-light-primaryShades-700 dark:bg-dark-primaryShades-700"
+                : "bg-white text-light-primaryShades-800 border-light-primaryShades-300 dark:border-dark-primaryShades-800 hover:bg-light-primaryShades-400 hover:text-blue-800 dark:text-dark-primaryShades-200 dark:bg-dark-primaryShades-600"
+            } focus:z-10 focus:ring-2 focus:ring-light-primaryShades-500 focus:bg-light-primaryShades-500 focus:text-white
           first:rounded-l-lg last:rounded-r-lg
           transition-all duration-300`}
           >
