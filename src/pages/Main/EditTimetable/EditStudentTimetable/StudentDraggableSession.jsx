@@ -1,7 +1,18 @@
 import React from "react";
 import { useAuth } from "../../../../context/Authcontext";
 import { useDrag } from "react-dnd";
-import { Avatar } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  IconButton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@mui/material";
+import { UserCog2, UserPlus2 } from "lucide-react";
+import { FaExchangeAlt } from "react-icons/fa";
+import { CancelPresentation, ChangeCircleOutlined } from "@mui/icons-material";
+import { SiGoogleclassroom } from "react-icons/si";
 
 const getSessionBorderColor = (session) => {
   if (!session || !session.name) {
@@ -31,12 +42,12 @@ const getSessionColor = (session) => {
 const StudentDraggableSession = ({
   session,
   rowIndex,
+  classroomId,
   columnIndex,
   sessionIndex,
   selectedDay,
-  
-  teacherWeekTimetable,
-  handleOpenRoomChangeDialog,
+handleOpenRoomChangeDialog,
+  openChangeOrSwapSessionDialog,
 }) => {
   const { darkMode, apiDomain } = useAuth();
 
@@ -81,42 +92,142 @@ const StudentDraggableSession = ({
           key={distributionIndex}
           className="mt-2 bg-white dark:bg-dark-secondary bg-opacity-50 rounded-md p-2"
         >
-          <div className="flex items-center mb-1">
-            <Avatar
-              alt={distribution.teacher.name}
-              src={
-                distribution.teacher.profile_image
-                  ? `${apiDomain}/${distribution.teacher.profile_image}`
-                  : undefined
-              }
-              className="w-8 h-8 rounded-full mr-2 border-2 border-white dark:border-dark-border"
-            >
-              {!distribution.teacher.profile_image &&
-                distribution.teacher.name.charAt(0)}
-            </Avatar>
-            <div>
-              <p className="text-xs font-medium dark:text-dark-text">
-                {distribution.teacher.name}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-dark-muted">
-                {distribution.subject}
-              </p>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center">
+              <Avatar
+                alt={distribution.teacher.name}
+                src={
+                  distribution.teacher.profile_image
+                    ? `${apiDomain}/${distribution.teacher.profile_image}`
+                    : undefined
+                }
+                className="w-8 h-8 rounded-full mr-2 border-2 border-white dark:border-dark-border"
+              >
+                {!distribution.teacher.profile_image &&
+                  distribution.teacher.name.charAt(0)}
+              </Avatar>
+              <div>
+                <p className="text-xs font-medium dark:text-dark-text">
+                  {distribution.teacher.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-dark-muted">
+                  {distribution.subject}
+                </p>
+              </div>
             </div>
+
+            <Tooltip title="Reassign Teacher" arrow>
+              <Button
+                size="small"
+                variant="outlined"
+                sx={{
+                  minWidth: "24px",
+                  width: "24px",
+                  height: "24px",
+                  padding: 0,
+                  border: "1px solid rgba(0, 0, 0, 0.12)",
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    border: "1px solid rgba(0, 0, 0, 0.23)",
+                  },
+                  ".dark &": {
+                    borderColor: "rgba(255, 255, 255, 0.12)",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.08)",
+                      borderColor: "rgba(255, 255, 255, 0.23)",
+                    },
+                  },
+                }}
+              >
+                <UserCog2 className="h-3 w-3 text-gray-600 dark:text-dark-muted" />
+              </Button>
+            </Tooltip>
           </div>
+
           <div className="text-xs">
-            {session?.type == "Elective" && (
+            {session?.type === "Elective" && (
               <p className="text-gray-600 dark:text-dark-muted">
                 Students: {distribution.number_of_students_from_this_class}
               </p>
             )}
-            {
-              <p className="text-gray-600 dark:text-dark-muted">
-                Room: {distribution.room.name} ({distribution.room.number})
+            {distribution.room && (
+              <p className="text-xs mb-2 flex justify-start gap-1 items-center text-gray-500 dark:text-gray-400">
+                <span className="font-medium">
+                  Room: {distribution.room.name} ({distribution.room.number})
+                </span>
+                <Tooltip title="Change Room">
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    sx={{
+                      minWidth: "24px",
+                      width: "24px",
+                      height: "24px",
+                      padding: 0,
+                      border: "1px solid rgba(0, 0, 0, 0.12)",
+                      "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.04)",
+                        border: "1px solid rgba(0, 0, 0, 0.23)",
+                      },
+                      ".dark &": {
+                        borderColor: "rgba(255, 255, 255, 0.12)",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 255, 255, 0.08)",
+                          borderColor: "rgba(255, 255, 255, 0.23)",
+                        },
+                      },
+                    }}
+                    onClick={() =>
+                      handleOpenRoomChangeDialog(
+                        classroomId,
+                        columnIndex,
+                        session?.id,
+                        session.room
+                      )
+                    }
+                  >
+                    <SiGoogleclassroom className="text-gray-500 text-sm" />
+                  </Button>
+                </Tooltip>
               </p>
-            }
+            )}
           </div>
         </div>
       ))}
+
+      <div className="w-full flex flex-row justify-around self-end mt-2">
+        {/* <div className="basis-1/3 flex justify-center items-center  border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
+          <Tooltip title="Swap session">
+            <IconButton
+              disabled={session.type == "Elective"}
+              size="small"
+              className="p-1 rounded-full light-background-1 hover:shadow-md transition-all duration-300"
+            >
+              <FaExchangeAlt className="text-sm dark:text-white text-slate-500" />
+            </IconButton>
+          </Tooltip>
+        </div> */}
+
+        <div className="basis-1/3 flex justify-center items-center  border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
+          <Tooltip title="Swap session">
+            <IconButton
+              disabled={session.type == "Elective"}
+              onClick={() =>
+                openChangeOrSwapSessionDialog(
+                  classroomId,
+                  columnIndex,
+                  session,
+                  selectedDay
+                )
+              }
+              size="small"
+              className="p-1 rounded-full light-background-1 hover:shadow-md transition-all duration-300"
+            >
+              <FaExchangeAlt className="text-sm dark:text-white text-slate-500" />
+            </IconButton>
+          </Tooltip>
+        </div>
+      </div>
     </div>
   );
 };

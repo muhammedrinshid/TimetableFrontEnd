@@ -24,8 +24,10 @@ const StudentDroppableCell = ({
   moveSession,
   hasConflict,
   teacher,
-  teacherWeekTimetable,
+  handleOpenRoomChangeDialog,
   selectedDay,
+  openChangeOrSwapSessionDialog,
+  classData,
 }) => {
   const [, drop] = useDrop({
     accept: "SESSION",
@@ -76,12 +78,14 @@ const StudentDroppableCell = ({
                 moveSession={moveSession}
                 teacher={teacher}
                 selectedDay={selectedDay}
+                openChangeOrSwapSessionDialog={openChangeOrSwapSessionDialog}
+                classroomId={classData?.classroom?.id}
+                handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
               />
             ))}
           </div>
         )}
       </div>
-    
     </td>
   );
 };

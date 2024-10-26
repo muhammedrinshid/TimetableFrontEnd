@@ -48,6 +48,8 @@ const StudentDraggableTimetable = ({
   searchTerm,
   setConflicts,
   conflicts,
+  openChangeOrSwapSessionDialog,
+  handleOpenRoomChangeDialog,
 }) => {
   const [columns, setColumns] = useState(
     Array.from({ length: NumberOfPeriodsInAday }, (_, i) => `Period ${i + 1}`)
@@ -70,45 +72,47 @@ const StudentDraggableTimetable = ({
     setFilteredTimetable(studentWeekTimetable[selectedDay]);
   }, [studentWeekTimetable, selectedDay]);
 
-   useEffect(() => {
-     if (searchTerm) {
-       const lowercasedSearch = searchTerm.toLowerCase();
-       const filtered = studentWeekTimetable?.[selectedDay].filter((classData) => {
-         // Check class and room matches (unchanged)
-         const classMatch =
-           `${classData?.classroom?.standard}${classData?.classroom?.division}`
-             .toLowerCase()
-             .includes(lowercasedSearch);
+  useEffect(() => {
+    if (searchTerm) {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = studentWeekTimetable?.[selectedDay].filter(
+        (classData) => {
+          // Check class and room matches (unchanged)
+          const classMatch =
+            `${classData?.classroom?.standard}${classData?.classroom?.division}`
+              .toLowerCase()
+              .includes(lowercasedSearch);
 
-         const roomMatch =
-           `${classData?.classroom?.room?.name} (Room ${classData?.classroom?.room?.room_number})`
-             .toLowerCase()
-             .includes(lowercasedSearch);
+          const roomMatch =
+            `${classData?.classroom?.room?.name} (Room ${classData?.classroom?.room?.room_number})`
+              .toLowerCase()
+              .includes(lowercasedSearch);
 
-         // Check nested sessions structure
-         const sessionMatch = classData?.sessions?.some(
-           (sessionGrp) =>
-             sessionGrp?.session?.name
-               ?.toLowerCase()
-               .includes(lowercasedSearch) ||
-             sessionGrp?.session?.class_distribution?.some(
-               (distribution) =>
-                 distribution?.subject
-                   ?.toLowerCase()
-                   .includes(lowercasedSearch) ||
-                 distribution?.teacher?.name
-                   ?.toLowerCase()
-                   .includes(lowercasedSearch)
-             )
-         );
+          // Check nested sessions structure
+          const sessionMatch = classData?.sessions?.some(
+            (sessionGrp) =>
+              sessionGrp?.session?.name
+                ?.toLowerCase()
+                .includes(lowercasedSearch) ||
+              sessionGrp?.session?.class_distribution?.some(
+                (distribution) =>
+                  distribution?.subject
+                    ?.toLowerCase()
+                    .includes(lowercasedSearch) ||
+                  distribution?.teacher?.name
+                    ?.toLowerCase()
+                    .includes(lowercasedSearch)
+              )
+          );
 
-         return classMatch || roomMatch || sessionMatch;
-       });
-       setFilteredTimetable(filtered);
-     } else {
+          return classMatch || roomMatch || sessionMatch;
+        }
+      );
+      setFilteredTimetable(filtered);
+    } else {
       setFilteredTimetable(studentWeekTimetable[selectedDay]);
-     }
-   }, [searchTerm, studentWeekTimetable, selectedDay]);
+    }
+  }, [searchTerm, studentWeekTimetable, selectedDay]);
 
   const moveColumn = useCallback(
     (fromIndex, toIndex) => {
@@ -162,7 +166,6 @@ const StudentDraggableTimetable = ({
             name: null,
             type: null,
             class_distribution: null,
-         
           });
         }
 
@@ -194,13 +197,8 @@ const StudentDraggableTimetable = ({
     //       )
     //   )
     // );
-    return false
+    return false;
   };
-
-  
-
-  
-
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -230,6 +228,7 @@ const StudentDraggableTimetable = ({
                   ?.slice(0, NumberOfPeriodsInAday)
                   ?.map((sessionGrp, sessionGrpIndex) => (
                     <StudentDroppableCell
+                      handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
                       key={sessionGrpIndex}
                       classData={classData}
                       rowIndex={classIndex}
@@ -239,6 +238,9 @@ const StudentDraggableTimetable = ({
                       hasConflict={hasConflict}
                       selectedDay={selectedDay}
                       studentWeekTimetable={studentWeekTimetable}
+                      openChangeOrSwapSessionDialog={
+                        openChangeOrSwapSessionDialog
+                      }
                     />
                   ))}
               </tr>

@@ -157,7 +157,7 @@ const EditTeacherTimetable = ({ timeTableId }) => {
           <div
             className={`col-start-2 col-end-3 row-start-1 row-end-2 transition-[max-width] duration-500 ease-in-out overflow-hidden pb-3 w-full h-full`}
           >
-            <ErrorDisplay errors={conflicts} />
+            <ErrorDisplay errors={conflicts} viewType={"teacher"} />
           </div>
           <div className=" col-start-2 col-end-3 row-start-2 row-end-3 h-full overflow-hidden pb-2">
             <RoomAvailabilityDisplayer

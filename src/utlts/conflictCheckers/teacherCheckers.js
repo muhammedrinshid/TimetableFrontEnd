@@ -136,10 +136,12 @@ export function checkConcurrentSessions(teacherTimetable) {
         errors.push({
           type: "Concurrent Sessions",
           sessionGroup: sessionGroupIndex + 1,
-          teachers: [{
-            id: teacher.instructor.id,
-            name: teacher.instructor.name,
-          }],
+          teachers: [
+            {
+              id: teacher.instructor.id,
+              name: teacher.instructor.name,
+            },
+          ],
           sessions: sessionGroup.map((session) => ({
             subject: session.subject,
             subjectId: session.subject_id,
