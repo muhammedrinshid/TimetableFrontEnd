@@ -4,6 +4,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { useConflictChecker } from "../../../../hooks/useConflictChecker";
 import StudentDroppableCell from "./StudentDroppableCell";
 import ClassroomInfoCard from "./ClassroomInfoCard";
+import { ConstructionOutlined } from "@mui/icons-material";
 
 // Column dragging component
 const DraggableColumn = ({
@@ -50,6 +51,7 @@ const StudentDraggableTimetable = ({
   conflicts,
   openChangeOrSwapSessionDialog,
   handleOpenRoomChangeDialog,
+  handleOpenTeacherChangeDialog,
 }) => {
   const [columns, setColumns] = useState(
     Array.from({ length: NumberOfPeriodsInAday }, (_, i) => `Period ${i + 1}`)
@@ -183,21 +185,17 @@ const StudentDraggableTimetable = ({
     },
     [selectedDay, setStudentWeekTimetable]
   );
-
-  const hasConflict = (toClassRoomIndex, sessionGroup) => {
-    // return (
-    //   conflicts?.length > 0 &&
-    //   conflicts.some(
-    //     (conflict) =>
-    //       conflict.sessionGroup === sessionGroup + 1 &&
-    //       conflict.teachers.some(
-    //         (toClassRoom) =>
-    //           toClassRoom?.id ===
-    //           filteredTimetable[toClassRoomIndex]?.instructor.id
-    //       )
-    //   )
-    // );
-    return false;
+console.log(conflicts)
+  const hasConflict = (classRoomId, sessionGroup) => {
+    
+    return (
+      conflicts?.length > 0 &&
+      conflicts?.some(
+        (conflict) =>
+          conflict?.period === sessionGroup + 1 &&
+          conflict.classRooms.some((classRoom) => classRoom.id === classRoomId)
+      )
+    );
   };
 
   return (
@@ -229,6 +227,9 @@ const StudentDraggableTimetable = ({
                   ?.map((sessionGrp, sessionGrpIndex) => (
                     <StudentDroppableCell
                       handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
+                      handleOpenTeacherChangeDialog={
+                        handleOpenTeacherChangeDialog
+                      }
                       key={sessionGrpIndex}
                       classData={classData}
                       rowIndex={classIndex}

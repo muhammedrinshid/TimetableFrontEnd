@@ -224,64 +224,93 @@
     
 // // }
 
-<div
+// [
+//     {
+//         "id": "d7d1df88-686f-4b71-947c-ece4bdd044fb",
+//         "name": "Arunima",
+//         "surname": "Mohan",
+//         "email": "arunima@gmai.com",
+//         "phone": "9895762990",
+//         "min_lessons_per_week": 10,
+//         "max_lessons_per_week": 15,
+//         "teacher_id": "T0001",
+//         "profile_image": "/media/teacher_profiles/teacher07_6H8BgHW.jpg",
+//         "qualified_subjects_display": [
+//             {
+//                 "name": "Maths",
+//                 "id": "a13495cd-1011-491e-986f-70984d2abf3a"
+//             }
+//         ],
+//         "grades_display": [
+//             {
+//                 "name": "Elementary School",
+//                 "short_name": "ES",
+//                 "id": "7544c4bd-d319-42a7-8489-bfe1d8d75ee0"
+//             }
+//         ]
+//     },
+// ......
 
-  className={`mb-2 last:mb-0 border-t-4 rounded-lg overflow-hidden ${getSessionBorderColor(
-    session
-  )} p-2 ${getSessionColor(session)}`}
->
-  <div className="flex justify-between items-start mb-2">
-    <p className="font-semibold text-sm truncate flex-grow">{session.name}</p>
-    <span
-      className={`text-xs px-2 py-1 rounded-full ${
-        session?.type === "Elective"
-          ? "bg-blue-100 text-blue-800 dark:bg-dark-secondary dark:text-dark-text"
-          : "bg-purple-100 text-purple-800 dark:bg-dark-primary dark:text-dark-text"
-      }`}
-    >
-      {session?.type}
-    </span>
-  </div>
-  {session.class_distribution.map((distribution, distributionIndex) => (
-    <div
-      key={distributionIndex}
-      className="mt-2 bg-white dark:bg-dark-secondary bg-opacity-50 rounded-md p-2"
-    >
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center">
-          <Avatar
-            alt={distribution.teacher.name}
-            src={
-              distribution.teacher.profile_image
-                ? `${apiDomain}/${distribution.teacher.profile_image}`
-                : undefined
-            }
-            className="w-8 h-8 rounded-full mr-2 border-2 border-white dark:border-dark-border"
-          >
-            {!distribution.teacher.profile_image &&
-              distribution.teacher.name.charAt(0)}
-          </Avatar>
-          <div>
-            <p className="text-xs font-medium dark:text-dark-text">
-              {distribution.teacher.name}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-dark-muted">
-              {distribution.subject}
-            </p>
-          </div>
-        </div>
 
-    
-      </div>
 
-      <div className="text-xs">
-     
-        <p className="text-gray-600 dark:text-dark-muted">
-          Room: {distribution.room.name} ({distribution.room.number})
-        </p>
-      </div>
-    </div>
-  ))}
-
-  
-</div>;
+// {
+//         "MON": [
+//             {
+//                 "instructor": {
+//                     "id": "d7d1df88-686f-4b71-947c-ece4bdd044fb",
+//                     "name": "Arunima",
+//                     "profile_image": "/media/teacher_profiles/teacher07_6H8BgHW.jpg",
+//                     "surname": "Mohan",
+//                     "teacher_id": "T0001",
+//                     "qualified_subjects": [
+//                         {
+//                             "name": "Maths",
+//                             "id": "a13495cd-1011-491e-986f-70984d2abf3a"
+//                         }
+//                     ]
+//                 },
+//                 "sessions": [
+                 
+//                     [
+//                         {
+//                             "subject": null,
+//                             "subject_id": null,
+//                             "type": null,
+//                             "elective_subject_name": null,
+//                             "room": null,
+//                             "class_details": null,
+//                             "elective_group_id": null,
+//                             "session_key": null,
+//                             "lesson_id": null
+//                         }
+//                     ],
+//                     [
+//                         {
+//                             "subject": "Maths",
+//                             "subject_id": "a13495cd-1011-491e-986f-70984d2abf3a",
+//                             "type": "Core",
+//                             "elective_subject_name": "Maths",
+//                             "room": {
+//                                 "name": "room 1 Division B",
+//                                 "room_number": "105",
+//                                 "room_type": "CLASSROOM",
+//                                 "id": "ed3f1c46-ec17-4dfb-b1dd-a3fcaf2c0896"
+//                             },
+//                             "class_details": [
+//                                 {
+//                                     "id": "aa13de61-e1f5-4a19-9330-bf2a55e321a5",
+//                                     "standard": "1",
+//                                     "division": "B",
+//                                     "number_of_students": 0
+//                                 }
+//                             ],
+//                             "elective_group_id": null,
+//                             "session_key": "89d63e6e-169b-4360-af4d-9e1a5f5b4132",
+//                             "lesson_id": "915ddc21-f3dd-491a-afd2-1595a9eb45bf"
+//                         }
+//                     ],
+                    
+//                 ]
+//             },
+//            ....etc
+//         ],}

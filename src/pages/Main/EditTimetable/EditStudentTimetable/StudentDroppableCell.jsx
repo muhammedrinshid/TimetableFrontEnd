@@ -28,6 +28,7 @@ const StudentDroppableCell = ({
   selectedDay,
   openChangeOrSwapSessionDialog,
   classData,
+  handleOpenTeacherChangeDialog,
 }) => {
   const [, drop] = useDrop({
     accept: "SESSION",
@@ -40,7 +41,7 @@ const StudentDroppableCell = ({
     <td
       ref={drop}
       className={`border rounded-lg ${
-        hasConflict(rowIndex, columnIndex) ? "bg-red-200 error" : ""
+        hasConflict(classData?.classroom?.id, columnIndex) ? "bg-red-200 error" : ""
       }`}
       style={{
         minWidth: "180px",
@@ -81,6 +82,7 @@ const StudentDroppableCell = ({
                 openChangeOrSwapSessionDialog={openChangeOrSwapSessionDialog}
                 classroomId={classData?.classroom?.id}
                 handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
+                handleOpenTeacherChangeDialog={handleOpenTeacherChangeDialog}
               />
             ))}
           </div>

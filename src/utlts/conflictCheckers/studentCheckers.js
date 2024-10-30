@@ -73,7 +73,7 @@ export function checkRoomAndTeacherConflicts(timetable) {
                 type: "Room Conflict",
                 period: sessionGroupIndex + 1,
                 room: distribution.room.name,
-                classRoomIndx,
+                classRoomId:classroomData?.classroom?.id,
                 roomId,
                 classRooms: [roomsInUse.get(roomId), currentClassroom],
               });
@@ -87,7 +87,7 @@ export function checkRoomAndTeacherConflicts(timetable) {
                 type: "Teacher Conflict",
                 period: sessionGroupIndex + 1,
                 teacher: distribution.teacher.name,
-                classRoomIndx,
+                classRoomId:classroomData?.classroom?.id,
                 teacherId,
                 classRooms: [
                   teachersInSession.get(teacherId),
@@ -118,7 +118,7 @@ export function checkEmptyPeriods(timetable) {
         errors.push({
           type: "Empty Period",
           period: periodIndex + 1,
-          classRoomIndx: classRoomIndx,
+          classRoomId: classroomData?.classroom?.id,
 
           class: `${classroomData.classroom.standard}-${classroomData.classroom.division}`,
           classRooms: [
@@ -132,7 +132,6 @@ export function checkEmptyPeriods(timetable) {
       }
     });
   });
-  console.log(errors);
   return errors;
 }
 

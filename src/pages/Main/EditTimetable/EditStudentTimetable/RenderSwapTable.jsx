@@ -167,7 +167,7 @@ const SessionCard = ({ session, isSwapping, direction }) => {
           </div>
           <div className="text-vs">
             <p className="text-gray-600 dark:text-dark-muted truncate">
-              Room: {distribution.room.name} ({distribution.room.number})
+              Room: {distribution.room.name} ({distribution.room?.room_number})
             </p>
           </div>
         </div>

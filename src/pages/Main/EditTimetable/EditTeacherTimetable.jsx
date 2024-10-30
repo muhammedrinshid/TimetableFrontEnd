@@ -134,6 +134,8 @@ const EditTeacherTimetable = ({ timeTableId }) => {
           searchTerm={searchTerm}
           selectedDay={selectedDay}
           timeTableId={timeTableId}
+          conflicts={conflicts}
+          teacherWeekTimetable={teacherWeekTimetable}
         />
         <DraggableTeacherTimetable
           selectedDay={selectedDay}

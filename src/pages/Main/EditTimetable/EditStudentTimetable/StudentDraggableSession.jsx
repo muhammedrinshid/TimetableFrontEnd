@@ -46,8 +46,9 @@ const StudentDraggableSession = ({
   columnIndex,
   sessionIndex,
   selectedDay,
-handleOpenRoomChangeDialog,
+  handleOpenRoomChangeDialog,
   openChangeOrSwapSessionDialog,
+  handleOpenTeacherChangeDialog,
 }) => {
   const { darkMode, apiDomain } = useAuth();
 
@@ -87,7 +88,7 @@ handleOpenRoomChangeDialog,
           {session?.type}
         </span>
       </div>
-      {session.class_distribution.map((distribution, distributionIndex) => (
+      {session?.class_distribution?.map((distribution, distributionIndex) => (
         <div
           key={distributionIndex}
           className="mt-2 bg-white dark:bg-dark-secondary bg-opacity-50 rounded-md p-2"
@@ -118,6 +119,8 @@ handleOpenRoomChangeDialog,
 
             <Tooltip title="Reassign Teacher" arrow>
               <Button
+
+              onClick={()=>handleOpenTeacherChangeDialog(distribution?.teacher,columnIndex,session?.session_key,distribution?.subject)}
                 size="small"
                 variant="outlined"
                 sx={{
@@ -153,7 +156,8 @@ handleOpenRoomChangeDialog,
             {distribution.room && (
               <p className="text-xs mb-2 flex justify-start gap-1 items-center text-gray-500 dark:text-gray-400">
                 <span className="font-medium">
-                  Room: {distribution.room.name} ({distribution.room.number})
+                  Room: {distribution.room.name} (
+                  {distribution.room?.room_number})
                 </span>
                 <Tooltip title="Change Room">
                   <Button
@@ -181,8 +185,8 @@ handleOpenRoomChangeDialog,
                       handleOpenRoomChangeDialog(
                         classroomId,
                         columnIndex,
-                        session?.id,
-                        session.room
+                        session?.session_key,
+                        distribution.room
                       )
                     }
                   >

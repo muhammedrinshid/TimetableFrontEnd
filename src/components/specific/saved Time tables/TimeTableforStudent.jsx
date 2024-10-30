@@ -223,7 +223,7 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
                                   )}
                                   <p className="text-gray-600">
                                     Room: {distribution?.room?.name} (
-                                    {distribution?.room?.number})
+                                    {distribution?.room?.room_number})
                                   </p>
                                 </div>
                               </div>

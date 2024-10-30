@@ -179,7 +179,7 @@ const DraggableTeacherTimetable = ({
   const hasConflict = (teacherIndex, sessionGroup) => {
     return (
       conflicts?.length > 0 &&
-      conflicts.some(
+      conflicts?.some(
         (conflict) =>
           conflict.sessionGroup === sessionGroup + 1 &&
           conflict.teachers.some(

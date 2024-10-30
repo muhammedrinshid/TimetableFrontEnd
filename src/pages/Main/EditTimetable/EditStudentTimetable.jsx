@@ -9,6 +9,7 @@ import StudentDraggableTimetable from "./EditStudentTimetable/StudentDraggableTi
 import EditStudentTimetableControlePanel from "./EditStudentTimetable/EditStudentTimetableControlePanel.jsx";
 import ChangeOrSwapSessionDialog from "./EditStudentTimetable/ChangeOrSwapSessionDialog.jsx";
 import StudentViewRoomChangeDialog from "./EditStudentTimetable/StudentViewRoomChangeDialog.jsx";
+import StudentViewTeacherChangeDialog from "./EditStudentTimetable/StudentViewTeacherChangeDialog.jsx";
 
 
 const EditStudentTimetable = ({ timeTableId }) => {
@@ -22,6 +23,19 @@ const EditStudentTimetable = ({ timeTableId }) => {
   const [availableRooms, setAvailableRooms] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
+    //  const [
+    //    studentWeekTimetable,
+    //    { set: setStudentWeekTimetable, undo, redo, canUndo, canRedo },
+    //  ] = useUndo({
+    //    MON: [],
+    //    TUE: [],
+    //    WED: [],
+    //    THU: [],
+    //    FRI: [],
+    //    SAT: [],
+    //    SUN: [],
+    //  }  );
+
   const [changeOrSwapSessionDialog, setChangeOrSwapSessionDialog] = useState({
     isOpen: false,
     classroomId: null,
@@ -35,6 +49,15 @@ const EditStudentTimetable = ({ timeTableId }) => {
       toRoom: null,
       type: null,
       selectedSessionForRoomNumber:null,
+    });
+    const [teacherChangeDialogOpen, setTeacherChangeDialogOpen] = useState({
+      isOpen: false,
+      fromTeacher: null,
+      toTeacher: null,
+      type: null,
+      selectedSessionForTeacherChange:null,
+      fromSubject:null,
+      sessionKey:null,
     });
   const fetchStudentTimetable = async () => {
     setLoading(true); // Set loading to true before fetching
@@ -154,6 +177,23 @@ const EditStudentTimetable = ({ timeTableId }) => {
     };
     setRoomChangeDialogOpen(newValue);
   };
+  const handleOpenTeacherChangeDialog = (
+    fromTeacherId,
+    sessionGrpIdx,
+    sessionKey,
+    subject
+  ) => {
+    const newValue = {
+      isOpen: true,
+      selectedSessionForTeacherChange: sessionGrpIdx,
+      fromTeacher: fromTeacherId,
+      toTeacher: null,
+      sessionKey: sessionKey,
+      fromSubject: subject,
+      type: null,
+    };
+    setTeacherChangeDialogOpen(newValue);
+  };
 
 
 
@@ -196,6 +236,12 @@ const EditStudentTimetable = ({ timeTableId }) => {
           searchTerm={searchTerm}
           selectedDay={selectedDay}
           timeTableId={timeTableId}
+          // canRedo={canRedo}
+          // canUndo={canUndo}
+          // onRedo={redo}
+          // onUndo={undo}
+          conflicts={conflicts}
+          studentWeekTimetable={studentWeekTimetable}
         />
         <StudentDraggableTimetable
           selectedDay={selectedDay}
@@ -207,6 +253,7 @@ const EditStudentTimetable = ({ timeTableId }) => {
           setConflicts={setConflicts}
           openChangeOrSwapSessionDialog={openChangeOrSwapSessionDialog}
           handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
+          handleOpenTeacherChangeDialog={handleOpenTeacherChangeDialog}
         />
       </div>
 
@@ -246,6 +293,26 @@ const EditStudentTimetable = ({ timeTableId }) => {
         selectedDay={selectedDay}
         roomChangeDialogOpen={roomChangeDialogOpen}
         setRoomChangeDialogOpen={setRoomChangeDialogOpen}
+        setStudentWeekTimetable={setStudentWeekTimetable}
+      />
+      <StudentViewTeacherChangeDialog
+        open={teacherChangeDialogOpen.isOpen}
+        onClose={() =>
+          setTeacherChangeDialogOpen({
+            isOpen: false,
+            fromTeacher: null,
+            toTeacher: null,
+            type: null,
+            selectedSessionForTeacherChange: null,
+            sessionKey: null,
+            fromSubject: null,
+          })
+        }
+        availableTeachers={teachers}
+        studentWeekTimetable={studentWeekTimetable}
+        selectedDay={selectedDay}
+        teacherChangeDialogOpen={teacherChangeDialogOpen}
+        setTeacherChangeDialogOpen={setTeacherChangeDialogOpen}
         setStudentWeekTimetable={setStudentWeekTimetable}
       />
     </div>
