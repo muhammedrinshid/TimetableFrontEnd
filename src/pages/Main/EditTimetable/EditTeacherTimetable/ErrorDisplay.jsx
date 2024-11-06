@@ -7,9 +7,11 @@ import {
   ChevronUp,
   Clock,
 } from "lucide-react";
+import { useAuth } from "../../../../context/Authcontext";
 
 const ErrorDisplay = ({ errors, viewType }) => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const{darkMode}=useAuth()
+  const [isDarkMode, setIsDarkMode] = useState(darkMode);
   const [expandedErrors, setExpandedErrors] = useState({});
 
   const teacherErrorTypeDetails = {

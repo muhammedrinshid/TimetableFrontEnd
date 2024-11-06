@@ -330,7 +330,7 @@ const EditTeacherTimetableControlPanel = ({
                 }}
               >
                 <Edit className="w-5 h-5" />
-                <span>Edit Schedule</span>
+                <span>Edit Students Schedule</span>
               </Button>
             </Link>
           )}

@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { LabelDispalyerWithIcon, LabelDisplayer, MeterGaugeChart, PieChartStatsDisplayer, StatsPairDisplayer } from "../../common";
+import {
+  LabelDispalyerWithIcon,
+  LabelDisplayer,
+  MeterGaugeChart,
+  PieChartStatsDisplayer,
+  StatsPairDisplayer,
+} from "../../common";
 import { Avatar, Button, IconButton } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import { class_data } from "../../../assets/datas";
@@ -28,82 +34,100 @@ export const row1 = [
   "Session12",
 ];
 
-
-
-const TeacherDetails = ({ setISelectedTeacher, selectedTeacher ,setIsDeleteTeacherPopupOpen,teachersMap}) => {
-  const [scheduledLessons,setScheduledLessons]=useState({free:0,engaged:0})
+const TeacherDetails = ({
+  setISelectedTeacher,
+  selectedTeacher,
+  setIsDeleteTeacherPopupOpen,
+  teachersMap,
+}) => {
+  const [scheduledLessons, setScheduledLessons] = useState({
+    free: 0,
+    engaged: 0,
+  });
   const [isAnimating, setIsAnimating] = useState(false);
   const [teacherWeeklyTimetable, setTeacherWeeklyTimetable] = useState([]);
 
-  const { apiDomain, headers, } = useAuth();
+  const { apiDomain, headers } = useAuth();
 
-const calculateScheduledLessons = (timetableData) => {
-  let free = 0;
-  let engaged = 0;
+  const calculateScheduledLessons = (timetableData) => {
+    let free = 0;
+    let engaged = 0;
 
-  timetableData.forEach((day) => {
-    day.sessions.forEach((session) => {
-      if (session.subject === null) {
-        free++;
-      } else {
-        engaged++;
-      }
+    timetableData.forEach((day) => {
+      day.sessions.forEach((session) => {
+        if (session.subject === null) {
+          free++;
+        } else {
+          engaged++;
+        }
+      });
     });
-  });
 
-  return { free, engaged };
-};
+    return { free, engaged };
+  };
 
-const getStatusDetails = (
-  minLessonsPerWeek,
-  maxLessonsPerWeek,
-  freeLessonsPerWeek,
-  engagedLessonsPerWeek
-) => {
-  const averageLessons = (minLessonsPerWeek + maxLessonsPerWeek) / 2;
-  let icon = <ErrorOutline style={{ color: "grey" }} />;
-  let text = "Unknown";
+  const getStatusDetails = (
+    minLessonsPerWeek,
+    maxLessonsPerWeek,
+    freeLessonsPerWeek,
+    engagedLessonsPerWeek
+  ) => {
+    const averageLessons = (minLessonsPerWeek + maxLessonsPerWeek) / 2;
+    let icon = <ErrorOutline style={{ color: "grey" }} />;
+    let text = "Unknown";
 
-  // Ensure values are numbers and non-negative
-  if (isNaN(minLessonsPerWeek) || isNaN(maxLessonsPerWeek) || isNaN(freeLessonsPerWeek) || isNaN(engagedLessonsPerWeek)) {
-    return { status: "error", icon: <ErrorOutline style={{ color: "red" }} />, text: "Invalid values" };
-  }
+    // Ensure values are numbers and non-negative
+    if (
+      isNaN(minLessonsPerWeek) ||
+      isNaN(maxLessonsPerWeek) ||
+      isNaN(freeLessonsPerWeek) ||
+      isNaN(engagedLessonsPerWeek)
+    ) {
+      return {
+        status: "error",
+        icon: <ErrorOutline style={{ color: "red" }} />,
+        text: "Invalid values",
+      };
+    }
 
-  if (minLessonsPerWeek > maxLessonsPerWeek) {
-    return { status: "error", icon: <ErrorOutline style={{ color: "red" }} />, text: "Check ranges" };
-  }
+    if (minLessonsPerWeek > maxLessonsPerWeek) {
+      return {
+        status: "error",
+        icon: <ErrorOutline style={{ color: "red" }} />,
+        text: "Check ranges",
+      };
+    }
 
-  if (engagedLessonsPerWeek < minLessonsPerWeek) {
-    icon = <ErrorOutline style={{ color: "red" }} />;
-    text = "Below Minimum Lessons";
-  } else if (engagedLessonsPerWeek > maxLessonsPerWeek) {
-    icon = <WarningAmber style={{ color: "orange" }} />;
-    text = "Exceeds Maximum Lessons";
-  } else if (engagedLessonsPerWeek === minLessonsPerWeek) {
-    icon = <CheckCircle style={{ color: "green" }} />;
-    text = "Exactly at Minimum";
-  } else if (engagedLessonsPerWeek === maxLessonsPerWeek) {
-    icon = <CheckCircle style={{ color: "blue" }} />;
-    text = "Exactly at Maximum";
-  } else if (
-    engagedLessonsPerWeek >= averageLessons - 1 &&
-    engagedLessonsPerWeek <= averageLessons + 1
-  ) {
-    icon = <CheckCircle style={{ color: "purple" }} />;
-    text = "Close to Average Lessons";
-  } else if (
-    engagedLessonsPerWeek > minLessonsPerWeek &&
-    engagedLessonsPerWeek < maxLessonsPerWeek
-  ) {
-    icon = <CheckCircle style={{ color: "green" }} />;
-    text = "Optimal Lesson Load";
-  } else {
-    text = "Unclear Status";
-  }
+    if (engagedLessonsPerWeek < minLessonsPerWeek) {
+      icon = <ErrorOutline style={{ color: "red" }} />;
+      text = "Below Minimum Lessons";
+    } else if (engagedLessonsPerWeek > maxLessonsPerWeek) {
+      icon = <WarningAmber style={{ color: "orange" }} />;
+      text = "Exceeds Maximum Lessons";
+    } else if (engagedLessonsPerWeek === minLessonsPerWeek) {
+      icon = <CheckCircle style={{ color: "green" }} />;
+      text = "Exactly at Minimum";
+    } else if (engagedLessonsPerWeek === maxLessonsPerWeek) {
+      icon = <CheckCircle style={{ color: "blue" }} />;
+      text = "Exactly at Maximum";
+    } else if (
+      engagedLessonsPerWeek >= averageLessons - 1 &&
+      engagedLessonsPerWeek <= averageLessons + 1
+    ) {
+      icon = <CheckCircle style={{ color: "purple" }} />;
+      text = "Close to Average Lessons";
+    } else if (
+      engagedLessonsPerWeek > minLessonsPerWeek &&
+      engagedLessonsPerWeek < maxLessonsPerWeek
+    ) {
+      icon = <CheckCircle style={{ color: "green" }} />;
+      text = "Optimal Lesson Load";
+    } else {
+      text = "Unclear Status";
+    }
 
-
-  return { status: text.replace(/ /g, ""), icon, text };
-};
+    return { status: text.replace(/ /g, ""), icon, text };
+  };
   const fetchTeacherWeekTimetable = async () => {
     try {
       const response = await axios.get(
@@ -116,7 +140,6 @@ const getStatusDetails = (
       const scheduledLessons = calculateScheduledLessons(response.data);
 
       setScheduledLessons(scheduledLessons);
-
     } catch (error) {
       if (error.response) {
         console.error(
@@ -145,86 +168,105 @@ const getStatusDetails = (
       }
     }
   };
-const data = [
-  { name: "Group A", value: 400, color: "#0088FE" },
-  { name: "Group B", value: 300, color: "#00C49F" },
-  { name: "Group C", value: 300, color: "#FFBB28" },
-  { name: "Group D", value: 200, color: "#FF8042" },
-];
+ const sendEmail = async () => {
+   try {
+     const response = await axios.post(
+       `${apiDomain}/api/time-table/send-email/`,
+       {},
+       {
+         headers,
+         timeout: 30000, // 30 second timeout
+       }
+     );
+
+     toast.success(response.data.message);
+   } catch (error) {
+     const errorMessage =
+       error.response?.data?.error ||
+       error.message ||
+       "An unexpected error occurred while sending the email";
+
+     toast.error(`Failed to send email: ${errorMessage}`);
+
+     // Log error for debugging
+     console.error("Email sending error:", error);
+   }
+ };
+  const data = [
+    { name: "Group A", value: 400, color: "#0088FE" },
+    { name: "Group B", value: 300, color: "#00C49F" },
+    { name: "Group C", value: 300, color: "#FFBB28" },
+    { name: "Group D", value: 200, color: "#FF8042" },
+  ];
   useEffect(() => {
     if (selectedTeacher.isopen) {
       fetchTeacherWeekTimetable();
     }
   }, [selectedTeacher]);
 
-  const handleDeleteTeacher =()=>{
-    setIsDeleteTeacherPopupOpen(selectedTeacher?.id)
-   
-  }
+  const handleDeleteTeacher = () => {
+    setIsDeleteTeacherPopupOpen(selectedTeacher?.id);
+  };
 
-    const { icon: iconForAsignedLessonEvaluate,text: textForAsignedLessonEvaluate } =
-      getStatusDetails(
-        selectedTeacher?.min_lessons_per_week,
-        selectedTeacher?.max_lessons_per_week,
-        scheduledLessons.free,
-        scheduledLessons.engaged,
-      );
-const isPreviousDisabled =  selectedTeacher.index === 0;
-const isNextDisabled = 
-  selectedTeacher.index === teachersMap.length - 1;
-console.log(isPreviousDisabled,isNextDisabled)
-const handleTeacherPrevious = (
-  currentIndex,
-) => {
-  // Check if previous is disabled (if current index is 0)
-  if (currentIndex === 0) return;
+  const {
+    icon: iconForAsignedLessonEvaluate,
+    text: textForAsignedLessonEvaluate,
+  } = getStatusDetails(
+    selectedTeacher?.min_lessons_per_week,
+    selectedTeacher?.max_lessons_per_week,
+    scheduledLessons.free,
+    scheduledLessons.engaged
+  );
+  const isPreviousDisabled = selectedTeacher.index === 0;
+  const isNextDisabled = selectedTeacher.index === teachersMap.length - 1;
+  console.log(isPreviousDisabled, isNextDisabled);
+  const handleTeacherPrevious = (currentIndex) => {
+    // Check if previous is disabled (if current index is 0)
+    if (currentIndex === 0) return;
 
-  // Start the animation and reset the timetable
-  setIsAnimating(true);
-  setTeacherWeeklyTimetable([]);
+    // Start the animation and reset the timetable
+    setIsAnimating(true);
+    setTeacherWeeklyTimetable([]);
 
-  // After a delay, update the selected teacher
-  setTimeout(() => {
-    const newIndex = currentIndex - 1;
-    const teacher_obj = teachersMap[newIndex];
+    // After a delay, update the selected teacher
+    setTimeout(() => {
+      const newIndex = currentIndex - 1;
+      const teacher_obj = teachersMap[newIndex];
 
-    // Set the selected teacher with the updated index and open the teacher view
-    setISelectedTeacher({
-      ...teacher_obj,
-      index: newIndex,
-      isopen: true,
-    });
+      // Set the selected teacher with the updated index and open the teacher view
+      setISelectedTeacher({
+        ...teacher_obj,
+        index: newIndex,
+        isopen: true,
+      });
 
-    setIsAnimating(false);
-  }, 300);
-};
+      setIsAnimating(false);
+    }, 300);
+  };
 
-const handleTeacherNext = (
-  currentIndex,
-) => {
-  // Check if next is disabled (if current index is the last in the array)
-  if (currentIndex === teachersMap.length - 1) return;
+  const handleTeacherNext = (currentIndex) => {
+    // Check if next is disabled (if current index is the last in the array)
+    if (currentIndex === teachersMap.length - 1) return;
 
-  // Start the animation and reset the timetable
-  setIsAnimating(true);
-  setTeacherWeeklyTimetable([]);
+    // Start the animation and reset the timetable
+    setIsAnimating(true);
+    setTeacherWeeklyTimetable([]);
 
-  // After a delay, update the selected teacher
-  setTimeout(() => {
-    const newIndex = currentIndex + 1;
-    const teacher_obj = teachersMap[newIndex];
+    // After a delay, update the selected teacher
+    setTimeout(() => {
+      const newIndex = currentIndex + 1;
+      const teacher_obj = teachersMap[newIndex];
 
-    // Set the selected teacher with the updated index and open the teacher view
-    setISelectedTeacher({
-      ...teacher_obj,
-      index: newIndex,
-      isopen: true,
-    });
+      // Set the selected teacher with the updated index and open the teacher view
+      setISelectedTeacher({
+        ...teacher_obj,
+        index: newIndex,
+        isopen: true,
+      });
 
-    setIsAnimating(false);
-  }, 300);
-};
-
+      setIsAnimating(false);
+    }, 300);
+  };
 
   const pieChartComponent = (
     <PieChartStatsDisplayer
@@ -307,6 +349,28 @@ const handleTeacherNext = (
               onClick={() => handleDeleteTeacher()}
             >
               Delete
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<DeleteOutlineIcon />}
+              size="small"
+              sx={{
+                textTransform: "none",
+                border: "none",
+                outline: "none",
+                borderRadius: 2,
+                padding: "8px 12px",
+                fontSize: 10,
+                backgroundColor: "rgba(255, 182, 193, 0.2)",
+                color: "#d32f2f",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 182, 193, 0.5)",
+                  borderColor: "#d32f2f",
+                },
+              }}
+              onClick={() => sendEmail()}
+            >
+              Send Email
             </Button>
           </div>
         </div>

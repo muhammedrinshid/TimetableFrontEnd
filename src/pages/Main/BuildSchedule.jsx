@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { ScheduleLoading } from "../../components/common";
 import { motion } from "framer-motion";
+import { AlertTriangle } from "lucide-react";
 
 const BuildSchedule = () => {
   const { apiDomain, logoutUser, headers } = useAuth();
@@ -26,7 +27,11 @@ const BuildSchedule = () => {
   const [generatingTime, setGeneratingTime] = useState(30);
   const [canGenerate, setCanGenerate] = useState(false);
   const [generatedTimetableId, setGeneratedTimetableId] = useState(null);
-  const [generatedTimetableScore, setGeneratedTimetableScore] = useState({soft:0,hard:0,score:0});
+  const [generatedTimetableScore, setGeneratedTimetableScore] = useState({
+    soft: 0,
+    hard: 0,
+    score: 0,
+  });
   const [editTimeTableOpen, setEditTimeTableOpen] = useState(false);
   const [name, setName] = useState("");
   useEffect(() => {
@@ -146,19 +151,21 @@ const BuildSchedule = () => {
       transition={{
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
-      }} className=" p-4 overflow-y-auto h-full ">
-      <div className="flex flex-col justify-between max-w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden min-h-full flex-grow">
+      }}
+      className="p-4 overflow-y-auto h-full bg-background1 dark:"
+    >
+      <div className="flex flex-col justify-between max-w-full mx-auto bg-white dark:bg-dark-primaryShades-700 rounded-xl shadow-lg dark:shadow-dark-shadow overflow-hidden min-h-full flex-grow">
         <div className="p-6 sm:p-10">
-          <h1 className="text-4xl font-bold mb-8 text-gray-800 text-center">
+          <h1 className="text-4xl font-bold mb-8 text-gray-800 dark:text-dark-text text-center">
             Build Your Schedule
           </h1>
 
           {scheduleErrorList.length > 0 ? (
-            <div className="mb-8 bg-red-50 p-6 rounded-lg">
-              <h2 className="text-2xl font-semibold mb-4 text-center text-red-600">
+            <div className="mb-8 bg-red-50 dark:bg-red-900/20 p-6 rounded-lg btn">
+              <h2 className="text-2xl font-semibold mb-4 text-center text-red-600 dark:text-red-400">
                 Unable to Generate Schedule
               </h2>
-              <p className="mb-4 text-center text-gray-700">
+              <p className="mb-4 text-center text-gray-700 dark:text-dark-muted">
                 Please resolve the following issues:
               </p>
               <div className="flex flex-wrap justify-center gap-3">
@@ -168,22 +175,25 @@ const BuildSchedule = () => {
                     label={reason}
                     color="error"
                     variant="outlined"
-                    className="text-sm"
+                    className="text-sm dark:border-red-400 dark:text-red-400"
                   />
                 ))}
               </div>
             </div>
           ) : (
-            <div className="mb-8 bg-green-50 p-6 rounded-lg flex items-center justify-center">
-              <CheckCircle className="text-green-500 mr-3" fontSize="large" />
-              <p className="text-xl text-green-700 font-semibold">
+            <div className="mb-8 bg-green-50 dark:bg-green-900/20 p-6 rounded-lg flex items-center justify-center">
+              <CheckCircle
+                className="text-green-500 dark:text-green-400 mr-3"
+                fontSize="large"
+              />
+              <p className="text-xl text-green-700 dark:text-green-400 font-semibold">
                 You're all set! Ready to generate your schedule.
               </p>
             </div>
           )}
 
           <div className="flex flex-col items-center gap-6 mb-8">
-            <p className="text-xl text-gray-700 font-medium">
+            <p className="text-xl text-gray-700 dark:text-dark-text font-medium">
               Generation Time: {generatingTime} seconds
             </p>
             <Slider
@@ -209,7 +219,7 @@ const BuildSchedule = () => {
               startIcon={<AddIcon />}
               onClick={handleGenerateTimetable}
               disabled={!canGenerate || loading}
-              className="w-64 h-12 text-lg"
+              className="w-64 h-12 text-lg dark:bg-dark-primary dark:hover:bg-dark-primary-600 dark:disabled:bg-dark-primary-300"
               style={{
                 background: canGenerate
                   ? "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)"
@@ -225,9 +235,7 @@ const BuildSchedule = () => {
 
           {loading && (
             <div className="mb-8">
-             
-              <ScheduleLoading minDuration={generatingTime}/>
-            
+              <ScheduleLoading minDuration={generatingTime} />
             </div>
           )}
 
@@ -238,7 +246,7 @@ const BuildSchedule = () => {
                 color="success"
                 startIcon={<CheckCircle />}
                 onClick={handleEditTimeTableOpen}
-                className="w-48 h-12 text-lg"
+                className="w-48 h-12 text-lg dark:bg-dark-success dark:hover:bg-dark-success-600"
               >
                 Accept
               </Button>
@@ -247,23 +255,27 @@ const BuildSchedule = () => {
                 color="error"
                 startIcon={<Cancel />}
                 onClick={handleDeclineTimetable}
-                className="w-48 h-12 text-lg"
+                className="w-48 h-12 text-lg dark:bg-dark-error dark:hover:bg-dark-error-600"
               >
                 Decline
               </Button>
             </div>
           )}
         </div>
-        <div className="">
-          <Alert severity="warning" sx={{ mt: 2 }}>
-            This solution will be automatically saved to your timetable unless
-            declined. If this is not your preferred option, please ensure you
-            decline it to avoid saving
-          </Alert>
+        <div className="border-t border-gray-200 dark:border-gray-700 mt-2">
+          <div className="flex items-center bg-yellow-50 text-yellow-800 p-4 border-l-4 border-yellow-400 dark:bg-yellow-900 dark:text-yellow-100 dark:border-yellow-600">
+            <AlertTriangle className="w-5 h-5 mr-2 text-yellow-400 dark:text-yellow-500" />
+            <p>
+              This solution will be automatically saved to your timetable unless
+              declined. If this is not your preferred option, please ensure you
+              decline it to avoid saving.
+            </p>
+          </div>
         </div>
       </div>
+
       {generatedTimetableId && (
-        <div className="mt-8 border-t border-gray-200 pt-8  sm:px-10">
+        <div className="mt-8 border-t border-gray-200 dark:border-dark-border pt-8 sm:px-10">
           <GeneratedTimeTableViewer
             timeTableId={generatedTimetableId}
             generatedTimetableScore={generatedTimetableScore}
@@ -271,8 +283,16 @@ const BuildSchedule = () => {
         </div>
       )}
 
-      <Dialog open={editTimeTableOpen} onClose={handleEditTimeTableclose}>
-        <DialogTitle>Accept Timetable</DialogTitle>
+      <Dialog
+        open={editTimeTableOpen}
+        onClose={handleEditTimeTableclose}
+        PaperProps={{
+          className: "dark:bg-dark-background dark:text-dark-text",
+        }}
+      >
+        <DialogTitle className="dark:text-dark-text">
+          Accept Timetable
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -284,11 +304,26 @@ const BuildSchedule = () => {
             variant="outlined"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            InputProps={{
+              className: "dark:text-dark-text dark:border-dark-border",
+            }}
+            InputLabelProps={{
+              className: "dark:text-dark-muted",
+            }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleEditTimeTableclose}>Cancel</Button>
-          <Button onClick={handleAcceptTimetable} color="primary">
+          <Button
+            onClick={handleEditTimeTableclose}
+            className="dark:text-dark-text"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleAcceptTimetable}
+            color="primary"
+            className="dark:bg-dark-primary dark:hover:bg-dark-primary-600"
+          >
             Submit
           </Button>
         </DialogActions>

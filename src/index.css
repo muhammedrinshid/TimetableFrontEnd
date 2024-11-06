@@ -1,11 +1,14 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700;800;900&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100;1,500;1,600;1,700;1,800;1,900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700;800;900&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,500;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+/* Font imports */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+/* Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Reset styles */
 * {
   margin: 0;
   padding: 0;
@@ -14,205 +17,116 @@
 }
 
 html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden; /* This will prevent scrolling */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
-
+/* Animations */
 @keyframes blink-top-border {
-  0%,
-  100% {
-    border-top-color: #a86666;
-  }
-  50% {
-    border-top-color: #dd1b1b; /* Light red color */
-  }
-}.flip-enter {
-  -webkit-transform: scale(1) rotateX(0);
+  0%, 100% { border-top-color: #a86666; }
+  50% { border-top-color: #dd1b1b; }
+}
+
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Flip animations */
+.flip-enter {
   transform: scale(1) rotateX(0);
   opacity: 0;
 }
+
 .flip-enter-active {
-  -webkit-transform: scale(1) rotateX(-180deg);
   transform: scale(1) rotateX(-180deg);
   opacity: 1;
   transition: transform 0.5s, opacity 0.5s;
 }
+
 .flip-exit {
-  -webkit-transform: scale(1) rotateX(-180deg);
   transform: scale(1) rotateX(-180deg);
   opacity: 1;
 }
+
 .flip-exit-active {
-  -webkit-transform: scale(1) rotateX(0);
   transform: scale(1) rotateX(0);
   opacity: 0;
   transition: transform 0.5s, opacity 0.5s;
 }
 
+/* Flip scale animation */
 .flip-scale-up-hor {
-  -webkit-animation: flip-scale-up-hor 0.5s linear both;
   animation: flip-scale-up-hor 0.5s linear both;
-}
-
-/* Keyframes for the flip-scale-up-hor animation */
-@-webkit-keyframes flip-scale-up-hor {
-  0% {
-    -webkit-transform: scale(1) rotateX(0);
-    transform: scale(1) rotateX(0);
-  }
-  50% {
-    -webkit-transform: scale(2.5) rotateX(-90deg);
-    transform: scale(2.5) rotateX(-90deg);
-  }
-  100% {
-    -webkit-transform: scale(1) rotateX(-180deg);
-    transform: scale(1) rotateX(-180deg);
-  }
 }
 
 @keyframes flip-scale-up-hor {
   0% {
-    -webkit-transform: scale(1) rotateX(0);
     transform: scale(1) rotateX(0);
   }
   50% {
-    -webkit-transform: scale(2.5) rotateX(-90deg);
     transform: scale(2.5) rotateX(-90deg);
   }
   100% {
-    -webkit-transform: scale(1) rotateX(-180deg);
     transform: scale(1) rotateX(-180deg);
   }
 }
 
+/* Fade animations */
 .fade-enter {
   opacity: 0;
   transform: scale(0.9);
 }
+
 .fade-enter-active {
   opacity: 1;
   transform: scale(1);
   transition: opacity 500ms, transform 500ms;
 }
+
 .fade-exit {
   opacity: 1;
   transform: scale(1);
 }
+
 .fade-exit-active {
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 500ms, transform 500ms;
 }
+
+/* Slide animations */
 .slide-enter {
   transform: translateX(100%);
   opacity: 0;
 }
+
 .slide-enter-active {
   transform: translateX(0);
   opacity: 1;
   transition: transform 500ms, opacity 500ms;
 }
+
 .slide-exit {
   transform: translateX(0);
   opacity: 1;
 }
+
 .slide-exit-active {
   transform: translateX(-100%);
   opacity: 0;
   transition: transform 500ms, opacity 500ms;
 }
 
-.selector {
-  @apply shadow-custom-11;
-}
-.blinking-top-border {
-  @apply border-t-[5px] border-solid;
-  animation: blink-top-border 1.5s infinite;
-}
-.input-custom1 {
-  @apply border border-gray-300 outline-gray-300 rounded-md w-full p-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-light-primary transition duration-200 ease-in-out;
-}
-.input-label1 {
-  @apply block text-text_1 text-sm font-semibold mb-1;
-}
-.button-cutom1 {
-  @apply w-full p-3 bg-light-primary text-white rounded-md flex justify-center items-center gap-2 text-sm font-medium hover:border-2 hover:border-light-primary hover:bg-white hover:text-light-primary transition duration-300;
-}
-
-.shadow_box {
-  @apply bg-white rounded-lg shadow-custom-2;
-}
-.view_controller {
-  @apply cursor-pointer h-full p-1   opacity-90  flex justify-center items-center gap-2 text-sm font-medium  transition duration-300 w-1/2  text-opacity-80;
-}
-
-.gradient_3 {
-  @apply bg-gradient-to-b from-lime-100 to-lime-50 border-t-[4px] border-lime-500 text-lime-700;
-}
-.gradient_1 {
-  @apply bg-gradient-to-b from-purple-100 to-purple-50 border-t-[4px] border-purple-500 text-purple-800;
-}
-.gradient_2 {
-  @apply bg-gradient-to-b from-blue-100 to-purple-50 border-t-[4px] border-blue-500 text-blue-700;
-}
-.gradient_4 {
-  @apply bg-gradient-to-b from-orange-200 to-orange-50 border-t-[4px] border-orange-500 text-orange-700;
-}
-.gradient_5 {
-  @apply bg-gradient-to-b from-amber-100 to-orange-50 border-t-[4px] border-amber-500 text-amber-700;
-}
-.gradient_6 {
-  @apply bg-gradient-to-b from-red-100 to-red-50 border-red-500 text-red-700;
-}
-.leave__card {
-  @apply bg-gradient-to-b from-gray-200 to-gray-100 border-gray-500 text-gray-400 border-t-[5px];
-}
-.error {
-  @apply text-xs font-light text-red-500 mt-1;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #ffebeb;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(232, 231, 255, 0.6); /* Reduced opacity */
-  border-radius: 4px;
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(205, 204, 224, 0.6) #f1f1f1;
-}
-/* General gradient animations */
-@keyframes gradient-move {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Apply the animation to the classes */
+/* Utility classes */
 .bg-gradient-moving {
   background-size: 200% 200%;
   animation: gradient-move 8s ease infinite;
 }
 
-/* Optional: Blinking border */
 .blinking-top-border {
   position: relative;
 }
@@ -229,54 +143,87 @@ html, body {
   animation: gradient-move 2s linear infinite;
 }
 
-/* Base button styles */
+/* Gradient styles */
+.gradient_1 { @apply bg-gradient-to-b from-purple-100 to-purple-50 border-t-[4px] border-purple-500 text-purple-800; }
+.gradient_2 { @apply bg-gradient-to-b from-blue-100 to-purple-50 border-t-[4px] border-blue-500 text-blue-700; }
+.gradient_3 { @apply bg-gradient-to-b from-lime-100 to-lime-50 border-t-[4px] border-lime-500 text-lime-700; }
+.gradient_4 { @apply bg-gradient-to-b from-orange-200 to-orange-50 border-t-[4px] border-orange-500 text-orange-700; }
+.gradient_5 { @apply bg-gradient-to-b from-amber-100 to-orange-50 border-t-[4px] border-amber-500 text-amber-700; }
+.gradient_6 { @apply bg-gradient-to-b from-red-100 to-red-50 border-red-500 text-red-700; }
+
+/* Form elements */
+.input-custom1 {
+  @apply border border-gray-300 outline-gray-300 rounded-md w-full p-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-light-primary transition duration-200 ease-in-out;
+}
+
+.input-label1 {
+  @apply block text-text_1 text-sm font-semibold mb-1;
+}
+
+/* Button styles */
 .btn {
-  @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm;
+  @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm hover:scale-105;
 }
-
-/* Primary gradient button */
 .btn-gradient-primary {
-  /* Adjusted the via and to colors to match the theme better */
-  @apply text-white bg-gradient-to-r from-[#312ECB] via-[#5A4ED6] to-[#312ECB]; 
-  @apply hover:bg-[length:200%_100%] bg-[length:100%_100%];
-  @apply shadow-lg hover:shadow-[#312ECB]/20;
-  @apply focus:ring-[#312ECB];
+  @apply bg-gradient-to-r from-[#312ECB] to-[#7874E0]
+    hover:from-[#7874E0] hover:to-[#312ECB]
+    text-white shadow hover:shadow-lg
+    transition-all duration-300;
 }
 
-/* Secondary gradient button (gray version) */
+/* Secondary Button - Soft Purple */
 .btn-gradient-secondary {
-  /* Adjusted the gradient to a dark theme-compatible palette */
-  @apply text-white bg-gradient-to-r from-gray-600 via-gray-700 to-gray-600; 
-  @apply hover:bg-[length:200%_100%] bg-[length:100%_100%];
-  @apply shadow-lg hover:shadow-gray-700/20;
-  @apply focus:ring-gray-600;
+  @apply bg-gradient-to-r from-[#715DF1] to-[#7874E0]
+    hover:from-[#7874E0] hover:to-[#715DF1]
+    text-white shadow hover:shadow-lg
+    transition-all duration-300;
 }
 
-/* Disabled button */
+/* Ocean Button - Cool Blue */
+.btn-gradient-ocean {
+  @apply bg-gradient-to-r from-[#4558BE] to-[#5C6FD9]
+    hover:from-[#5C6FD9] hover:to-[#4558BE]
+    text-white shadow hover:shadow-lg
+    transition-all duration-300;
+}
+
+/* Light Button - Subtle Gray */
+.btn-gradient-light {
+  @apply bg-gradient-to-r from-[#ecf3fa] to-[#DFDFDF]
+    hover:from-[#DFDFDF] hover:to-[#ecf3fa]
+    text-[#312ECB] shadow hover:shadow-lg
+    transition-all duration-300;
+}
 .btn-disabled {
-  @apply cursor-not-allowed bg-gradient-to-r from-gray-100 to-gray-200 text-gray-400;
-  @apply dark:from-gray-700 dark:to-gray-800 dark:text-gray-500;
-  @apply shadow-none pointer-events-none;
+  @apply cursor-not-allowed bg-gradient-to-r from-gray-100 to-gray-200 text-gray-400 dark:from-gray-700 dark:to-gray-800 dark:text-gray-500 shadow-none pointer-events-none;
 }
 
 /* Button sizes */
-.btn-sm {
-  @apply px-3 py-2 text-sm;
+.btn-sm { @apply px-3 py-2 text-sm; }
+.btn-lg { @apply px-6 py-3 text-base; }
+
+/* Button icons */
+.btn-icon { @apply space-x-2; }
+.btn-icon-left svg { @apply -ml-0.5 mr-2 w-4 h-4; }
+.btn-icon-right svg { @apply -mr-0.5 ml-2 w-4 h-4; }
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.btn-lg {
-  @apply px-6 py-3 text-base;
+::-webkit-scrollbar-track {
+  background: #ffebeb;
 }
 
-/* Icon button modifiers */
-.btn-icon {
-  @apply space-x-2;
+::-webkit-scrollbar-thumb {
+  background-color: rgba(232, 231, 255, 0.6);
+  border-radius: 4px;
 }
 
-.btn-icon-left svg {
-  @apply -ml-0.5 mr-2 w-4 h-4;
-}
-
-.btn-icon-right svg {
-  @apply -mr-0.5 ml-2 w-4 h-4;
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(205, 204, 224, 0.6) #f1f1f1;
 }

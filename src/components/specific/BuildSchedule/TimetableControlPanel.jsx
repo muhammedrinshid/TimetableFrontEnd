@@ -14,8 +14,8 @@ const TimetableControlPanel = ({
   timeTableId,
 }) => {
   const editButtonText = isTeacherView
-    ? "Edit  Schedule"
-    : "Edit  Schedule";
+    ? "Edit Teacher Schedule"
+    : "Edit Students Schedule";
   const editLinkPath = isTeacherView
     ? `/edit-timetable/teacher/${timeTableId}`
     : `/edit-timetable/student/${timeTableId}`;
@@ -89,7 +89,7 @@ const TimetableControlPanel = ({
           className="btn btn-gradient-primary btn-icon btn-icon-left"
         >
           <LayoutGrid className="w-4 h-4" />
-          <span>{isTeacherView ? "Teacher View" : "Student View"}</span>
+          <span>{!isTeacherView ? "Teacher View" : "Student View"}</span>
         </button>
       </div>
     </div>

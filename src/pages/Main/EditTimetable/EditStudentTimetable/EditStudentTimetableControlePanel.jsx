@@ -363,7 +363,7 @@ const handleProceed= ()=>{
                 }}
               >
                 <Edit className="w-5 h-5" />
-                <span>Edit Schedule</span>
+                <span>Edit Teachers Schedule</span>
               </Button>
             </Link>
           )}

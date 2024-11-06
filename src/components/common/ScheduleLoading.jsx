@@ -1,45 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
-import { FaBook, FaClock, FaGraduationCap, FaChalkboardTeacher } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { Clock, BookOpen, GraduationCap, Users } from "lucide-react";
+import { useAuth } from "../../context/Authcontext";
 
 const ScheduleLoading = ({ minDuration = 5 }) => {
+  const { darkMode } = useAuth();
   const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [startTime, setStartTime] = useState(null);
 
   const messages = [
-   'Arranging classes...',
-    'Scheduling teachers...',
-    'Optimizing lunch breaks...',
-    'Balancing subjects...',
-    'Finalizing timetables...',
-    
-    'Checking room conflicts...',
-    'Resolving teacher conflicts...',
-    'Handling student group conflicts...',
-    'Validating elective group timeslot constraints...',
-    'Ensuring teacher assignments...',
-    'Ensuring timeslot assignments...',
-    
-    'Balancing tutor lesson load...',
-    'Enforcing daily lesson limits...',
-    'Preferring consistent teacher for subject...',
-    'Limiting subjects to once per day...',
-    'Avoiding overlapping periods for teachers with the same class...',
-    'Avoiding continuous subject blocks...',
-    'Minimizing continuous teaching for teachers...',
-    'Avoiding consecutive elective lessons...'
+    "Arranging classes...",
+    "Scheduling teachers...",
+    "Optimizing lunch breaks...",
+    "Balancing subjects...",
+    "Finalizing timetables...",
+    "Checking room conflicts...",
+    "Resolving teacher conflicts...",
+    "Handling student group conflicts...",
+    "Validating elective group timeslot constraints...",
+    "Ensuring teacher assignments...",
+    "Ensuring timeslot assignments...",
+    "Balancing tutor lesson load...",
+    "Enforcing daily lesson limits...",
+    "Preferring consistent teacher for subject...",
+    "Limiting subjects to once per day...",
+    "Avoiding overlapping periods for teachers with the same class...",
+    "Avoiding continuous subject blocks...",
+    "Minimizing continuous teaching for teachers...",
+    "Avoiding consecutive elective lessons...",
   ];
 
-  const icons = [FaBook, FaClock, FaGraduationCap, FaChalkboardTeacher];
+  const icons = [BookOpen, Clock, GraduationCap, Users];
 
   useEffect(() => {
     setStartTime(Date.now());
-    
+
     const interval = setInterval(() => {
       const elapsedTime = (Date.now() - startTime) / 1000;
-      const calculatedProgress = Math.min((elapsedTime / minDuration) * 100, 100);
-      
+      const calculatedProgress = Math.min(
+        (elapsedTime / minDuration) * 100,
+        100
+      );
+
       setProgress(calculatedProgress);
       setMessage(messages[Math.floor(Math.random() * messages.length)]);
 
@@ -51,59 +53,75 @@ const ScheduleLoading = ({ minDuration = 5 }) => {
     return () => clearInterval(interval);
   }, [minDuration, startTime]);
 
+  const styles = `
+    @keyframes electron-glow {
+      0%, 100% { filter: drop-shadow(0 0 4px ${
+        darkMode ? "#60a5fa" : "#3b82f6"
+      }); }
+      50% { filter: drop-shadow(0 0 8px ${darkMode ? "#93c5fd" : "#60a5fa"}); }
+    }
+    .electron-glow { animation: electron-glow 3s ease-in-out infinite; }
+  `;
+
   return (
-    <Box 
-      display="flex" 
-      flexDirection="column" 
-      alignItems="center" 
-      justifyContent="center" 
-      height="100%"
-      width="100%"
-      bgcolor="background.paper"
-      borderRadius={2}
-      p={3}
-    >
-      <Box 
-        position="relative" 
-        width={200} 
-        height={200} 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center"
-      >
+    <div className="relative flex flex-col items-center justify-center w-full max-w-2xl mx-auto p-16">
+      <style>{styles}</style>
+
+      {/* Icon Animation Container */}
+      <div className="relative w-64 h-64 mb-8">
         {icons.map((Icon, index) => (
-          <Box
+          <div
             key={index}
-            position="absolute"
-            top={100 - Math.cos((progress / 100 * Math.PI * 2) + (index * Math.PI / 2)) * 80}
-            left={100 + Math.sin((progress / 100 * Math.PI * 2) + (index * Math.PI / 2)) * 80}
+            className="absolute top-1/2 left-1/2 electron-glow"
             style={{
               transform: `translate(-50%, -50%) rotate(${progress * 3.6}deg)`,
-              transition: 'all 0.5s ease-out'
+              top: `${
+                50 -
+                Math.cos(
+                  (progress / 100) * Math.PI * 2 + (index * Math.PI) / 2
+                ) *
+                  40
+              }%`,
+              left: `${
+                50 +
+                Math.sin(
+                  (progress / 100) * Math.PI * 2 + (index * Math.PI) / 2
+                ) *
+                  40
+              }%`,
+              transition: "all 0.5s ease-out",
             }}
           >
-            <Icon size={32} color="#3f51b5" />
-          </Box>
+            <div className="bg-white/10 dark:bg-white/5 p-2 backdrop-blur-sm rounded-full">
+              <Icon
+                className="text-blue-600 dark:text-blue-400"
+                size={24}
+                strokeWidth={2}
+              />
+            </div>
+          </div>
         ))}
-      </Box>
-      <Box mt={2} width="100%">
-        <Box width="100%" bgcolor="grey.300" borderRadius={5} height={10}>
-          <Box
-            width={`${progress}%`}
-            bgcolor="primary.main"
-            borderRadius={5}
-            height={10}
-            transition="width 0.5s ease-out"
-          />
-        </Box>
-      </Box>
-      <Typography variant="h6" color="primary" mt={2}>
-        {message}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" mt={1}>
-        {`${Math.round(progress)}% Complete`}
-      </Typography>
-    </Box>
+      </div>
+
+      {/* Progress bar with gradient */}
+      <div className="w-full max-w-md h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 transition-all duration-300 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Message container */}
+      <div className="mt-8 min-h-[60px] flex flex-col items-center justify-center">
+        <p className="text-xl font-medium text-blue-600 dark:text-blue-400 text-center">
+          {message}
+        </p>
+
+        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+          {Math.round(progress)}% Complete
+        </p>
+      </div>
+    </div>
   );
 };
 
