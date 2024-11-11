@@ -91,8 +91,8 @@ function TeacherUpdateForm({
       }
 
       // Handle grades
-      const oldGrades = teacherData.grades_display.map((g) => g.id);
-      const newGrades = formData.grades.map((g) => g.id);
+      const oldGrades = teacherData?.grades_display?.map((g) => g.id);
+      const newGrades = formData?.grades?.map((g) => g.id);
       if (
         JSON.stringify(oldGrades.sort()) !== JSON.stringify(newGrades.sort())
       ) {

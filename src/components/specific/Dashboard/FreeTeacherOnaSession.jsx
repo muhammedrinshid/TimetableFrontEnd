@@ -21,9 +21,9 @@ const FreeTeacherOnaSession = ({
   };
 
   return (
-    <div className="relative col-start-3 col-end-4 row-start-3 row-end-4 shadow_box overflow-hidden flex flex-col items-start dark:bg-dark-background1">
+    <div className="relative col-start-3 col-end-4 row-start-3 row-end-4 shadow_box overflow-hidden flex flex-col items-start dark:bg-dark-background1  bg-light-background1  rounded-lg shadow-sm bg-opacity-60">
       {/* heading section */}
-      <div className="p-2 shadow-bottom1 dark:shadow-dark-shadow">
+      <div className="p-2 shadow-bottom1 dark:shadow-dark-shadow bg-white w-full">
         <p className="text-lg font-medium text-dark-secondary dark:text-dark-text mt-1 ml-2">
           for Session-{selectedSession + 1}
         </p>

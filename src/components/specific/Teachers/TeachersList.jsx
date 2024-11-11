@@ -49,7 +49,6 @@ const TeachersList = ({
   };
   const handleSelectedTeacher = (teacher_id, index) => {
     let teacher = filteredAndSortedTeachers.find((teacher) => teacher.teacher_id === teacher_id);
-    console.log(selectedTeacher);
     setISelectedTeacher((prev) => ({ ...teacher, isopen: true, index: index }));
   };
 

@@ -160,12 +160,11 @@ const BuildSchedule = () => {
             Build Your Schedule
           </h1>
 
-          {scheduleErrorList.length > 0 ? (
-            <div className="mb-8 bg-red-50 dark:bg-red-900/20 p-6 rounded-lg btn">
-              <h2 className="text-2xl font-semibold mb-4 text-center text-red-600 dark:text-red-400">
+          {scheduleErrorList.length > 0 ? (<div className="mb-8 bg-red-50 p-6 rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4 text-center text-red-600">
                 Unable to Generate Schedule
               </h2>
-              <p className="mb-4 text-center text-gray-700 dark:text-dark-muted">
+              <p className="mb-4 text-center text-gray-700">
                 Please resolve the following issues:
               </p>
               <div className="flex flex-wrap justify-center gap-3">
@@ -175,12 +174,12 @@ const BuildSchedule = () => {
                     label={reason}
                     color="error"
                     variant="outlined"
-                    className="text-sm dark:border-red-400 dark:text-red-400"
+                    className="text-sm"
                   />
                 ))}
               </div>
             </div>
-          ) : (
+          )  : (
             <div className="mb-8 bg-green-50 dark:bg-green-900/20 p-6 rounded-lg flex items-center justify-center">
               <CheckCircle
                 className="text-green-500 dark:text-green-400 mr-3"

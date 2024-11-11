@@ -15,7 +15,7 @@ const TeacherAttendanceStatus = ({
 
   const {apiDomain}=useAuth()
   return (
-    <div className="overflow-y-auto relative bg-white dark:bg-dark-background text-slate-700 dark:text-dark-text">
+    <div className="overflow-y-auto relative bg-white dark:bg-dark-background text-slate-700 dark:text-dark-text rounlg">
       <div className="sticky top-0 left-0 flex flex-col items-start basis-1/4 p-4 font-Inter z-10 bg-white dark:bg-dark-primary shadow-bottom1 dark:shadow-dark-shadow">
         <StyledAvatarGroup max={4}>
           {teacherWeekTimetable.map((teacher) => (

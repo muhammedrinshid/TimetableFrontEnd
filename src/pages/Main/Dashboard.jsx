@@ -101,10 +101,13 @@ const Dashboard = () => {
   }
 
   const StyledTextField = styled(TextField)({
-    "& .MuiInputBase-root": {
-      border: "none",
-      outline: "none",
+    '& .MuiInputBase-root': {
+      padding: '8px 12px',
+      borderRadius: '8px',
     },
+    '& .MuiInputBase-input': {
+      padding: '0px',
+    }
   });
 
   const handleDateChange = (newDate) => {
@@ -261,29 +264,37 @@ const Dashboard = () => {
       </div>
 
       {/* Date selector */}
-      <div className="col-start-2 col-end-3 row-start-1 row-end-2 shadow_box flex flex-row justify-center items-center dark:bg-dark-secondary">
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DesktopDatePicker
-            value={selectedDate}
-            onChange={handleDateChange}
-            renderInput={(params) => (
-              <StyledTextField
-                {...params}
-                variant="standard"
-                InputProps={{
-                  ...params.InputProps,
-                  disableUnderline: true,
-                  className: "dark:text-dark-text",
-                }}
-                className="dark:bg-dark-secondary"
-              />
-            )}
-          />
-        </LocalizationProvider>
-      </div>
+      <div className="col-start-2 col-end-3 row-start-1 row-end-2">
+      <div className="flex items-center shadow_box bg-white dark:bg-dark-secondary rounded-lg overflow-hidden p-1">
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DesktopDatePicker
+          value={selectedDate}
+          onChange={handleDateChange}
+          renderInput={(params) => (
+            <StyledTextField
+              {...params}
+              variant="standard"
+              InputProps={{
+                ...params.InputProps,
+                disableUnderline: true,
+                className: "dark:text-dark-text ",
+              }}
+              className="dark:bg-dark-secondary bg-white w-full"
+              sx={{
+                '& .MuiInputBase-root': {
+                  borderRadius: '8px',
+                  // padding: '4px 8px',
+                  fontSize:'16px'
+                }
+              }}
+            />
+          )}
+        />
+      </LocalizationProvider>
+    </div></div>
 
       {/* Teacher present status of the day */}
-      <div className="col-start-3 col-end-4 row-start-1 row-end-3 shadow_box flex flex-col overflow-hidden dark:bg-dark-secondary">
+      <div className="col-start-3 col-end-4 row-start-1 row-end-3 shadow_box flex flex-col overflow-hidden dark:bg-dark-secondary bg-light-background1  rounded-lg shadow-sm bg-opacity-60">
         <TeacherAttendanceStatus
           countPresentTeachers={countPresentTeachers}
           getTeacherStatus={getTeacherStatus}

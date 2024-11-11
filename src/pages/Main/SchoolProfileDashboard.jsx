@@ -150,13 +150,13 @@ const SchoolProfileDashboard = ({ schoolData }) => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>Grades and Standards</Typography>
-                {school.grades.map((grade, index) => (
+                {school?.grades?.map((grade, index) => (
                   <Typography key={index}>
                     <strong>{grade.name}:</strong> {grade.count} years
                   </Typography>
                 ))}
                 <Box sx={{ height: '1px', backgroundColor: 'grey.300', my: 1 }} />
-                {school.standards.map((standard, index) => (
+                {school?.standards?.map((standard, index) => (
                   <Typography key={index}>
                     <strong>{standard.name} Grade:</strong> {standard.divisions} divisions
                   </Typography>

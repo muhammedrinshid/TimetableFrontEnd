@@ -107,7 +107,7 @@ const TeachersInSchool = () => {
       }
     } catch (error) {
       console.error("Error fetching grades:", error);
-      toast.error("Error fetching grades");
+      toast.info("Error fetching grades");
     }
   };
 

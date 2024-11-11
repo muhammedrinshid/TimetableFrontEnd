@@ -20,21 +20,29 @@ import { ThemeProvider } from "@mui/material";
 function App() {
   return (
       <div className="w-full min-h-screen dark:bg-light-background bg-[#F8F7FC] flex items-center justify-center font-Roboto">
-        <ToastContainer
-          position="bottom-right"
-          autoClose={4000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-          icon={true}
-          limit={3}
-          transition={Flip}
-        />
+         <ToastContainer
+      position="bottom-right"
+      autoClose={2000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="colored"
+      icon={true}
+      limit={3}
+      transition={Flip}
+      // Added custom styling
+      className="!w-80" // Sets a fixed width
+      toastClassName="!rounded-lg !text-sm !p-3" // Styles each toast
+      bodyClassName="!text-sm !font-normal" // Styles the toast text
+      style={{
+        '--toastify-toast-min-height': '48px',
+        '--toastify-toast-max-height': 'auto',
+      }}
+    />
         <div
           className="w-full 3xl:max-w-8xl  h-screen  3xl:max-h-128   3xl:rounded-md   shadow-custom-2 overflow-clip relative"
           style={{
