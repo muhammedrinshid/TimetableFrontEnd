@@ -23,7 +23,7 @@ import {
 const menuData = [
   {
     name: "Dashboard",
-    icon: <MdOutlineDashboard />, // Alternative dashboard icon
+    icon: <MdOutlineDashboard />, // Cleaner settings icon
     path: "",
   },
   {
@@ -40,6 +40,11 @@ const menuData = [
     name: "Classes",
     icon: <MdOutlineClass />, // Alternative class icon
     path: "/classes",
+  },
+  {
+    name: "Day Planner",
+    icon: <MdOutlineDashboard />, // Alternative dashboard icon
+    path: "/day-planner",
   },
   {
     name: "Saved tables",

@@ -64,7 +64,7 @@ const EditStudentTimetable = ({ timeTableId }) => {
 
     try {
       const response = await axios.get(
-        `${apiDomain}/api/time-table/default-student-view-week/`,
+        `${apiDomain}/api/time-table/edit-student-week-timetable/${timeTableId}/`,
         {
           headers,
         }

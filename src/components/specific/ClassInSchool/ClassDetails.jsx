@@ -41,7 +41,6 @@ export const row1 = [
   "Session12",
 ];
 
-
 const ClassDetails = ({
   setISelectedClassforView,
   selectedClassforView,
@@ -49,7 +48,7 @@ const ClassDetails = ({
   refetch,
   refresh,
   classroomMap,
-  openEditCalssroomForm
+  openEditCalssroomForm,
 }) => {
   const { apiDomain, headers, logoutUser, totalperiodsInWeek } = useAuth();
 
@@ -167,7 +166,6 @@ const ClassDetails = ({
     }
   }, [selectedClassforView, refetch]);
 
-
   const handleReassignGroup = (subjectName, optionSubject) => {
     // Logic to reassign the group
     console.log(`Reassign group for ${subjectName} - ${optionSubject}`);
@@ -213,7 +211,7 @@ const ClassDetails = ({
   };
   return (
     <div
-      className={`relative flex flex-col  w-full h-full rounded-2xl px-6 py-5 transition-opacity duration-300 ${
+      className={`relative flex flex-col  w-full h-full rounded-2xl px-6 py-5 transition-opacity duration-300 overflow-y-auto max-h-full${
         isAnimating ? "opacity-0" : "opacity-100"
       }`}
     >
@@ -239,7 +237,7 @@ const ClassDetails = ({
               {classroomData?.standard_short_name}-{classroomData?.division}
             </h1>
           </div>
-       
+
           <div className="flex flex-row gap-3">
             <Button
               variant="outlined"
@@ -402,14 +400,12 @@ const ClassDetails = ({
         refresh={refresh}
         setOpenAddNewSubjectForm={setOpenAddNewSubjectForm}
       />
-   
 
       {/* Timetable Section */}
       <div className="overflow-auto py-6">
         <ClassRoomWeeklyTimeTableComponent
           weeklyTimetable={classroomWeeklyTimetable}
           classroomData={classroomData}
-
         />
       </div>
       <UpdateSubjectForm

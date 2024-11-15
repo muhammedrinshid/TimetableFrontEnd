@@ -115,7 +115,7 @@ const DirectivesConfiguration = () => {
       transition={{
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
-      }} className="container mx-auto px-4 py-8 dark:bg-dark-background text-dark-primary dark:text-light-primary overflow-y-scroll">
+      }} className="container mx-auto px-4 py-8 dark:bg-dark-background text-dark-primary dark:text-light-primary overflow-y-scroll h-full">
       <h1 className="text-3xl font-bold mb-6 text-center text-dark-primary dark:text-light-primary">
         Directives Configuration
       </h1>

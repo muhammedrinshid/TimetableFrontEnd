@@ -51,7 +51,7 @@ const SwapTeacherPopus = ({
 
   const handleChange = (event) => {
     setseconTeacherSubject({
-      index: event.target.value,
+      index: event?.target?.value,
       name: teacher2?.instructor?.qualified_subjects[event.target.value]?.name ||"",
     });
   };

@@ -45,10 +45,10 @@ const SubjectsAndTeachers = ({
 
   return (
     <div className="py-6 relative text-right">
-      <p className="text-sm font-medium text-text_2 font-Inter mb-4">
+      <p className="text-sm font-medium text-text_2 font-Inter mb-">
         SUBJECTS AND TEACHERS
       </p>
-      <div className="space-y-4">
+      <div className="space-y-2">
         {visibleSubjects?.slice(0, 3).map((subject, index) => (
           <SubjectCard
             key={index}
@@ -63,7 +63,7 @@ const SubjectsAndTeachers = ({
 
       {classroomData?.subject_data.length > 3 && (
         <>
-          <animated.div style={animProps} className="space-y-4 overflow-hidden">
+          <animated.div style={animProps} className="space-y-2 overflow-hidden mt-2">
             {visibleSubjects?.slice(3).map((subject, index) => (
               <SubjectCard
                 key={index + 3}

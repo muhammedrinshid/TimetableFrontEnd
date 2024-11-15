@@ -14,7 +14,8 @@ const AddStandardForm = ({
   open,
   onClose,
   seletctedGreadeForCreation,
-  setClassByGrade,
+  refectClasssroomListdata
+  ,
 }) => {
   const { apiDomain, logoutUser, headers } = useAuth();
 
@@ -48,14 +49,8 @@ const AddStandardForm = ({
         classrooms: response.data.classrooms,
       };
 
-      setClassByGrade((prev) => {
-        let newData = prev.map((grade) =>
-          grade.id == response.data.grade_id
-            ? { ...grade, standards: [...grade.standards,newStandard]}
-            : grade
-        );
-        return newData
-      });
+      refectClasssroomListdata();
+
       onClose()
       toast.success("Standard and classrooms created successfully");
     } catch (err) {
@@ -89,7 +84,6 @@ const AddStandardForm = ({
   const onSubmitForm = async (data) => {
     data["grade"] = seletctedGreadeForCreation;
 
-    console.log(data);
 
     try {
       const result = await createStandardAndClassrooms(data);

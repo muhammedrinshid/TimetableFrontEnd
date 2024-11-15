@@ -188,12 +188,12 @@ const ClassList = ({
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
       }}
-      className=" relative "
+      className="relative flex flex-col w-full h-[calc(100vh-5rem)] 3xl:h-[calc(60rem-5rem)] max-h-[calc(100vh-5rem)] 3xl:max-h-[calc(60rem-5rem)]"
     >
-      {/* header and contorle  section */}
-      <div className="">
+      {/* header and control section */}
+      <div className="flex-none">
         {/* header */}
-        <div className=" flex flex-row justify-between items-center mb-4  ">
+        <div className="flex flex-row justify-between items-center mb-4">
           <h2 className="text-3xl font-Inter font-semibold">
             Classes in School{" "}
           </h2>
@@ -219,7 +219,7 @@ const ClassList = ({
         </div>
 
         {/* controle */}
-        <div className="relative flex flex-row justify-between gap-10 ">
+        <div className="relative flex flex-row justify-between gap-10">
           <div className="p-1 bg-white rounded-2xl basis-2/5 h-fit shadow-custom-8">
             <SearchInput value={searchQuery} onChange={handleSearchChange} />{" "}
           </div>
@@ -230,12 +230,14 @@ const ClassList = ({
               options={options}
             />{" "}
           </div>
-          <div className="p-1 bg-white rounded-2xl  shadow-custom-8">
+          <div className="p-1 bg-white rounded-2xl shadow-custom-8">
             <GradeSortMenu setSortType={setSortMethod} />
           </div>
         </div>
       </div>
-      <div className="overflow-y-auto h-full max-h-full ">
+
+      {/* main content */}
+      <div className="flex-1 overflow-y-auto mt-4">
         {filteredGrades?.map((grade) => {
           const filteredAndSortedStandards = [...grade.standards]
             .filter(
@@ -266,7 +268,7 @@ const ClassList = ({
               {filteredAndSortedStandards.length == 0 ? (
                 <EmptyState grade={grade.name} />
               ) : (
-                <div className="flex flex-col w-full max-w-full ">
+                <div className="flex flex-col w-full max-w-full">
                   {filteredAndSortedStandards.map((standard) => {
                     return (
                       <div className="flex flex-row justify-start my-3 gap-5 items-center flex-wrap border-b last:border-none">
@@ -307,11 +309,12 @@ const ClassList = ({
           );
         })}
       </div>
+
       <AddStandardForm
         open={isAddStandarFormOpen}
         onClose={handleFormClose}
         seletctedGreadeForCreation={seletctedGreadeForCreation}
-        setClassByGrade={setClassByGrade}
+        refectClasssroomListdata={refectClasssroomListdata}
       />
       <SubjectAssignmentForm
         open={OpenTeacherAssingmentForm.isOpen}

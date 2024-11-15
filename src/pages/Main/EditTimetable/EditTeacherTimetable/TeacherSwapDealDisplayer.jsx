@@ -50,7 +50,6 @@ const getSessionColor = (session) => {
 };
 const renderTeacherInfo = (teacher) => {
   const workingLoadEntries = Object.entries(teacher?.instructor.working_load || {});
-  console.log(teacher?.instructor.working_load);
   return (
     <div className="flex flex-col gap-2 p-1">
       <div className="flex items-center gap-2">

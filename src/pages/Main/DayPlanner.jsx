@@ -16,7 +16,7 @@ import { useAuth } from "../../context/Authcontext";
 import { styled, TextField } from "@mui/material";
 import { motion } from "framer-motion";
 
-const Dashboard = () => {
+const DayPlanner = () => {
   const today = new Date();
   const { apiDomain, headers } = useAuth();
 
@@ -237,7 +237,7 @@ const Dashboard = () => {
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
       }}
-      className="grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto pl-6 pr-4 pb-6 gap-4 "
+      className="grid grid-rows-[1fr_10fr_7fr] grid-cols-[4fr_2fr_2fr] overflow-auto pl-6 pr-4 pb-6 gap-4 h-full max-h-full"
     >
       {/* Control panel */}
       <div className="col-start-1 col-end-2 row-start-1 row-end-2 flex flex-row items-center">
@@ -351,4 +351,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DayPlanner;

@@ -122,7 +122,7 @@ const ClassesInSchool = ({}) => {
     <>
     
       <ReactCardFlip
-        containerClassName="pl-6 pr-4 pb-6   grid grid-rows-[1fr_4fr] overflow-auto   "
+        containerClassName="pl-6 pr-4 pb-6   grid grid-rows-[1fr_4fr] h-full max-h-full   "
         isFlipped={selectedClassforView.isOpen}
         flipDirection="vertical"
       >

@@ -185,7 +185,7 @@ const TeachersInSchool = () => {
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
       }}
-      className=" grid grid-rows-[10fr_4fr] grid-cols-[6fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4 "
+      className=" grid grid-rows-[10fr_4fr] grid-cols-[6fr_2fr] overflow-auto  pl-6 pr-4 pb-6 gap-4 h-full"
     >
       {/* teachers list placed */}
 
@@ -198,7 +198,7 @@ const TeachersInSchool = () => {
       />
 
       {/* overall details */}
-      <div className="col-start-2 col-end-3 row-start-1 row-end-2 bg-white rounded-2xl">
+      <div className="col-start-2 col-end-3 row-start-1 row-end-2 bg-white rounded-2xl h-full max-h-full overflow-y-auto">
         <div className="p-4 ">
           <div className="flex flex-row justify-between p-4 items-center rounded-xl bg-light-primary bg-opacity-90 shadow-custom-1">
             <div className="text-right">

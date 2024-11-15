@@ -87,7 +87,7 @@ const getSessionColor = (session) => {
           <table className="w-full border-collapse">
             <thead className="sticky top-0">
               <tr className="sticky left-0 top-0 z-20 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200">
-                <th className="w-[160px] min-w-[160px] p-4 text-left font-semibold border-r sticky left-0">
+                <th className="w-[160px] min-w-[160px] p-4 text-left font-semibold border-r sticky left-0 z-30 ">
                   {teacherRow1[0]}
                 </th>
                 {teacherRow1.slice(1).map((header, index) => (
@@ -106,7 +106,7 @@ const getSessionColor = (session) => {
                   key={teacherIndex}
                   className="bg-white hover:bg-gray-50 transition-colors duration-300 dark:bg-gray-800"
                 >
-                  <td className="w-[160px] min-w-[160px] p-4 border-b border-r sticky left-0 bg-white dark:bg-gray-800">
+                  <td className="w-[160px] min-w-[160px] p-4 border-b border-r sticky left-0 bg-white dark:bg-gray-800 z-10">
                     <SavedTimeTableTeacherListCard teacher={teacher} />
                   </td>
                   {teacher?.sessions

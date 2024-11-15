@@ -40,7 +40,7 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-6 overflow-hidden"
+      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mb-2 overflow-hidden "
     >
       <div className="flex">
         <div className="w-3 bg-gradient-to-b from-blue-500 to-purple-600"></div>

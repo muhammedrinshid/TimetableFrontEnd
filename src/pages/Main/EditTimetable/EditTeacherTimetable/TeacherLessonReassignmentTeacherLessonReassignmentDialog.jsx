@@ -4,18 +4,19 @@ import { Loadings } from "../../../../components/common";
 import { ArrowLeft, Badge, Check, X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogActions, Button } from "@mui/material";
-import {
-  Swap as SwapIcon,
-  ArrowLeft as ArrowLeftIcon,
-  Check as CheckIcon,
-} from "lucide-react";
-import TeacherSwapDealDisplayer from "./TeacherSwapDealDisplayer";
-import { RandomColorChip } from "../../../../components/Mui components";
 
-const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm }) => {
+import TeacherSwapDealDisplayer from "./TeacherSwapDealDisplayer";
+
+const TeacherLessonReassignmentDialog = ({
+  isOpen,
+  onClose,
+  swapParams,
+  onConfirm,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [swapOptions, setSwapOptions] = useState([]);
   const [selectedSwap, setSelectedSwap] = useState(null);
+
   const findPossibleSwaps = (
     teacherId,
     selectedDay,
@@ -30,7 +31,6 @@ const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm
     const teacher1 = timetable[selectedDay].find(
       (t) => t.instructor.id === teacherId
     );
-    // Get the initiating selectedSessions's data
 
     if (!teacher1) return result;
 
@@ -55,8 +55,8 @@ const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm
           if (sessionGroup2.length > 1) return;
 
           // Check for corresponding sessions
-          const session3 = teacher1.sessions[sessionGroupIndex2][0];
-          const session4 = teacher2.sessions[sessionNumber][0];
+          const session3 =  timetable[dayOfWeek]?.find((tutor)=>tutor?.instructor?.id==teacherId).sessions[sessionGroupIndex2][0];
+          const session4 =timetable[selectedDay]?.find((tutor)=>tutor?.instructor.id==teacher2?.instructor?.id)?.sessions[sessionNumber][0];
 
           // Validate the corresponding sessions
           if (!areSwappableCoreSessions(session3, session4)) return;
@@ -109,7 +109,7 @@ const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm
               },
             ],
           };
-
+        
           result.push(swapOption);
         });
       });
@@ -123,7 +123,7 @@ const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm
    */
   const isValidSession = (session, selectedSession) => {
     if (!session || session.subject === null) return false;
-    if (session.type === "Elective") return false;
+    if (session.type === "Elective" || selectedSession.type == "Elective") return false;
     if (!session.class_details || !selectedSession.class_details) return false;
 
     // For core subjects, verify class details match
@@ -206,7 +206,7 @@ const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm
     );
     const elapsedTime = Date.now() - startTime;
     if (elapsedTime < 1000) {
-      await new Promise((resolve) => setTimeout(resolve, 3000 - elapsedTime));
+      await new Promise((resolve) => setTimeout(resolve, 1000 - elapsedTime));
     }
     setSwapOptions(swaps);
     setIsLoading(false);
@@ -216,12 +216,12 @@ const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm
     setSelectedSwap(swap);
   };
 
-    const handleConfirm = () => {
-      if (selectedSwap) {
-        onConfirm(selectedSwap);
-        onClose();
-      }
-    };
+  const handleConfirm = () => {
+    if (selectedSwap) {
+      onConfirm(selectedSwap);
+      onClose();
+    }
+  };
 
   const handleBack = () => {
     setSelectedSwap(null);
@@ -261,7 +261,7 @@ const TeacherLessonReassignmentDialog = ({ isOpen, onClose, swapParams,onConfirm
               className="space-y-4"
             >
               <h2 className="text-xl font-bold mb-4">Available Swaps </h2>
-          
+
               {swapOptions.map((swap, index) => (
                 <motion.div
                   key={index}

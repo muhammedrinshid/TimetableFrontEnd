@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { AiOutlineFileExcel } from "react-icons/ai";
 import { SiMicrosoftexcel } from "react-icons/si";
-import { FaFileDownload } from "react-icons/fa";
+import { FaFileDownload,FaFilePdf  } from "react-icons/fa";
 
 const ClassRoomWeeklyTimeTableComponent = ({
   weeklyTimetable,
@@ -52,34 +52,40 @@ const ClassRoomWeeklyTimeTableComponent = ({
     const hue = (dayName.charCodeAt(0) * 20) % 360;
     return `hsl(${hue}, 70%, 50%)`;
   };
-  const handleDownload = async () => {
+  const handleDownload = async (isPdf = false) => {
+
     try {
+      const file_type = isPdf ? "pdf" : "xlsx";
       const response = await axios.get(
-        `${apiDomain}/api/time-table/download-classroom-timetable/${classroomData.id}/`,
+        `${apiDomain}/api/time-table/download-classroom-timetable/${classroomData.id}/?file_type=${file_type}`,
         {
           headers,
-
           responseType: "blob",
+          // params: { format },
+
         }
       );
 
+  
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute(
         "download",
-        `${classroomData?.standard_short_name}-${classroomData?.division}_timetable.xlsx`
+        `${classroomData?.standard_short_name}-${classroomData?.division}_timetable.${file_type}`  // Remove the trailing slash
       );
+      
       document.body.appendChild(link);
       link.click();
       link.remove();
-
+  
       toast.success("Timetable downloaded successfully!");
     } catch (error) {
       console.error("Download failed:", error);
       toast.error("Failed to download timetable. Please try again.");
     }
   };
+  
 
   const StyledAvatar = styled(Avatar)(({ theme }) => ({
     width: 70,
@@ -102,14 +108,23 @@ const ClassRoomWeeklyTimeTableComponent = ({
       </h2>
 
       <div className="overflow-x-auto shadow-xl rounded-lg">
-        <div className="mb-2">
-          <Tooltip title={"Download Time Table File"}>
+        <div className="mb-2 flex flex-row gap-3 p-2 justify-center">
+          <Tooltip title={"Download Time Table excel file"}>
             <button
-              onClick={handleDownload}
+              onClick={()=>handleDownload(false)}
               className="  p-4 bg-primary hover:bg-primary-dark bg-light-primary rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               aria-label="Add new subject"
             >
-              <FaFileDownload className="w-6 h-6 text-white" />
+              <FaFileDownload className="w-4 h-4 text-white" />
+            </button>
+          </Tooltip>
+          <Tooltip title={"Download Time Table pdf file"}>
+            <button
+              onClick={()=>handleDownload(true)}
+              className="  p-4 bg-primary hover:bg-primary-dark bg-light-primary rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              aria-label="Add new subject"
+            >
+              <FaFilePdf      className="w-4 h-4 text-white" />
             </button>
           </Tooltip>
         </div>
