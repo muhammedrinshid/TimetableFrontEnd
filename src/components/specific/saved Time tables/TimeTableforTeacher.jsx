@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/Authcontext";
 import { Avatar, Chip, Tooltip } from "@mui/material";
 import SavedTimeTableTeacherListCard from "./SavedTimeTableTeacherListCard";
+import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
 
 const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
   const { apiDomain, NumberOfPeriodsInAday } = useAuth();
@@ -74,6 +75,15 @@ const getSessionColor = (session) => {
       return "bg-gradient-to-b from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400";
   }
 };
+
+
+if (!teacherTimetable?.length) {
+  return (
+    <div className="h-full w-full">
+      <EmptyDefaultTimetableState />
+    </div>
+  );
+}
 
   return (
     <div className="container mx-auto p-4">

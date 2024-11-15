@@ -50,7 +50,7 @@ function App() {
           backgroundImage: `url(${mainBg02})`,
         }}
       >
-        <div className="absolute inset-0 bg-light-background1 dark:bg-dark-border dark:bg-opacity-80 bg-opacity-95 z-0 max-h-screen h-screen  3xl:h-[60rem] 3xl:max-h-128"></div>
+        <div className="absolute inset-0 bg-light-background1 dark:bg-dark-border dark:bg-opacity-80 bg-opacity-95 z-0 max-h-screen h-screen 3xl:h-128 3xl:max-h-128"></div>
         <BrowserRouter>
           <AuthProvider>
             <Routes>

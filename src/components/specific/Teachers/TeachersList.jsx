@@ -15,6 +15,7 @@ import { defaultAvatarImage } from "../../../assets/images";
 import DeleteConfirmationPopup from "../../common/DeleteConfirmationPopup";
 import RandomColorChip2 from "../../Mui components/RandomColorChip2";
 import { useAuth } from "../../../context/Authcontext";
+import TeacherNotAdded from "../../empty state management components/TeacherNotAdded";
 
 const TeachersList = ({
   filteredAndSortedTeachers,
@@ -28,7 +29,7 @@ const TeachersList = ({
   gradeType,
   searchTerm,
   setSortType,
-  
+  handleCreateTeacherOpen
 }) => {
   
   const { apiDomain, headers } = useAuth();
@@ -61,6 +62,12 @@ const TeachersList = ({
       isOpen: true,
     }));
   };
+
+  if (!filteredAndSortedTeachers.length) {
+    return (
+      <TeacherNotAdded handleCreateTeacherOpen={handleCreateTeacherOpen}/>
+    )
+  }
 
   return (
     <div className="h-full w-full overflow-auto   flex flex-col">

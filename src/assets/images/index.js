@@ -1,6 +1,6 @@
 import logo from './logo.png'
 import loginimage from './loginImage.png'
-import defaultAvatarImage from './user1.jpg'
+import defaultAvatarImage from './defaultimage.png'
 import userAvatar from './user1.jpg'
 import teacher01 from './teacher01.jpg'
 import teacher02 from './teacher02.jpg'

@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "../../../context/Authcontext";
 import { Avatar } from "@mui/material";
 import ClassroomInfoCard from "./ClassroomInfoCard";
+import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
 
 const StudentViewOneDayTt = ({ studentTimeTable }) => {
   const { NumberOfPeriodsInAday, apiDomain } = useAuth();
@@ -23,6 +24,13 @@ const StudentViewOneDayTt = ({ studentTimeTable }) => {
       .fill()
       .map((_, i) => `Session${i + 1}`),
   ];
+  if (!studentTimeTable?.length) {
+    return (
+      <div className="h-full w-full">
+        <EmptyDefaultTimetableState />
+      </div>
+    );
+  }
 
   return (
     <div className="shadow-xl rounded-lg bg-white dark:bg-gray-900">

@@ -11,6 +11,7 @@ import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationP
 import SavedTimeTableViewer from "../../components/specific/saved Time tables/SavedTimeTableViewer";
 import { SearchInput } from "../../components/Mui components";
 import TimeTableSortMenu from "../../components/specific/saved Time tables/TimeTableSortMenu";
+import NoSavedTimetables from "../../components/empty state management components/NoSavedTimetables";
 
 const SavedTimeTables = () => {
   const { apiDomain, headers } = useAuth();
@@ -176,6 +177,9 @@ const SavedTimeTables = () => {
         </div>
 
         <div className="space-y-4">
+           {
+           (!savedTables?.length&&(<NoSavedTimetables/>))
+          }
           <div className="space-y-4 2xl:space-y-0 2xl:grid 2xl:grid-cols-2 2xl:gap-4">
             {filteredAndSortedTimetables
               .slice(0, visibleTables)

@@ -13,6 +13,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import { grey } from "@mui/material/colors";
 import { useAuth } from "../../../context/Authcontext";
+import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
 
 const TeacherViewOneDayTt = ({
   teacherTimetable,
@@ -78,6 +79,13 @@ const getSessionBorderColor = (session) => {
   }
 };
 
+if (!teacherTimetable?.length) {
+  return (
+    <div className="h-full w-full">
+      <EmptyDefaultTimetableState />
+    </div>
+  );
+}
 
   return (
     <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800">

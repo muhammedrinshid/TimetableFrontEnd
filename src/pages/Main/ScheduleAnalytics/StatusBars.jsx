@@ -12,6 +12,7 @@ import { Avatar, Card } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import { FaClock, FaCheckCircle, FaTasks } from "react-icons/fa";
 import {  useNavigate } from "react-router-dom";
+import EmptyDefaultTimetableState from "../../../components/empty state management components/EmptyDefaultTimetableState";
 
 // Metrics Card Component
 const MetricsCard = ({ title, value, icon: Icon, trend, isLoading }) => (
@@ -46,28 +47,7 @@ const MetricsCard = ({ title, value, icon: Icon, trend, isLoading }) => (
   </div>
 );
 
-const EmptyState = () => {
-  
-  
-  
-  const navigate = useNavigate();
 
-  return (
-  
-  <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
-    <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center">
-      <Calendar className="w-12 h-12 text-blue-500" />
-    </div>
-    <h3 className="text-lg font-semibold text-gray-900">No Timetable Generated</h3>
-    <p className="text-gray-500 max-w-sm">
-      You haven't generated any AI scheduler timetables yet. Generate your first timetable to get started.
-    </p>
-    <button onClick={() => navigate("/build-schedule")} className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-      <Plus className="w-4 h-4 mr-2" />
-      Generate Timetable
-    </button>
-  </div>
-)};
 
 const TeacherAvatar = ({ src, name }) => (
   <div className="flex flex-col items-center gap-2">
@@ -152,8 +132,8 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
           />
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100">
-          <EmptyState />
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full">
+          <EmptyDefaultTimetableState />
         </div>
       </div>
     );

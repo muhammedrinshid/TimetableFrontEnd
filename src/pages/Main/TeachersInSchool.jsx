@@ -123,7 +123,6 @@ const TeachersInSchool = () => {
   
 
   const handleCreateTeacherOpen = () => {
-    console.log("hi");
     setCreateTeacherFormOpen(true);
   };
 
@@ -195,6 +194,7 @@ const TeachersInSchool = () => {
         setSelectedTeacherForUpdation={setSelectedTeacherForUpdation}
         setRefetch={setRefetch}
         grades={grades}
+        handleCreateTeacherOpen={handleCreateTeacherOpen}
       />
 
       {/* overall details */}

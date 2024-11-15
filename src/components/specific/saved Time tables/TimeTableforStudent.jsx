@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/Authcontext";
 import { Avatar, Box, Typography, Chip } from "@mui/material";
 import { styled } from "@mui/system";
+import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
 
 const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
   const { apiDomain, NumberOfPeriodsInAday } = useAuth();
@@ -87,7 +88,13 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
     boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
     background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
   }));
-
+  if (!StudentTimeTable?.length) {
+    return (
+      <div className="h-full w-full">
+        <EmptyDefaultTimetableState />
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">

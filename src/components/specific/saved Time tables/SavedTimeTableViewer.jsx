@@ -6,6 +6,7 @@ import { useAuth } from "../../../context/Authcontext";
 import axios from "axios";
 import StudentTimeTableComponent from "./TimeTableforStudent";
 import TimetableControlPanel from "../BuildSchedule/TimetableControlPanel";
+import { Loadings } from "../../common";
 
 const SavedTimeTableViewer = ({ timeTableId }) => {
   const { headers, apiDomain } = useAuth();
@@ -16,6 +17,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
   const [lessonsPerDay, setLessonsPerDay] = useState(5);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isTimetableLoading, setIsTimetableLoading] = useState(false);
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
@@ -25,6 +27,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
     setIsTeacherView(!isTeacherView);
   };
   const fetchTeacherTimetable = async () => {
+    setIsTimetableLoading(true);
     try {
       const response = await axios.get(
         `${apiDomain}/api/time-table/default-teacher-view-week/`,
@@ -35,12 +38,15 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
       setTeacherWeekTimetable(response.data.week_timetable);
       setLessonsPerDay(response.data.lessons_per_day);
     } catch (error) {
-      console.error(
-        `Error fetching teacher timetable: ${
-          error.response?.status || "Network error"
-        }. ${error.message}`
-      );
-      toast.error(`Failed to load teacher timetable. Please try again.`);
+      const errorMessage = error.response
+        ? `Error fetching teacher timetable: ${error.response.status}. ${
+            error.response.data?.message || error.message
+          }`
+        : `Network error. ${error.message}`;
+      console.error(errorMessage);
+      toast.error("Failed to load teacher timetable. Please try again.");
+    } finally {
+      setIsTimetableLoading(false);
     }
   };
 
@@ -69,7 +75,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
     fetchStudentTimetable();
   }, []);
 
-  const days = Object.keys(teacherWeekTimetable).map((day) => day);
+  const days = teacherWeekTimetable ? Object.keys(teacherWeekTimetable) : [];
   const handleDayChange = (event) => {
     setSelectedDay(event.target.value);
   };
@@ -90,7 +96,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
       />
 
       <div className="w-full flex justify-center mb-4">
-        {Object.keys(teacherWeekTimetable).map((day) => (
+        {Object.keys(teacherWeekTimetable || {}).map((day) => (
           <button
             key={day}
             onClick={() => handleDayClick(day)}
@@ -106,15 +112,16 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
           </button>
         ))}
       </div>
-
-      {isTeacherView ? (
+      {isTimetableLoading ? (
+        <Loadings.ThemedMiniLoader />
+      ) : isTeacherView ? (
         <TeacherTimeTableComponent
-          teacherTimetable={teacherWeekTimetable[selectedDay]}
+          teacherTimetable={teacherWeekTimetable?.[selectedDay] || []}
           searchTerm={searchTerm}
         />
       ) : (
         <StudentTimeTableComponent
-          StudentTimeTable={studentWeekTimetable[selectedDay]}
+          studentTimeTable={studentWeekTimetable?.[selectedDay] || []}
           searchTerm={searchTerm}
         />
       )}

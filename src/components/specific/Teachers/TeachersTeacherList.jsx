@@ -10,7 +10,8 @@ const TeachersTeacherList = ({
   handleChange,
   setSelectedTeacherForUpdation,
   setIsDeleteTeacherPopupOpen,
-  grades
+  grades,
+  handleCreateTeacherOpen
 }) => {
   const [selectedTeacher, setISelectedTeacher] = useState({
     isopen: false,
@@ -73,6 +74,7 @@ const filteredAndSortedTeachers = useMemo(() => {
         setGradeType={setGradeType}
         setSearchTerm={setSearchTerm}
         setSortType={setSortType}
+        handleCreateTeacherOpen={handleCreateTeacherOpen}
       />
       <TeacherDetails
         selectedTeacher={selectedTeacher}
