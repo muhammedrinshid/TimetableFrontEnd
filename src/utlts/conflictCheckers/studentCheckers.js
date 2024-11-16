@@ -1,18 +1,15 @@
 export function checkRoomAndTeacherConflicts(timetable) {
-  // Input validation
   if (!Array.isArray(timetable)) {
     throw new Error("Timetable must be an array");
   }
 
   const errors = [];
-  // Get maximum number of sessions across all classrooms
   const maxSessions = Math.max(
     ...timetable.map((classroomData) =>
       Array.isArray(classroomData?.sessions) ? classroomData.sessions.length : 0
     )
   );
 
-  // Iterate through each session period
   for (
     let sessionGroupIndex = 0;
     sessionGroupIndex < maxSessions;
@@ -22,58 +19,45 @@ export function checkRoomAndTeacherConflicts(timetable) {
     const teachersInSession = new Map();
     const electiveGroupInSession = new Map();
 
-    // Process each classroom's sessions
-    timetable.forEach((classroomData, classRoomIndx) => {
-      if (!classroomData?.classroom) {
-        return; // Skip invalid classroom data
-      }
+    timetable.forEach((classroomData) => {
+      const classroom = classroomData?.classroom;
+      if (!classroom) return;
 
-      const sessionGroup = classroomData.sessions[sessionGroupIndex] || [];
-
+      const sessionGroup = classroomData?.sessions?.[sessionGroupIndex] || [];
       sessionGroup.forEach((session) => {
-        // Skip empty sessions
-        if (!session?.name || !session?.class_distribution) {
-          return;
-        }
+        if (!session?.name || !session?.class_distribution) return;
 
-        // Process each distribution in the session
         session.class_distribution.forEach((distribution) => {
-          if (!distribution?.room?.id || !distribution?.teacher?.id) {
-            return; // Skip invalid distribution data
-          }
+          const roomId = distribution?.room?.id;
+          const teacherId = distribution?.teacher?.id;
 
-          const roomId = distribution.room.id;
-          const teacherId = distribution.teacher.id;
+          if (!roomId || !teacherId) return;
+
           const currentClassroom = {
-            id: classroomData.classroom.id,
-            standard: classroomData.classroom.standard,
-            division: classroomData.classroom.division,
+            id: classroom?.id,
+            standard: classroom?.standard,
+            division: classroom?.division,
           };
 
-          // Handle elective sessions
-          if (session.elective_id) {
+          if (session?.elective_id) {
             if (electiveGroupInSession.has(session.elective_id)) {
-              // Same elective group - just update tracking maps
               roomsInUse.set(roomId, currentClassroom);
               teachersInSession.set(teacherId, currentClassroom);
             } else {
-              // New elective group - check for conflicts
               electiveGroupInSession.set(session.elective_id, true);
               checkAndRecordConflicts();
             }
           } else {
-            // Non-elective sessions - always check for conflicts
             checkAndRecordConflicts();
           }
 
           function checkAndRecordConflicts() {
-            // Check room conflict
             if (roomsInUse.has(roomId)) {
               errors.push({
                 type: "Room Conflict",
                 period: sessionGroupIndex + 1,
-                room: distribution.room.name,
-                classRoomId:classroomData?.classroom?.id,
+                room: distribution?.room?.name,
+                classRoomId: classroom?.id,
                 roomId,
                 classRooms: [roomsInUse.get(roomId), currentClassroom],
               });
@@ -81,18 +65,14 @@ export function checkRoomAndTeacherConflicts(timetable) {
               roomsInUse.set(roomId, currentClassroom);
             }
 
-            // Check teacher conflict
             if (teachersInSession.has(teacherId)) {
               errors.push({
                 type: "Teacher Conflict",
                 period: sessionGroupIndex + 1,
-                teacher: distribution.teacher.name,
-                classRoomId:classroomData?.classroom?.id,
+                teacher: distribution?.teacher?.name,
+                classRoomId: classroom?.id,
                 teacherId,
-                classRooms: [
-                  teachersInSession.get(teacherId),
-                  currentClassroom,
-                ],
+                classRooms: [teachersInSession.get(teacherId), currentClassroom],
               });
             } else {
               teachersInSession.set(teacherId, currentClassroom);
@@ -109,29 +89,30 @@ export function checkRoomAndTeacherConflicts(timetable) {
 export function checkEmptyPeriods(timetable) {
   const errors = [];
 
-  timetable.forEach((classroomData, classRoomIndx) => {
-    classroomData.sessions.forEach((sessionGroup, periodIndex) => {
+  timetable.forEach((classroomData) => {
+    const classroom = classroomData?.classroom;
+    classroomData?.sessions?.forEach((sessionGroup, periodIndex) => {
       if (
-        sessionGroup.length === 0 ||
-        (sessionGroup.length == 1 && sessionGroup[0].name == null)
+        sessionGroup?.length === 0 ||
+        (sessionGroup?.length === 1 && !sessionGroup[0]?.name)
       ) {
         errors.push({
           type: "Empty Period",
           period: periodIndex + 1,
-          classRoomId: classroomData?.classroom?.id,
-
-          class: `${classroomData.classroom.standard}-${classroomData.classroom.division}`,
+          classRoomId: classroom?.id,
+          class: `${classroom?.standard}-${classroom?.division}`,
           classRooms: [
             {
-              id: classroomData.classroom.id,
-              standard: classroomData.classroom.standard,
-              division: classroomData.classroom.division,
+              id: classroom?.id,
+              standard: classroom?.standard,
+              division: classroom?.division,
             },
           ],
         });
       }
     });
   });
+
   return errors;
 }
 
@@ -139,20 +120,21 @@ export function checkConcurrentSessions(timetable) {
   const errors = [];
 
   timetable.forEach((classroomData) => {
-    classroomData.sessions.forEach((sessionGroup, sessionGroupIndex) => {
-      if (sessionGroup.length > 1) {
+    const classroom = classroomData?.classroom;
+    classroomData?.sessions?.forEach((sessionGroup, sessionGroupIndex) => {
+      if (sessionGroup?.length > 1) {
         errors.push({
           type: "Concurrent Sessions",
           sessionGroup: sessionGroupIndex + 1,
           classRooms: [
             {
-              id: classroomData.classroom.id,
-              standard: classroomData.classroom.standard,
-              division: classroomData.classroom.division,
+              id: classroom?.id,
+              standard: classroom?.standard,
+              division: classroom?.division,
             },
           ],
           sessions: sessionGroup.map((session) => ({
-            subject: session.name,
+            subject: session?.name,
           })),
         });
       }
@@ -165,7 +147,6 @@ export function checkConcurrentSessions(timetable) {
 export function checkStudentConflicts(timetable) {
   let conflicts = [];
 
-  // Combine all conflicts from different checks
   conflicts = conflicts.concat(checkRoomAndTeacherConflicts(timetable));
   conflicts = conflicts.concat(checkEmptyPeriods(timetable));
   conflicts = conflicts.concat(checkConcurrentSessions(timetable));

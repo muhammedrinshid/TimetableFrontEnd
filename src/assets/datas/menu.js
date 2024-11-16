@@ -41,6 +41,17 @@ const menuData = [
     icon: <MdOutlineClass />, // Alternative class icon
     path: "/classes",
   },
+  
+  {
+    name: "Directives", // New menu item
+    icon: <FaSlidersH />, // Choose an appropriate icon
+    path: "/directives-configuration",
+  },
+  {
+    name: "Ai Scheduler", // New Build Schedule item
+    icon: <FaMagic />, // Icon for building/creating
+    path: "/build-schedule", // Route for Build Schedule page
+  },
   {
     name: "Day Planner",
     icon: <MdOutlineDashboard />, // Alternative dashboard icon
@@ -52,16 +63,7 @@ const menuData = [
     path: "/saved-timetables",
   },
 
-  {
-    name: "Directives", // New menu item
-    icon: <FaSlidersH />, // Choose an appropriate icon
-    path: "/directives-configuration",
-  },
-  {
-    name: "Ai Scheduler", // New Build Schedule item
-    icon: <FaMagic />, // Icon for building/creating
-    path: "/build-schedule", // Route for Build Schedule page
-  },
+
 
 ];
 

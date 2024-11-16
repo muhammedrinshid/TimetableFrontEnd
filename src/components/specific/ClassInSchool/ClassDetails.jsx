@@ -211,7 +211,7 @@ const ClassDetails = ({
   };
   return (
     <div
-      className={`relative flex flex-col  w-full h-full rounded-2xl px-6 py-5 transition-opacity duration-300 overflow-y-auto max-h-full${
+      className={`relative flex flex-col  w-full h-[calc(100vh-5rem)] 3xl:h-[calc(60rem-5rem)] max-h-[calc(100vh-5rem)] 3xl:max-h-[calc(60rem-5rem)] rounded-2xl px-6 py-5 transition-opacity duration-300 overflow-y-auto max-h-full ${
         isAnimating ? "opacity-0" : "opacity-100"
       }`}
     >
