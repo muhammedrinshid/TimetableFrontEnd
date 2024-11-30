@@ -121,11 +121,11 @@ const ClassesInSchool = ({}) => {
   return (
     <>
     
-      <ReactCardFlip
-        containerClassName="pl-6 pr-4 pb-6   grid grid-rows-[1fr_4fr] h-full max-h-full   "
-        isFlipped={selectedClassforView.isOpen}
-        flipDirection="vertical"
-      >
+    <ReactCardFlip
+          containerClassName="pl-6 pr-4 pb-6 grid grid-rows-[1fr_4fr] h-full max-h-full w-full"
+          isFlipped={selectedClassforView.isOpen}
+          flipDirection="vertical"
+        >
         <ClassList
           setISelectedClassforView={setISelectedClassforView}
           handleClassroomDelete={handleClassroomDelete}

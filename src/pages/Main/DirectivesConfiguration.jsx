@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Switch, Tooltip, CircularProgress } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
-import { toast } from 'react-toastify'; 
-import { useAuth } from '../../context/Authcontext';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Switch, Tooltip, CircularProgress } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/Authcontext";
 import { motion } from "framer-motion";
 
 const DirectivesConfiguration = () => {
@@ -11,7 +11,7 @@ const DirectivesConfiguration = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { apiDomain, headers, logoutUser } = useAuth();
   const directiveDescriptions = {
-    tutor_free_period_constraint:"Ensures atleast one free period in a day",
+    tutor_free_period_constraint: "Ensures atleast one free period in a day",
     elective_group_timeslot:
       "Ensures that elective subjects are scheduled at the same time for all groups.",
     ensure_teacher_assigned:
@@ -35,8 +35,16 @@ const DirectivesConfiguration = () => {
       "Ensures breaks between teaching periods for teachers.",
     avoid_consecutive_elective_lessons:
       "Prevents elective subjects from being scheduled back-to-back.",
+    avoid_elective_in_first_period:
+      "Prevents elective subjects from being scheduled first period",
+    avoid_first_half_period:
+      "Prevents scheduling subjects in the first half of the day (e.g., morning sessions).",
+    assign_class_teacher_at_first_period:
+      "Indicates whether the class teacher should be assigned to the first period.",
+      same_teacher_first_period_constraint:
+    "Ensures the same teacher is assigned to the first period each day.",
+
   };
-  
 
   useEffect(() => {
     fetchDirectives();
@@ -44,7 +52,10 @@ const DirectivesConfiguration = () => {
 
   const fetchDirectives = async () => {
     try {
-      const response = await axios.get(`${apiDomain}/api/user/user-constraints/`, { headers });
+      const response = await axios.get(
+        `${apiDomain}/api/user/user-constraints/`,
+        { headers }
+      );
       setDirectives(response.data);
       setIsLoading(false);
     } catch (err) {
@@ -54,8 +65,12 @@ const DirectivesConfiguration = () => {
 
   const updateDirective = async (key, value) => {
     try {
-      await axios.put(`${apiDomain}/api/user/user-constraints/`, { [key]: value }, { headers });
-      setDirectives(prev => ({ ...prev, [key]: value }));
+      await axios.put(
+        `${apiDomain}/api/user/user-constraints/`,
+        { [key]: value },
+        { headers }
+      );
+      setDirectives((prev) => ({ ...prev, [key]: value }));
       toast.success("Directive updated successfully");
     } catch (err) {
       handleError(err);
@@ -69,7 +84,9 @@ const DirectivesConfiguration = () => {
         toast.error("Error occurred: Unauthorized access");
         logoutUser();
       } else {
-        toast.error(`Error occurred: ${err.response.data?.message || "Unexpected error"}`);
+        toast.error(
+          `Error occurred: ${err.response.data?.message || "Unexpected error"}`
+        );
       }
     } else if (err.request) {
       console.error("No response received:", err.request);
@@ -92,10 +109,16 @@ const DirectivesConfiguration = () => {
     <div className="flex items-center justify-between p-4 bg-slate-200 dark:bg-dark-secondary rounded-lg shadow-custom-2 hover:shadow-custom-3 transition-shadow duration-300">
       <div className="flex items-center space-x-2">
         <span className="text-sm font-medium text-dark-primary dark:text-light-primary">
-          {name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+          {name
+            .split("_")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")}
         </span>
         <Tooltip title={description || "No description available"} arrow>
-          <InfoIcon fontSize="small" className="text-light-accent dark:text-dark-accent cursor-help" />
+          <InfoIcon
+            fontSize="small"
+            className="text-light-accent dark:text-dark-accent cursor-help"
+          />
         </Tooltip>
       </div>
       <Switch
@@ -109,13 +132,15 @@ const DirectivesConfiguration = () => {
   );
 
   return (
-      <motion.div
+    <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{
         duration: 0.8,
         ease: [0.6, -0.05, 0.01, 0.99],
-      }} className="container mx-auto px-4 py-8 dark:bg-dark-background text-dark-primary dark:text-light-primary overflow-y-scroll h-full">
+      }}
+      className="container mx-auto px-4 py-8 dark:bg-dark-background text-dark-primary dark:text-light-primary overflow-y-scroll h-full"
+    >
       <h1 className="text-3xl font-bold mb-6 text-center text-dark-primary dark:text-light-primary">
         Directives Configuration
       </h1>
@@ -190,6 +215,18 @@ const DirectivesConfiguration = () => {
               updateDirective(
                 "consecutive_multi_block_lessons",
                 !directives.consecutive_multi_block_lessons
+              )
+            }
+            disabled={false}
+          />
+          <DirectiveItem
+            name="avoid_first_half_period"
+            description={directiveDescriptions.avoid_first_half_period}
+            value={directives.avoid_first_half_period}
+            onChange={() =>
+              updateDirective(
+                "avoid_first_half_period",
+                !directives.avoid_first_half_period
               )
             }
             disabled={false}
@@ -314,6 +351,46 @@ const DirectivesConfiguration = () => {
               updateDirective(
                 "avoid_consecutive_elective_lessons",
                 !directives.avoid_consecutive_elective_lessons
+              )
+            }
+            disabled={false}
+          />
+          <DirectiveItem
+            name="avoid_elective_in_first_period"
+            description={directiveDescriptions.avoid_elective_in_first_period}
+            value={directives.avoid_elective_in_first_period}
+            onChange={() =>
+              updateDirective(
+                "avoid_elective_in_first_period",
+                !directives.avoid_elective_in_first_period
+              )
+            }
+            disabled={false}
+          />
+          <DirectiveItem
+            name="assign_class_teacher_at_first_period"
+            description={
+              directiveDescriptions.assign_class_teacher_at_first_period
+            }
+            value={directives.assign_class_teacher_at_first_period}
+            onChange={() =>
+              updateDirective(
+                "assign_class_teacher_at_first_period",
+                !directives.assign_class_teacher_at_first_period
+              )
+            }
+            disabled={false}
+          />
+          <DirectiveItem
+            name="same_teacher_first_period_constraint"
+            description={
+              directiveDescriptions.same_teacher_first_period_constraint
+            }
+            value={directives.same_teacher_first_period_constraint}
+            onChange={() =>
+              updateDirective(
+                "same_teacher_first_period_constraint",
+                !directives.same_teacher_first_period_constraint
               )
             }
             disabled={false}

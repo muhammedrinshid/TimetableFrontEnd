@@ -56,6 +56,7 @@ const ClassDetails = ({
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [classroomWeeklyTimetable, setClassroomWeeklyTimetable] = useState([]);
+  const [timetableDaySchedules , setTimetableDaySchedules ] = useState([]);
   const { NumberOfPeriodsInAday } = useAuth();
   const [isAnimating, setIsAnimating] = useState(false);
   const [openAddNewSubjectForm, setOpenAddNewSubjectForm] = useState({
@@ -126,16 +127,13 @@ const ClassDetails = ({
           headers,
         }
       );
-      setClassroomWeeklyTimetable(response.data);
+      setClassroomWeeklyTimetable(response.data.day_timetable);
+      setTimetableDaySchedules(response.data.day_schedules);
     } catch (error) {
       if (error.response) {
         // The request was made, and the server responded with a status code
         // that falls out of the range of 2xx
-        console.error(
-          "Server responded with an error:",
-          error.response.status,
-          error.response.data
-        );
+      
         if (error.response.status === 422) {
           toast.info(
             "            This classrooom has not been included in the default timetable optimization"
@@ -193,6 +191,8 @@ const ClassDetails = ({
     if (isPreviousDisabled) return;
     setIsAnimating(true);
     setClassroomWeeklyTimetable([]);
+    setTimetableDaySchedules([]);
+    
     setTimeout(() => {
       setISelectedClassforView((prev) => ({ ...prev, index: prev.index - 1 }));
       setIsAnimating(false);
@@ -203,6 +203,7 @@ const ClassDetails = ({
     if (isNextDisabled) return;
     setIsAnimating(true);
     setClassroomWeeklyTimetable([]);
+    setTimetableDaySchedules([]);
 
     setTimeout(() => {
       setISelectedClassforView((prev) => ({ ...prev, index: prev.index + 1 }));
@@ -211,10 +212,12 @@ const ClassDetails = ({
   };
   return (
     <div
-      className={`relative flex flex-col  w-full h-[calc(100vh-5rem)] 3xl:h-[calc(60rem-5rem)] max-h-[calc(100vh-5rem)] 3xl:max-h-[calc(60rem-5rem)] rounded-2xl px-6 py-5 transition-opacity duration-300 overflow-y-auto max-h-full ${
-        isAnimating ? "opacity-0" : "opacity-100"
-      }`}
-    >
+            className={`relative flex flex-col w-full h-full
+              max-h-[calc(100vh-5rem)] 3xl:max-h-[calc(60rem-5rem)]
+              rounded-2xl px-3 py-5 transition-opacity duration-300 
+              overflow-y-auto
+              ${isAnimating ? "opacity-0" : "opacity-100"}`}
+          >
       <div className=" flex flex-col bg-light-background1 mb-4 p-3 rounded-lg shadow-custom-6">
         {/* Header Section */}
         <div className="flex flex-row justify-between border-b pb-4 sticky top-0 bg-light-background1 rounded-t-lg p-3">
@@ -222,6 +225,7 @@ const ClassDetails = ({
             <IconButton
               onClick={() => {
                 setClassroomWeeklyTimetable([]);
+                setTimetableDaySchedules([]);
                 setISelectedClassforView((prev) => ({
                   ...prev,
                   isOpen: false,
@@ -377,6 +381,11 @@ const ClassDetails = ({
                 label="Number of Students"
               />
               <LabelDisplayer
+                data={classroomData?.class_teacher?.full_name}
+                label="Class Teacher"
+                avatarProfile={classroomData?.class_teacher?.profile_image}
+              />
+              <LabelDisplayer
                 data={
                   classroomData?.room
                     ? classroomData.room?.room_number +
@@ -402,10 +411,11 @@ const ClassDetails = ({
       />
 
       {/* Timetable Section */}
-      <div className="overflow-auto py-6">
+      <div className="w-full py-6">
         <ClassRoomWeeklyTimeTableComponent
           weeklyTimetable={classroomWeeklyTimetable}
           classroomData={classroomData}
+          timetableDaySchedules={timetableDaySchedules}
         />
       </div>
       <UpdateSubjectForm

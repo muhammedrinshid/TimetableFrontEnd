@@ -37,6 +37,7 @@ import { defaultAvatarImage } from "../../assets/images";
 import AddNewRoom from "../../components/forms/AddNewRoom";
 import RoomsSection from "../../components/specific/UserConfiguration/RoomsSection";
 import { Loadings } from "../../components/common";
+import SchoolConfiguration from "../../components/specific/UserConfiguration/SchoolConfiguration";
 
 // theme for the input fields
 const theme = createTheme({
@@ -91,7 +92,7 @@ const DAYS_OF_WEEK = [
   { label: "Sunday", value: "SUN" },
 ];
 
-const UserConfiguration = ({  }) => {
+const UserConfiguration = ({}) => {
   // context datas
   const { apiDomain, headers, logoutUser, fileUploadHeaders } = useAuth();
   const [schoolData, setSchoolData] = useState({});
@@ -473,12 +474,14 @@ const UserConfiguration = ({  }) => {
   ) : (
     <ThemeProvider theme={theme}>
       <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{
-        duration: 0.8,
-        ease: [0.6, -0.05, 0.01, 0.99],
-      }} className="w-full h-full rounded-2xl px-6 py-5  shadow-lg overflow-auto">
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.8,
+          ease: [0.6, -0.05, 0.01, 0.99],
+        }}
+        className="w-full h-full rounded-2xl px-6 py-5  shadow-lg overflow-auto"
+      >
         <div className="flex flex-row justify-between border-b pb-4">
           <div className="flex flex-row items-center gap-4">
             <h1 className="text-xl font-semibold">School Details</h1>
@@ -761,7 +764,7 @@ const UserConfiguration = ({  }) => {
           </Button>
         </Box>
         {/* School Configuration Section */}
-        <div className="mt-8 border-t pt-6 ">
+        {/* <div className="mt-8 border-t pt-6 ">
           <div className="flex justify-between items-center mb-4">
             <Typography variant="h6" className="text-blue-600">
               School Configuration
@@ -917,50 +920,15 @@ const UserConfiguration = ({  }) => {
             />
           </Box>
 
-          <Dialog open={openGradeDialog} onClose={handleCloseGradeDialog}>
-            <DialogTitle>
-              {isNewGrade ? "Create New Grade" : "Edit Grade"}
-            </DialogTitle>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                name="name"
-                label="Level Name"
-                type="text"
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-                value={currentGrade.name}
-                onChange={handleGradeChange}
-              />
-              <TextField
-                margin="dense"
-                name="short_name"
-                label="Short Name"
-                type="text"
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-                value={currentGrade.short_name}
-                onChange={handleGradeChange}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseGradeDialog}>Cancel</Button>
-              <Button onClick={handleSaveGrade}>Save</Button>
-            </DialogActions>
-          </Dialog>
-          <DeleteConfirmationPopup
-            isOpen={isDeletePopupOpen}
-            onClose={() => setIsDeletePopupOpen(false)}
-            onConfirm={handleConfirmGradeDelete}
-          />
-        </div>
+         
+        </div> */}
+        <SchoolConfiguration
+          schoolData={schoolData}
+          isEditingConfig={isEditingConfig}
+          setIsEditingConfig={setIsEditingConfig}
+          setSchoolData={setSchoolData}
+          handleSave={handleSave}
+        />
         {/* Rooms Section */}
         <RoomsSection rooms={rooms} handleOpenRoomForm={handleOpenRoomForm} />
       </motion.div>
@@ -969,6 +937,49 @@ const UserConfiguration = ({  }) => {
         handleClose={handleCloseRoomForm}
         handleSave={handleSaveRoom}
         initialRoom={currentRoom}
+      />
+      <Dialog open={openGradeDialog} onClose={handleCloseGradeDialog}>
+        <DialogTitle>
+          {isNewGrade ? "Create New Level" : "Edit Level"}
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="name"
+            label="Level Name"
+            type="text"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            variant="outlined"
+            value={currentGrade.name}
+            onChange={handleGradeChange}
+          />
+          <TextField
+            margin="dense"
+            name="short_name"
+            label="Short Name"
+            type="text"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            variant="outlined"
+            value={currentGrade.short_name}
+            onChange={handleGradeChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseGradeDialog}>Cancel</Button>
+          <Button onClick={handleSaveGrade}>Save</Button>
+        </DialogActions>
+      </Dialog>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={handleConfirmGradeDelete}
       />
     </ThemeProvider>
   );

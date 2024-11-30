@@ -1,12 +1,12 @@
-import React from 'react'
-import { useAuth } from '../../../../context/Authcontext';
-import { useDrag } from 'react-dnd';
+import React from "react";
+import { useAuth } from "../../../../context/Authcontext";
+import { useDrag } from "react-dnd";
 import { IconButton, Tooltip } from "@mui/material";
-import {  FaExchangeAlt } from "react-icons/fa";
+import { FaExchangeAlt } from "react-icons/fa";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-
-
+import CopyAllIcon from "@mui/icons-material/CopyAll";
+import CheckIcon from "@mui/icons-material/Check";
 
 const getSessionBorderColor = (session) => {
   if (!session || !session.subject) {
@@ -22,7 +22,6 @@ const getSessionBorderColor = (session) => {
   }
 };
 
-
 const getSessionColor = (session) => {
   if (!session || !session.subject) {
     return "bg-gradient-to-b from-green-200 via-white to-green-200 text-green-900 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400";
@@ -37,8 +36,6 @@ const getSessionColor = (session) => {
   }
 };
 
-
-
 const DraggableSession = ({
   session,
   rowIndex,
@@ -49,9 +46,11 @@ const DraggableSession = ({
   onOpenTeacherSwapDialog,
   teacherWeekTimetable,
   handleOpenRoomChangeDialog,
+  changeTecherStatus = null, // Default value set to null
+  copyDetails = null, // Default value set to null
 }) => {
   const { darkMode, apiDomain } = useAuth();
-
+  
   const [{ isDragging }, drag] = useDrag({
     type: "SESSION",
     item: {
@@ -142,51 +141,88 @@ const DraggableSession = ({
 
       <div className="w-full flex flex-row justify-around self-end mt-2">
         <div className="basis-1/3 flex justify-center items-center p-1 border-t border-r border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
-          <Tooltip title="Absent this period">
+          {changeTecherStatus &&
+            (teacher.instructor.present[columnIndex] === false ? (
+              <Tooltip title="Present this period">
+                <IconButton
+                  size="small"
+                  onClick={() =>
+                    changeTecherStatus(teacher.instructor.id, columnIndex)
+                  }
+                >
+                  <CheckIcon
+                    fontSize="small"
+                    sx={{
+                      color: darkMode ? "#FFFFFF" : "inherit",
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Absent this period">
+                <IconButton
+                  size="small"
+                  onClick={() =>
+                    changeTecherStatus(teacher.instructor.id, columnIndex)
+                  }
+                >
+                  <CancelPresentationIcon
+                    fontSize="small"
+                    sx={{
+                      color: darkMode ? "#FFFFFF" : "inherit",
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+            ))}
+        </div>
+        <div className="basis-1/3 flex justify-center items-center border-t border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
+          <Tooltip title="Find Suitable Lesson Swaps">
             <IconButton
+              onClick={handleOpenSwapDialog}
+              disabled={session.type == "Elective"}
               size="small"
-              className="p-1 rounded-full light-background-1 hover:shadow-md transition-all duration-300"
+              className={`p-1 rounded-full light-background-1 transition-all duration-300 ${
+                session.type === "Elective"
+                  ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  : "hover:shadow-md"
+              }`}
             >
-              <CancelPresentationIcon
+              <ChangeCircleIcon
                 fontSize="small"
                 sx={{
-                  color: darkMode ? "#FFFFFF" : "#1F1F1F",
+                  color:
+                    session.type === "Elective"
+                      ? "#A8A8A8"
+                      : darkMode
+                      ? "#FFFFFF"
+                      : "#1F1F1F",
                 }}
               />
             </IconButton>
           </Tooltip>
         </div>
 
-        <div className="basis-1/3 flex justify-center items-center border-t border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
-          <Tooltip title="Assign a free teacher">
-            <IconButton
-              size="small"
-              className="p-1 rounded-full light-background-1 hover:shadow-md transition-all duration-300"
-            >
-              <ChangeCircleIcon
-                fontSize="small"
-                sx={{ color: darkMode ? "#FFFFFF" : "#1F1F1F" }}
-              />
-            </IconButton>
-          </Tooltip>
-        </div>
-
         <div className="basis-1/3 flex justify-center items-center border-t border-l border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
-          <Tooltip title="Copy data">
-            <IconButton
-              onClick={handleOpenSwapDialog}
-              disabled={session.type == "Elective"}
-              size="small"
-              className="p-1 rounded-full light-background-1 hover:shadow-md transition-all duration-300"
-            >
-              <FaExchangeAlt className="text-sm dark:text-white text-slate-500" />
-            </IconButton>
-          </Tooltip>
+          {copyDetails && (
+            <Tooltip title="Copy data">
+              <IconButton
+                size="small"
+                onClick={() => copyDetails(teacher?.instructor, session)}
+              >
+                <CopyAllIcon
+                  fontSize="small"
+                  sx={{
+                    color: darkMode ? "#FFFFFF" : "inherit",
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-
-export default DraggableSession
+export default DraggableSession;

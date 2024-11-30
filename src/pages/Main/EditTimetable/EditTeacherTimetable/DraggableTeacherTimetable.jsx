@@ -5,9 +5,17 @@ import EditTeacherListCard from "./EditTeacherListCard";
 import { useConflictChecker } from "../../../../hooks/useConflictChecker";
 import DroppableCell from "./DroppableCell";
 import TeacherLessonReassignmentDialog from "./TeacherLessonReassignmentTeacherLessonReassignmentDialog";
-
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "../../../../context/Authcontext";
+import DeleteConfirmationPopup from "../../../../components/common/DeleteConfirmationPopup";
 // Column dragging component
-const DraggableColumn = ({ columnIndex, children, moveColumn,onChangesetSelectedSessionForRoomNumber }) => {
+const DraggableColumn = ({
+  columnIndex,
+  children,
+  moveColumn,
+  onChangesetSelectedSessionForRoomNumber,
+}) => {
   const [, drag] = useDrag({
     type: "COLUMN",
     item: { columnIndex, type: "COLUMN" },
@@ -27,7 +35,7 @@ const DraggableColumn = ({ columnIndex, children, moveColumn,onChangesetSelected
     <th
       ref={(node) => drag(drop(node))}
       className="p-4 font-semibold cursor-pointer"
-      onClick={()=>onChangesetSelectedSessionForRoomNumber(columnIndex)}
+      onClick={() => onChangesetSelectedSessionForRoomNumber(columnIndex)}
     >
       {children}
     </th>
@@ -48,7 +56,11 @@ const DraggableTeacherTimetable = ({
   conflicts,
   onChangesetSelectedSessionForRoomNumber,
   handleOpenRoomChangeDialog,
+  changeTecherStatus = null, // Default value set to null
+  setIsDeleteDayTimetableForm,
+  isDeleteDayTimetableForm
 }) => {
+  const { apiDomain, headers } = useAuth();
   const [columns, setColumns] = useState(
     Array.from({ length: NumberOfPeriodsInAday }, (_, i) => `Period ${i + 1}`)
   );
@@ -59,16 +71,58 @@ const DraggableTeacherTimetable = ({
   const [currentSwapParams, setCurrentSwapParams] = useState(null);
 
   const checkedConflicts = useConflictChecker(
-    teacherWeekTimetable[selectedDay],
+    teacherWeekTimetable[selectedDay] || [],
     "teacher"
   );
+  function copyDetails(teacher, session, period) {
+    const teacherDetails = `
+        **Teacher Details**
+        - **Name**: ${teacher.name} ${teacher.surname}
+        - **Email**: ${teacher.email}
+        - **Phone**: ${teacher.phone}
+        - **Teacher ID**: ${teacher.teacher_id}
+        - **Qualified Subjects**: ${teacher.qualified_subjects
+          ?.map((sub) => sub.name)
+          .join(", ")}
+        
+        `;
 
+    const sessionDetails = `
+        **Schedule for Day ${"please change here" || "X"}, Period ${
+      period || "Y"
+    }**
+        **Subjects**:
+        ${session.class_details
+          .map(
+            (classDetail) =>
+              `- **Subject Name**: ${
+                session.subject || session.elective_subject_name
+              }\n  - **Standard & Division**: ${classDetail.standard} ${
+                classDetail.division
+              }\n  - **Number of Students**: ${
+                classDetail.number_of_students
+              } cadet\n  - **Room Number**: ${
+                session.room?.room_number || "N/A"
+              }`
+          )
+          .join("\n")}
+        `;
+
+    const finalText = teacherDetails + sessionDetails;
+
+    navigator.clipboard.writeText(finalText).then(() => {
+      alert("Details copied to clipboard!");
+    });
+  }
   useEffect(() => {
     setConflicts(checkedConflicts);
   }, [checkedConflicts, setConflicts]);
 
   useEffect(() => {
     setFilteredTimetable(teacherWeekTimetable[selectedDay]);
+    setColumns(
+      Array.from({ length: NumberOfPeriodsInAday }, (_, i) => `Period ${i + 1}`)
+    );
   }, [teacherWeekTimetable, selectedDay]);
 
   useEffect(() => {
@@ -263,7 +317,7 @@ const DraggableTeacherTimetable = ({
   };
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-[88%] w-full">
+      <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-full w-full">
         <table className="border-collapse w-full h-full">
           <thead>
             <tr className="sticky left-0 top-0 z-20 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200 p-4 font-semibold">
@@ -306,6 +360,8 @@ const DraggableTeacherTimetable = ({
                     selectedDay={selectedDay}
                     teacherWeekTimetable={teacherWeekTimetable}
                     handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
+                    changeTecherStatus={changeTecherStatus}
+                    copyDetails={copyDetails}
                   />
                 ))}
               </tr>
@@ -320,6 +376,7 @@ const DraggableTeacherTimetable = ({
           onConfirm={handleTeacherLessonReassignmentSwap}
         />
       </div>
+
     </DndProvider>
   );
 };

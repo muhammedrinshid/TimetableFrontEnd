@@ -47,7 +47,6 @@ const TeacherListDashboard = ({
                   size="small"
                   onClick={() => {
                     toggleFullDayLeaveorPresent(teacher.teacher_id, "present");
-                    toggleDrawer("noToggle");
                   }}
                   className="text-sm text-green-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-lightRed"
                 >

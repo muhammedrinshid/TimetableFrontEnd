@@ -1,8 +1,6 @@
 import React from "react";
 import {
-  TeacherViewClassroomCard,
   TeacherListDashboard,
-  TeacherViewHeading,
 } from "../../common";
 
 import Tooltip from "@mui/material/Tooltip";
@@ -20,76 +18,110 @@ const TeacherViewOneDayTt = ({
   changeTecherStatus,
   toggleDrawer,
   setSelectedSession,
-
+  teacherTimetableDaySchedules,
   toggleFullDayLeaveorPresent,
 }) => {
   const { NumberOfPeriodsInAday, darkMode } = useAuth();
 
   const teacherRow1 = [
     "Instructor",
-    ...Array(NumberOfPeriodsInAday)
+    ...Array(teacherTimetableDaySchedules?.teaching_slots)
       .fill()
       .map((_, i) => `Session${i + 1}`),
   ];
+  function copyDetails(teacher, session,period) {
+    const teacherDetails = `
+  **Teacher Details**
+  - **Name**: ${teacher.name} ${teacher.surname}
+  - **Email**: ${teacher.email}
+  - **Phone**: ${teacher.phone}
+  - **Teacher ID**: ${teacher.teacher_id}
+  - **Qualified Subjects**: ${teacher.qualified_subjects?.map(sub => sub.name).join(", ")}
+  
+  `;
+  
+    const sessionDetails = `
+  **Schedule for Day ${"please change here"|| 'X'}, Period ${period || 'Y'}**
+  **Subjects**:
+  ${session.class_details
+      .map(
+        classDetail =>
+          `- **Subject Name**: ${
+            session.subject || session.elective_subject_name
+          }\n  - **Standard & Division**: ${classDetail.standard} ${
+            classDetail.division
+          }\n  - **Number of Students**: ${
+            classDetail.number_of_students
+          } cadet\n  - **Room Number**: ${
+            session.room?.room_number || 'N/A'
+          }`
+      )
+      .join('\n')}
+  `;
+  
+    const finalText = teacherDetails + sessionDetails;
+  
+    navigator.clipboard.writeText(finalText).then(() => {
+      alert('Details copied to clipboard!');
+    });
+  }
+  
+  const getSessionColor = (session, teacher, index) => {
+    let colorClass = "";
 
-const getSessionColor = (session, teacher, index) => {
-  let colorClass = "";
+    if (!session.subject) {
+      colorClass =
+        "bg-gradient-to-b  from-green-200 via-white to-green-200 text-green-90 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400 bg-gradient-moving"; // Free period with gradient
+    } else {
+      switch (session.type) {
+        case "Core":
+          colorClass =
+            "from-blue-200 bg-gradient-to-b  via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200 "; // Core class with gradient
+          break;
+        case "Elective":
+          colorClass =
+            " from-purple-300 bg-gradient-to-b via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300"; // Elective class with gradient
+          break;
+        default:
+          colorClass =
+            "bg-gradient-moving bg-gradient-to-b  from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400"; // Default fallback with gradient
+          break;
+      }
+    }
 
-  if (!session.subject) {
-    colorClass =
-      "bg-gradient-to-b  from-green-200 via-white to-green-200 text-green-90 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400 bg-gradient-moving"; // Free period with gradient
-  } else {
+    // Add blinking-top-border class if the condition is met
+    if (
+      teacher?.instructor?.present[index] === false &&
+      teacher?.sessions[index]?.subject !== null
+    ) {
+      colorClass += " blinking-top-border leave__card";
+    }
+
+    return colorClass;
+  };
+
+  const getSessionBorderColor = (session) => {
     switch (session.type) {
       case "Core":
-        colorClass =
-          "from-blue-200 bg-gradient-to-b  via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200 "; // Core class with gradient
-        break;
+        return "border-blue-500 dark:border-gray-800"; // Dark border for Core classes
       case "Elective":
-        colorClass =
-          " from-purple-300 bg-gradient-to-b via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300"; // Elective class with gradient
-        break;
+        return "border-purple-500 dark:border-gray-500"; // Dark border for Elective classes
       default:
-        colorClass =
-          "bg-gradient-moving bg-gradient-to-b  from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400"; // Default fallback with gradient
-        break;
+        return "border-gray-300 dark:border-gray-300"; // Light gray for light mode, darker gray in dark mode
     }
+  };
+
+  if (!teacherTimetable?.length) {
+    return (
+      <div className="h-full w-full">
+        <EmptyDefaultTimetableState />
+      </div>
+    );
   }
-
-  // Add blinking-top-border class if the condition is met
-  if (
-    teacher?.instructor?.present[index] === false &&
-    teacher?.sessions[index]?.subject !== null
-  ) {
-    colorClass += " blinking-top-border leave__card";
-  }
-
-  return colorClass;
-};
-
-
-
-const getSessionBorderColor = (session) => {
-  switch (session.type) {
-    case "Core":
-      return "border-blue-500 dark:border-gray-800"; // Dark border for Core classes
-    case "Elective":
-      return "border-purple-500 dark:border-gray-500"; // Dark border for Elective classes
-    default:
-      return "border-gray-300 dark:border-gray-300"; // Light gray for light mode, darker gray in dark mode
-  }
-};
-
-if (!teacherTimetable?.length) {
-  return (
-    <div className="h-full w-full">
-      <EmptyDefaultTimetableState />
-    </div>
-  );
-}
 
   return (
     <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800">
-      <div style={{ minWidth: `${150 + NumberOfPeriodsInAday * 180}px` }}>
+      <div style={{ minWidth: `${150 + teacherTimetableDaySchedules?.teaching_slots * 180}px` }}>
         <table className="w-full">
           <thead className="sticky top-0 left-0 z-20 backdrop-blur-[6.4px]">
             <tr className="bg-gradient-to-r from-indigo-500 to-purple-500 text-gray-900 dark:from-gray-800 dark:to-gray-500 dark:text-gray-200">
@@ -127,9 +159,9 @@ if (!teacherTimetable?.length) {
                       sessions={teacher?.sessions}
                     />
                   </td>
-                  {teacher.sessions
-                    .slice(0, NumberOfPeriodsInAday)
-                    .map((sessionGrp, sessionGrpIndex) => (
+                  {teacherRow1.slice(1).map((_, sessionGrpIndex) => {
+                    const sessionGrp = teacher?.sessions[sessionGrpIndex];
+                    return sessionGrp ? (
                       <td
                         key={sessionGrpIndex}
                         className="border-b border-r p-2 w-[180px] border-gray-300 dark:border-gray-600"
@@ -211,7 +243,7 @@ if (!teacherTimetable?.length) {
                             )}
                             <div className="w-full flex flex-row justify-around self-end mt-2">
                               <div className="basis-1/3 flex justify-center items-center p-1 border-t border-r border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
-                                {teacher.instructor.present[sessionIndex] ===
+                                {teacher.instructor.present[sessionGrpIndex] ===
                                 false ? (
                                   <Tooltip title="Present this period">
                                     <IconButton
@@ -219,8 +251,8 @@ if (!teacherTimetable?.length) {
                                       onClick={() => {
                                         toggleDrawer("noToggle");
                                         changeTecherStatus(
-                                          teacher.instructor.teacher_id,
-                                          sessionIndex
+                                          teacher.instructor.id,
+                                          sessionGrpIndex
                                         );
                                       }}
                                     >
@@ -240,8 +272,8 @@ if (!teacherTimetable?.length) {
                                       size="small"
                                       onClick={() =>
                                         changeTecherStatus(
-                                          teacher.instructor.teacher_id,
-                                          sessionIndex
+                                          teacher.instructor.id,
+                                          sessionGrpIndex
                                         )
                                       }
                                     >
@@ -260,7 +292,7 @@ if (!teacherTimetable?.length) {
 
                               <div
                                 className={`basis-1/3 flex justify-center items-center border-t border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200 ${
-                                  teacher.instructor.present[sessionIndex] ===
+                                  teacher.instructor.present[sessionGrpIndex] ===
                                     true && "cursor-not-allowed"
                                 }`}
                               >
@@ -270,26 +302,26 @@ if (!teacherTimetable?.length) {
                                     onClick={() =>
                                       toggleDrawer(
                                         "toggle",
-                                        sessionIndex,
-                                        teacher.sessions[sessionIndex].subject,
+                                        sessionGrpIndex,
+                                        session,
+                                        session.subject,
                                         teacher
                                       )
                                     }
                                     disabled={
-                                      teacher.instructor.present[
-                                        sessionIndex
+                                      !teacher.instructor.present[
+                                        sessionGrpIndex
                                       ] ||
-                                      teacher?.sessions[sessionIndex]
-                                        ?.subject === null
+                                      session?.class_details === null
                                     }
                                     sx={{
                                       "& svg": {
                                         color:
-                                          teacher.instructor.present[
-                                            sessionIndex
+                                          !teacher.instructor.present[
+                                            sessionGrpIndex
                                           ] ||
-                                          teacher?.sessions[sessionIndex]
-                                            ?.subject === null
+                                          session
+                                            ?.class_details === null
                                             ? darkMode
                                               ? "#A9A9A9" // Gray color in dark mode when teacher is present
                                               : "gray" // Gray color in light mode when teacher is present
@@ -309,8 +341,8 @@ if (!teacherTimetable?.length) {
 
                               <div className="basis-1/3 flex justify-center items-center border-t border-l border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
                                 <Tooltip title="Copy data">
-                                  <IconButton size="small">
-                                    <CopyAllIcon
+                                <IconButton size="small" onClick={() => copyDetails(teacher?.instructor, session)}>
+                                <CopyAllIcon
                                       fontSize="small"
                                       sx={{
                                         color: darkMode ? "#FFFFFF" : "inherit",
@@ -323,7 +355,13 @@ if (!teacherTimetable?.length) {
                           </div>
                         ))}
                       </td>
-                    ))}
+                    ) : (
+                      <td
+                      className="border-b border-r p-2 w-[180px] border-gray-300 dark:border-gray-600"
+
+                      ></td>
+                    );
+                  })}
                 </tr>
               );
             })}

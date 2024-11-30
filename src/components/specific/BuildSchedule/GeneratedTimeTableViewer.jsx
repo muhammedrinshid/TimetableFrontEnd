@@ -26,8 +26,10 @@ const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+  const [studentTimetableDaySchedules, setStudentTimetableDaySchedules] = useState([]);
+  const [teacherTimetableDaySchedules, setTeacherTimetableDaySchedules] = useState([]);
+  
+  const days = teacherTimetableDaySchedules ? teacherTimetableDaySchedules.map((teacherTimetableDaySchedule)=>teacherTimetableDaySchedule.day) : [];
 
   const handleDayChange = (event) => {
     setSelectedDay(event.target.value);
@@ -47,8 +49,8 @@ const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
         `${apiDomain}/api/time-table/teacher-view-week/${timeTableId}/`,
         { headers }
       );
-      setTeacherWeekTimetable(response.data);
-    } catch (error) {
+      setTeacherWeekTimetable(response.data?.week_timetable);
+      setTeacherTimetableDaySchedules(response.data?.day_schedules);    } catch (error) {
       console.error(
         `Error fetching teacher timetable: ${
           error.response?.status || "Network error"
@@ -64,7 +66,9 @@ const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
         `${apiDomain}/api/time-table/student-view-week/${timeTableId}/`,
         { headers }
       );
-      setStudentWeekTimetable(response.data);
+      setStudentWeekTimetable(response.data.week_timetable);
+      setStudentTimetableDaySchedules(response?.data?.day_schedules);
+
     } catch (error) {
       console.error(
         `Error fetching student timetable: ${
@@ -114,11 +118,15 @@ const GeneratedTimeTableViewer = ({ timeTableId, generatedTimetableScore }) => {
         <TeacherTimeTableComponent
           teacherTimetable={teacherWeekTimetable[selectedDay]}
           searchTerm={searchTerm}
+          teacherTimetableDaySchedules={teacherTimetableDaySchedules?.find((daySchedule)=>daySchedule.day==selectedDay)}
+
         />
       ) : (
         <StudentTimeTableComponent
-          StudentTimeTable={studentWeekTimetable[selectedDay]}
+          studentTimeTable={studentWeekTimetable[selectedDay]}
           searchTerm={searchTerm}
+          studentTimetableDaySchedules={studentTimetableDaySchedules?.find((daySchedule)=>daySchedule.day==selectedDay)}
+
         />
       )}
     </div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogTitle,
@@ -8,34 +8,47 @@ import {
   DialogActions,
   Button,
   TextField,
-  Box
-} from '@mui/material';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { useAuth } from '../../context/Authcontext';
+  Box,
+  Avatar,
+  Typography,
+} from "@mui/material";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import { useAuth } from "../../context/Authcontext";
 
 const filter = createFilterOptions();
 
 const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
-  const {apiDomain,headers}=useAuth()
+  const { apiDomain, headers } = useAuth();
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [numberOfStudents, setNumberOfStudents] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [teachersWithoutClassroom, setTeachersWithoutClassroom] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [classroomData, nonOccupiedRooms] = await Promise.all([
-          axios.get(`${apiDomain}/api/class-room/classroom/${editClassroomForm?.classroomId}/`, { headers }),
-          axios.get(`${apiDomain}/api/room/non-occupied-rooms/`, { headers })
-        ]);
+        const [classroomData, nonOccupiedRooms, teachersData] =
+          await Promise.all([
+            axios.get(
+              `${apiDomain}/api/class-room/classroom/${editClassroomForm?.classroomId}/`,
+              { headers }
+            ),
+            axios.get(`${apiDomain}/api/room/non-occupied-rooms/`, { headers }),
+            axios.get(`${apiDomain}/api/teacher/teachers-without-classroom/`, {
+              headers,
+            }),
+          ]);
 
         const currentRoom = classroomData.data.room;
         const allRooms = [...nonOccupiedRooms.data];
 
         // Add the current room to the list if it's not null
         if (currentRoom) {
-          const roomExists = allRooms.some(room => room.id === currentRoom.id);
+          const roomExists = allRooms.some(
+            (room) => room.id === currentRoom.id
+          );
           if (!roomExists) {
             allRooms.push(currentRoom);
           }
@@ -43,14 +56,21 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
 
         setRooms(allRooms);
 
-        // Set default values
+        // Set default values for the form
         setSelectedRoom(currentRoom || null);
         setNumberOfStudents(classroomData.data.number_of_students || 0);
+        setSelectedTeacher(classroomData?.data?.class_teacher || null);
+
+        // Set teachers without classrooms
+        if (classroomData?.class_teacher) {
+          teachersData.push(classroomData.class_teacher);
+        }
+        setTeachersWithoutClassroom(teachersData.data || []);
 
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error('Failed to fetch classroom data');
+        console.error("Error fetching data:", error);
+        toast.error("Failed to fetch classroom data");
         setLoading(false);
       }
     };
@@ -60,17 +80,20 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
     }
   }, [open, editClassroomForm]);
 
-  const handleSubmit =async () => {
+  const handleSubmit = async () => {
     try {
       // Prepare the data to submit
       const dataToSubmit = {
-        room: selectedRoom ? {
-          id: selectedRoom.id,
-          name: selectedRoom.name,
-          room_number: selectedRoom.room_number,
-          capacity: selectedRoom.capacity
-        } : null,
-        number_of_students: numberOfStudents
+        room: selectedRoom
+          ? {
+              id: selectedRoom.id,
+              name: selectedRoom.name,
+              room_number: selectedRoom.room_number,
+              capacity: selectedRoom.capacity,
+            }
+          : null,
+        number_of_students: numberOfStudents,
+        class_teacher: selectedTeacher,
       };
 
       // Make the API call
@@ -82,29 +105,30 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
 
       // Handle successful response
       if (response.status === 200) {
-        toast.success('Classroom updated successfully');
+        toast.success("Classroom updated successfully");
         onClose(); // Close the form
         // You might want to update the parent component's state or trigger a refetch
       } else {
-        toast.error('Failed to update classroom');
+        toast.error("Failed to update classroom");
       }
     } catch (error) {
-      console.error('Error updating classroom:', error);
+      console.error("Error updating classroom:", error);
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        toast.error(`Error: ${error.response.data.error || 'Failed to update classroom'}`);
+        toast.error(
+          `Error: ${error.response.data.error || "Failed to update classroom"}`
+        );
       } else if (error.request) {
         // The request was made but no response was received
-        toast.error('No response received from server');
+        toast.error("No response received from server");
       } else {
         // Something happened in setting up the request that triggered an Error
-        toast.error('Error setting up the request');
+        toast.error("Error setting up the request");
       }
     }
     // Handle form submission logic here
-    console.log('Selected Room:', selectedRoom);
-    console.log('Number of Students:', numberOfStudents);
+  
     onClose();
   };
 
@@ -112,17 +136,19 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit Classroom {editClassroomForm?.name} </DialogTitle>
       <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
           <Autocomplete
             value={selectedRoom}
             onChange={(event, newValue) => {
-              if (typeof newValue === 'string') {
+              if (typeof newValue === "string") {
                 setSelectedRoom({ room_number: newValue, isNew: true });
               } else if (newValue && newValue.inputValue) {
                 // Create a new value from the user input
-                setSelectedRoom({ room_number: newValue.inputValue, isNew: true });
+                setSelectedRoom({
+                  room_number: newValue.inputValue,
+                  isNew: true,
+                });
               } else {
-
                 setSelectedRoom(newValue);
               }
             }}
@@ -130,8 +156,10 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
               const filtered = filter(options, params);
               const { inputValue } = params;
               // Suggest the creation of a new value
-              const isExisting = options.some((option) => inputValue === option.room_number);
-              if (inputValue !== '' && !isExisting) {
+              const isExisting = options.some(
+                (option) => inputValue === option.room_number
+              );
+              if (inputValue !== "" && !isExisting) {
                 filtered.push({
                   inputValue,
                   room_number: `Add "${inputValue}"`,
@@ -145,7 +173,7 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
             options={rooms}
             getOptionLabel={(option) => {
               // Value selected with enter, right from the input
-              if (typeof option === 'string') {
+              if (typeof option === "string") {
                 return option;
               }
               // Add "xxx" option created dynamically
@@ -155,11 +183,11 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
               // Regular option
               return option.room_number;
             }}
-            renderOption={(props, option) => <li {...props}>{option.room_number}</li>}
-            freeSolo
-            renderInput={(params) => (
-              <TextField {...params} label="Room" />
+            renderOption={(props, option) => (
+              <li {...props}>{option.room_number}</li>
             )}
+            freeSolo
+            renderInput={(params) => <TextField {...params} label="Room" />}
           />
           <TextField
             label="Number of Students"
@@ -167,6 +195,31 @@ const EditClassroomForm = ({ open, onClose, editClassroomForm }) => {
             value={numberOfStudents}
             onChange={(e) => setNumberOfStudents(Number(e.target.value))}
             fullWidth
+          />
+
+          <Autocomplete
+            value={selectedTeacher}
+            onChange={(event, newValue) => setSelectedTeacher(newValue)}
+            options={teachersWithoutClassroom}
+            getOptionLabel={(option) => option?.full_name}
+            renderOption={(props, option) => (
+              <Box
+                {...props}
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <Avatar
+                  alt={option.full_name}
+                  src={
+                    option.profile_image &&
+                    `${apiDomain}${option.profile_image}`
+                  }
+                />
+                <Typography>{option?.full_name}</Typography>
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField {...params} label="Select Teacher" />
+            )}
           />
         </Box>
       </DialogContent>

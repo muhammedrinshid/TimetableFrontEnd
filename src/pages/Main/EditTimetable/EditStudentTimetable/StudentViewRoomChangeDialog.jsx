@@ -182,6 +182,7 @@ const StudentViewRoomChangeDialog = ({
     previewSessions,
     sessionIndex = roomChangeDialogOpen?.selectedSessionForRoomNumber
   ) => {
+    console.log("jldj")
     try {
       const updatedTimetable = JSON.parse(JSON.stringify(studentWeekTimetable));
       const dayTimetable = updatedTimetable[selectedDay];

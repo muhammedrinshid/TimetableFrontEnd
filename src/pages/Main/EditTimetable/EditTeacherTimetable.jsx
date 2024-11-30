@@ -14,7 +14,6 @@ const EditTeacherTimetable = ({ timeTableId }) => {
   const { apiDomain, headers } = useAuth();
   const [selectedDay, setSelectedDay] = useState("MON");
   const [searchTerm, setSearchTerm] = useState("");
-  const [lessonsPerDay, setLessonsPerDay] = useState(5);
   const [loading, setLoading] = useState(true); // Loading state
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [conflicts, setConflicts] = useState([]);
@@ -29,6 +28,7 @@ const EditTeacherTimetable = ({ timeTableId }) => {
   });
 
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState({});
+  const [teacherTimetableDaySchedules, setTeacherTimetableDaySchedules] = useState([]);
 
   const fetchTeacherTimetable = async () => {
     setLoading(true); // Set loading to true before fetching
@@ -38,7 +38,8 @@ const EditTeacherTimetable = ({ timeTableId }) => {
         { headers }
       );
       setTeacherWeekTimetable(response.data.week_timetable);
-      setLessonsPerDay(response.data.lessons_per_day);
+      setTeacherTimetableDaySchedules(response.data?.day_schedules);
+
     } catch (error) {
       console.error(
         `Error fetching teacher timetable: ${
@@ -67,7 +68,7 @@ const EditTeacherTimetable = ({ timeTableId }) => {
     fetchTeacherTimetable();
     fetchAvailableRooms();
   }, [timeTableId]);
-  const days = Object.keys(teacherWeekTimetable).map((day) => day);
+  const days = teacherTimetableDaySchedules ? teacherTimetableDaySchedules.map((teacherTimetableDaySchedule)=>teacherTimetableDaySchedule.day) : [];
   const handleDayChange = (event) => {
     setSelectedDay(event.target.value);
   };
@@ -107,9 +108,13 @@ const EditTeacherTimetable = ({ timeTableId }) => {
       </div>
     );
   }
+  const selectedDaySchedule = teacherTimetableDaySchedules?.find(
+    (schedule) => schedule?.day === selectedDay
+  );
+  const NumberOfPeriodsInAday = selectedDaySchedule?.teaching_slots ?? 0;
   return (
     <div
-      className={`grid grid-rows-[3fr_2fr] grid-cols-[3fr_1fr] box-border gap-4 h-full w-full overflow-hidden pr-5 transition-all relative`}
+      className={`grid grid-rows-[3fr_2fr] grid-cols-[3fr_1fr] box-border gap-4 h-full w-full  pr-5 transition-all relative`}
     >
       <div
         className="absolute top-1/2 -right-0 m-2 px-1 py-3 bg-opacity-65    "
@@ -123,7 +128,7 @@ const EditTeacherTimetable = ({ timeTableId }) => {
       </div>
       {/* Large Left Panel */}
       <div
-        className={`col-start-1 col-end-2 row-start-1 row-end-3 p-3 overflow-hidden ${
+        className={`col-start-1 col-end-2 row-start-1 row-end-3 p-3 overflow-hidden flex flex-col ${
           isCollapsed ? "col-end-3" : ""
         } `}
       >
@@ -140,7 +145,7 @@ const EditTeacherTimetable = ({ timeTableId }) => {
         <DraggableTeacherTimetable
           selectedDay={selectedDay}
           setTeacherWeekTimetable={setTeacherWeekTimetable}
-          NumberOfPeriodsInAday={lessonsPerDay}
+          NumberOfPeriodsInAday={NumberOfPeriodsInAday}
           teacherWeekTimetable={teacherWeekTimetable}
           searchTerm={searchTerm}
           conflicts={conflicts}

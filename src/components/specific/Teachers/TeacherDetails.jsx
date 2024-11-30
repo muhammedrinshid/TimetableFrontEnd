@@ -46,6 +46,7 @@ const TeacherDetails = ({
   });
   const [isAnimating, setIsAnimating] = useState(false);
   const [teacherWeeklyTimetable, setTeacherWeeklyTimetable] = useState([]);
+  const [timetableDaySchedules , setTimetableDaySchedules ] = useState([]);
 
   const { apiDomain, headers } = useAuth();
 
@@ -136,17 +137,14 @@ const TeacherDetails = ({
           headers,
         }
       );
-      setTeacherWeeklyTimetable(response.data);
-      const scheduledLessons = calculateScheduledLessons(response.data);
+      setTeacherWeeklyTimetable(response.data?.day_timetable);
+      setTimetableDaySchedules(response.data?.day_schedules);
+      const scheduledLessons = calculateScheduledLessons(response.data?.day_timetable);
 
       setScheduledLessons(scheduledLessons);
     } catch (error) {
       if (error.response) {
-        console.error(
-          "Server responded with an error:",
-          error.response.status,
-          error.response.data
-        );
+   
 
         if (error.response.status === 422) {
           toast.info(
@@ -170,14 +168,13 @@ const TeacherDetails = ({
   };
  const sendEmail = async () => {
    try {
-     const response = await axios.post(
-       `${apiDomain}/api/time-table/send-email/`,
-       {},
-       {
-         headers,
-         timeout: 30000, // 30 second timeout
-       }
-     );
+    const response = await axios.post(
+      `${apiDomain}/api/time-table/send-email/`,
+      {},  // Request payload (empty object in this case)
+      {
+        headers,
+      }
+    );
 
      toast.success(response.data.message);
    } catch (error) {
@@ -227,6 +224,7 @@ const TeacherDetails = ({
     // Start the animation and reset the timetable
     setIsAnimating(true);
     setTeacherWeeklyTimetable([]);
+    setTimetableDaySchedules([]);
 
     // After a delay, update the selected teacher
     setTimeout(() => {
@@ -251,6 +249,7 @@ const TeacherDetails = ({
     // Start the animation and reset the timetable
     setIsAnimating(true);
     setTeacherWeeklyTimetable([]);
+    setTimetableDaySchedules([]);
 
     // After a delay, update the selected teacher
     setTimeout(() => {
@@ -304,6 +303,7 @@ const TeacherDetails = ({
                 onClick={() => {
                   setISelectedTeacher((prev) => ({ ...prev, isopen: false }));
                   setTeacherWeeklyTimetable([]);
+                  setTimetableDaySchedules([]);
                 }}
               />
             </IconButton>
@@ -472,6 +472,7 @@ const TeacherDetails = ({
 
       <TeacherWeeklyTimeTableComponent
         teacherWeeklyTimetable={teacherWeeklyTimetable}
+        timetableDaySchedules={timetableDaySchedules}
         TeacherDetails={selectedTeacher}
       />
 

@@ -48,6 +48,7 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
         name: subject.name,
         lessons_per_week: subject.lessons_per_week,
         is_elective: subject.is_elective,
+        prevent_first_half_period: subject.prevent_first_half_period,
         teacher: subject.teacher,
         options: subject.options || [],
         need_multi_block_lessons: subject.multi_block_lessons > 1,
@@ -191,7 +192,8 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
       name: formData.name,
       lessons_per_week: formData.lessons_per_week,
       subjects: subjects,
-      multi_block_lessons:formData.multi_block_lessons
+      multi_block_lessons:formData.multi_block_lessons,
+      prevent_first_half_period:formData?.prevent_first_half_period
     };
 
     try {
@@ -235,6 +237,8 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
           ? "Update Elective Subject"
           : "Update Core Subject"}
       </DialogTitle>
+  
+      <DialogContent>
       {!formData.is_elective && (
         <FormControlLabel
           control={
@@ -250,6 +254,22 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
             />
           }
           label="Need Multi-block Lessons."
+        />
+      )}
+      {!formData.is_elective && (
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData?.prevent_first_half_period}
+              onChange={() =>
+                setFormData((prev) => ({
+                  ...prev,
+                  prevent_first_half_period: !prev.prevent_first_half_period,
+                }))
+              }
+            />
+          }
+          label="prevent first half period"
         />
       )}
       {!subject.is_elective && (
@@ -272,7 +292,6 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
           label="Need Special Rooms"
         />
       )}
-      <DialogContent>
         {formData?.need_multi_block_lessons && (
           <MultiBlockLessonsInputForSingleClasssubject
             subject={formData}
@@ -385,7 +404,7 @@ const UpdateSubjectForm = ({ open, onClose, subject, refresh }) => {
                 </Box>
               )}
             >
-              {availableSubjectAndTeachers.map((subject) => (
+              {availableSubjectAndTeachers?.map((subject) => (
                 <MenuItem key={subject.id} value={subject.id}>
                   {subject.name}
                 </MenuItem>

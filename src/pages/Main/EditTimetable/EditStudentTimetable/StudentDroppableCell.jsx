@@ -2,6 +2,8 @@ import React from "react";
 
 import { useDrop } from "react-dnd";
 import StudentDraggableSession from "./StudentDraggableSession";
+import { IconButton, Tooltip } from "@mui/material";
+import { MdAssignmentReturn } from "react-icons/md";
 
 const getSessionColor = (session) => {
   if (!session || !session.subject) {
@@ -29,6 +31,7 @@ const StudentDroppableCell = ({
   openChangeOrSwapSessionDialog,
   classData,
   handleOpenTeacherChangeDialog,
+  handleOpenAssignOverlappingSession
 }) => {
   const [, drop] = useDrop({
     accept: "SESSION",
@@ -41,7 +44,9 @@ const StudentDroppableCell = ({
     <td
       ref={drop}
       className={`border rounded-lg ${
-        hasConflict(classData?.classroom?.id, columnIndex) ? "bg-red-200 error" : ""
+        hasConflict(classData?.classroom?.id, columnIndex)
+          ? "bg-red-200 error"
+          : ""
       }`}
       style={{
         minWidth: "180px",
@@ -61,10 +66,16 @@ const StudentDroppableCell = ({
               <p className="font-medium text-sm tracking-wide text-gray-500 dark:text-gray-400 uppercase">
                 Free Period
               </p>
+
               <div className="w-12 h-0.5 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full" />
               <p className="text-[11px] text-gray-400 dark:text-gray-500 font-light tracking-wide">
                 Time to recharge!
               </p>
+              <Tooltip title="Assign Overflow Lesson" arrow>
+                <IconButton onClick={()=>handleOpenAssignOverlappingSession(classData?.classroom?.id, selectedDay, columnIndex)}>
+                  <MdAssignmentReturn className="text-xl text-slate-500" />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
         ) : (

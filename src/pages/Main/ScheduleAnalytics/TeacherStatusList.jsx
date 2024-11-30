@@ -1,11 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ResponsivePie } from '@nivo/pie';
 import { useAuth } from '../../../context/Authcontext';
 import { Avatar } from '@mui/material';
 import { ChevronRightIcon } from 'lucide-react';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import TeacherTimetableDialog from './TeacherTimetableDialog';
 
 const TeacherStatusList = ({ teachersWeekAnalytics }) => {
-  const { apiDomain } = useAuth();
+  const { apiDomain,headers } = useAuth();
+
+  const [teacherWeeklyTimetable, setTeacherWeeklyTimetable] = useState(null);
+  const [timetableDaySchedules, setTimetableDaySchedules] = useState(null);
+
+    const [dialogState, setDialogState] = useState({ isOpen: false, teacherId: null,teacherDetail:null });
+    const fetchTeacherWeekTimetable = async (teacherId) => {
+      try {
+        const response = await axios.get(
+          `${apiDomain}/api/time-table/teacher-timetable-week/${teacherId}/`,
+          { headers }
+        );
+        setTeacherWeeklyTimetable(response.data?.day_timetable);
+        setTimetableDaySchedules(response.data?.day_schedules);
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 422) {
+            toast.info(
+              "This teacher has not been included in the default timetable optimization"
+            );
+          } else {
+            toast.error(
+              `Failed to retrieve timetables: ${
+                error.response.data.message || "Server error"
+              }`
+            );
+          }
+        } else if (error.request) {
+          console.error("No response received:", error.request);
+          toast.error("Failed to retrieve timetables: No response from server");
+        } else {
+          console.error("Error setting up request:", error.message);
+          toast.error("Failed to retrieve timetables: Network error");
+        }
+      }
+    };
+
+
+
+    useEffect(()=>{
+
+      if (dialogState?.isOpen && dialogState?.teacherId) {
+        fetchTeacherWeekTimetable(dialogState?.teacherId)
+      }
+    },[dialogState])
+    const handleOpen = async (teacherDetail) => {
+      setDialogState({ isOpen: true, teacherId:teacherDetail?.id,teacherDetail:teacherDetail });
+    };
+    const handleClose = () => {
+      setDialogState({ isOpen: false, teacherId: null,teacherDetail:null });
+      setTeacherWeeklyTimetable(null);
+      setTimetableDaySchedules(null);
+    };
+  
 
   if (!teachersWeekAnalytics || teachersWeekAnalytics.length === 0) {
     return (
@@ -72,7 +128,8 @@ const TeacherStatusList = ({ teachersWeekAnalytics }) => {
                 </h3>
               </div>
             </div>
-            <div className="flex items-center space-x-1 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500 cursor-pointer">
+            <div className="flex items-center space-x-1 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500 cursor-pointer "         onClick={() => handleOpen(teacher)} // Replace with actual teacher ID
+            >
               <p className="text-sm font-medium">View week timetable</p>
               <ChevronRightIcon size={16} />
             </div>
@@ -156,6 +213,9 @@ const TeacherStatusList = ({ teachersWeekAnalytics }) => {
           </div>
         </div>
       ))}
+
+
+      <TeacherTimetableDialog handleClose={handleClose} open={dialogState.isOpen} teacherWeeklyTimetable={teacherWeeklyTimetable} dialogState={dialogState} timetableDaySchedules={timetableDaySchedules} />
     </div>
   );
 };

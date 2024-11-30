@@ -4,7 +4,10 @@ import { Avatar } from "@mui/material";
 import ClassroomInfoCard from "./ClassroomInfoCard";
 import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
 
-const StudentViewOneDayTt = ({ studentTimeTable }) => {
+const StudentViewOneDayTt = ({
+  studentTimeTable,
+  studentrTimetableDaySchedules,
+}) => {
   const { NumberOfPeriodsInAday, apiDomain } = useAuth();
 
   const getSessionColor = (session) => {
@@ -20,7 +23,7 @@ const StudentViewOneDayTt = ({ studentTimeTable }) => {
 
   const studentRow = [
     "Time",
-    ...Array(NumberOfPeriodsInAday)
+    ...Array(studentrTimetableDaySchedules?.teaching_slots)
       .fill()
       .map((_, i) => `Session${i + 1}`),
   ];
@@ -60,9 +63,11 @@ const StudentViewOneDayTt = ({ studentTimeTable }) => {
                 <td className="border-b p-4 sticky left-0 z-10 w-[150px] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[9.4px] border border-white/7 dark:border-gray-700 dark:bg-gray-900">
                   <ClassroomInfoCard classData={classData} />
                 </td>
-                {classData.sessions
-                  ?.slice(0, NumberOfPeriodsInAday)
-                  ?.map((sessionGrp, sessionGrpIndex) => (
+
+                {studentRow.slice(1).map((_, sessionGrpIndex) => {
+                  const sessionGrp = classData.sessions[sessionGrpIndex];
+
+                  return sessionGrp ? (
                     <td
                       key={sessionGrpIndex}
                       className="border-b border-r p-2 w-[180px] dark:border-gray-700"
@@ -138,7 +143,13 @@ const StudentViewOneDayTt = ({ studentTimeTable }) => {
                         </div>
                       ))}
                     </td>
-                  ))}
+                  ) : (
+                    <td
+                      key={sessionGrpIndex}
+                      className="border-b border-r p-2 w-[180px] dark:border-gray-700"
+                    ></td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

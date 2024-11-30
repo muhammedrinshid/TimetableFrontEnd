@@ -4,56 +4,60 @@ import { Avatar, Box, Typography, Chip } from "@mui/material";
 import { styled } from "@mui/system";
 import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
 
-const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
+const StudentTimeTableComponent = ({
+  studentTimeTable,
+  searchTerm,
+  studentTimetableDaySchedules,
+}) => {
   const { apiDomain, NumberOfPeriodsInAday } = useAuth();
-  const [filteredTimetable, setFilteredTimetable] = useState(StudentTimeTable);
+  const [filteredTimetable, setFilteredTimetable] = useState(studentTimeTable);
 
   const studentRow = [
     "Time",
-    ...Array(NumberOfPeriodsInAday)
+    ...Array(studentTimetableDaySchedules?.teaching_slots)
       .fill()
       .map((_, i) => `Session${i + 1}`),
   ];
 
-   useEffect(() => {
-     if (searchTerm) {
-       const lowercasedSearch = searchTerm.toLowerCase();
-       const filtered = StudentTimeTable?.filter((classData) => {
-         // Check class and room matches (unchanged)
-         const classMatch =
-           `${classData?.classroom?.standard}${classData?.classroom?.division}`
-             .toLowerCase()
-             .includes(lowercasedSearch);
+  useEffect(() => {
+    if (searchTerm) {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = studentTimeTable?.filter((classData) => {
+        // Check class and room matches (unchanged)
+        const classMatch =
+          `${classData?.classroom?.standard}${classData?.classroom?.division}`
+            .toLowerCase()
+            .includes(lowercasedSearch);
 
-         const roomMatch =
-           `${classData?.classroom?.room?.name} (Room ${classData?.classroom?.room?.room_number})`
-             .toLowerCase()
-             .includes(lowercasedSearch);
+        const roomMatch =
+          `${classData?.classroom?.room?.name} (Room ${classData?.classroom?.room?.room_number})`
+            .toLowerCase()
+            .includes(lowercasedSearch);
 
-         // Check nested sessions structure
-         const sessionMatch = classData?.sessions?.some(
-           (sessionGrp) =>
-             sessionGrp?.session?.name
-               ?.toLowerCase()
-               .includes(lowercasedSearch) ||
-             sessionGrp?.session?.class_distribution?.some(
-               (distribution) =>
-                 distribution?.subject
-                   ?.toLowerCase()
-                   .includes(lowercasedSearch) ||
-                 distribution?.teacher?.name
-                   ?.toLowerCase()
-                   .includes(lowercasedSearch)
-             )
-         );
+        // Check nested sessions structure
+        const sessionMatch = classData?.sessions?.some(
+          (sessionGrp) =>
+            sessionGrp?.session?.name
+              ?.toLowerCase()
+              .includes(lowercasedSearch) ||
+            sessionGrp?.session?.class_distribution?.some(
+              (distribution) =>
+                distribution?.subject
+                  ?.toLowerCase()
+                  .includes(lowercasedSearch) ||
+                distribution?.teacher?.name
+                  ?.toLowerCase()
+                  .includes(lowercasedSearch)
+            )
+        );
 
-         return classMatch || roomMatch || sessionMatch;
-       });
-       setFilteredTimetable(filtered);
-     } else {
-       setFilteredTimetable(StudentTimeTable);
-     }
-   }, [searchTerm, StudentTimeTable, setFilteredTimetable]);
+        return classMatch || roomMatch || sessionMatch;
+      });
+      setFilteredTimetable(filtered);
+    } else {
+      setFilteredTimetable(studentTimeTable);
+    }
+  }, [searchTerm, studentTimeTable, setFilteredTimetable]);
 
   const getSessionColor = (session) => {
     switch (session?.type) {
@@ -86,9 +90,9 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
     fontWeight: "bold",
     marginRight: theme.spacing(2),
     boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
   }));
-  if (!StudentTimeTable?.length) {
+
+  if (!studentTimeTable?.length) {
     return (
       <div className="h-full w-full">
         <EmptyDefaultTimetableState />
@@ -167,9 +171,11 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
                     </Box>
                   </Box>
                 </td>
-                {classData?.sessions
-                  ?.slice(0, NumberOfPeriodsInAday)
-                  ?.map((sessionGrp, sessionGrpIndex) => (
+
+                {studentRow.slice(1).map((_, sessionGrpIndex) => {
+                  const sessionGrp = classData.sessions[sessionGrpIndex];
+
+                  return sessionGrp ? (
                     <td key={sessionGrpIndex} className="border-b p-2">
                       {sessionGrp?.map((session, sessionIndex) => (
                         <div
@@ -239,7 +245,10 @@ const StudentTimeTableComponent = ({ StudentTimeTable, searchTerm }) => {
                         </div>
                       ))}
                     </td>
-                  ))}
+                  ) : (
+                    <td key={sessionGrpIndex} className="border-b p-2"></td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

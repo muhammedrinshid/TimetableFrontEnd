@@ -4,12 +4,16 @@ import { Avatar, Chip, Tooltip } from "@mui/material";
 import SavedTimeTableTeacherListCard from "./SavedTimeTableTeacherListCard";
 import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
 
-const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
+const TeacherTimeTableComponent = ({
+  teacherTimetable,
+  searchTerm,
+  teacherTimetableDaySchedules,
+}) => {
   const { apiDomain, NumberOfPeriodsInAday } = useAuth();
   const [filteredTimetable, setFilteredTimetable] = useState(teacherTimetable);
   const teacherRow1 = [
     "Instructor",
-    ...Array(NumberOfPeriodsInAday)
+    ...Array(teacherTimetableDaySchedules?.teaching_slots)
       .fill()
       .map((_, i) => `Session${i + 1}`),
   ];
@@ -48,42 +52,41 @@ const TeacherTimeTableComponent = ({ teacherTimetable, searchTerm }) => {
     }
   }, [searchTerm, teacherTimetable]);
 
-const getSessionBorderColor = (session) => {
-  if (!session || !session.subject) {
-    return "border-gray-300 dark:border-gray-300";
-  }
-  switch (session.type) {
-    case "Core":
-      return "border-blue-500 ";
-    case "Elective":
-      return "border-purple-500 ";
-    default:
-      return "border-gray-300 ";
-  }
-};
+  const getSessionBorderColor = (session) => {
+    if (!session || !session.subject) {
+      return "border-gray-300 dark:border-gray-300";
+    }
+    switch (session.type) {
+      case "Core":
+        return "border-blue-500 ";
+      case "Elective":
+        return "border-purple-500 ";
+      default:
+        return "border-gray-300 ";
+    }
+  };
 
-const getSessionColor = (session) => {
-  if (!session || !session.subject) {
-    return "bg-gradient-to-b from-green-200 via-white to-green-200 text-green-900 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400";
-  }
-  switch (session.type) {
-    case "Core":
-      return "bg-gradient-to-b from-blue-200 via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200";
-    case "Elective":
-      return "bg-gradient-to-b from-purple-300 via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300";
-    default:
-      return "bg-gradient-to-b from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400";
-  }
-};
+  const getSessionColor = (session) => {
+    if (!session || !session.subject) {
+      return "bg-gradient-to-b from-green-200 via-white to-green-200 text-green-900 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 dark:text-gray-400";
+    }
+    switch (session.type) {
+      case "Core":
+        return "bg-gradient-to-b from-blue-200 via-white to-blue-200 text-blue-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-800 dark:to-black dark:text-gray-200";
+      case "Elective":
+        return "bg-gradient-to-b from-purple-300 via-white to-purple-200 text-purple-900 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-300";
+      default:
+        return "bg-gradient-to-b from-gray-100 via-white to-gray-200 text-gray-900 dark:bg-gradient-to-r dark:from-black dark:via-gray-700 dark:to-black dark:text-gray-400";
+    }
+  };
 
-
-if (!teacherTimetable?.length) {
-  return (
-    <div className="h-full w-full">
-      <EmptyDefaultTimetableState />
-    </div>
-  );
-}
+  if (!teacherTimetable?.length) {
+    return (
+      <div className="h-full w-full">
+        <EmptyDefaultTimetableState />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -119,9 +122,10 @@ if (!teacherTimetable?.length) {
                   <td className="w-[160px] min-w-[160px] p-4 border-b border-r sticky left-0 bg-white dark:bg-gray-800 z-10">
                     <SavedTimeTableTeacherListCard teacher={teacher} />
                   </td>
-                  {teacher?.sessions
-                    ?.slice(0, NumberOfPeriodsInAday)
-                    .map((sessionGroup, sessionGroupIndex) => (
+                  {teacherRow1.slice(1).map((_, sessionGroupIndex) => {
+                    const sessionGroup = teacher?.sessions[sessionGroupIndex];
+
+                    return sessionGroup ? (
                       <td
                         key={sessionGroupIndex}
                         className="w-[140px] min-w-[140px] border-b border-r p-3 last:border-r-0"
@@ -163,7 +167,11 @@ if (!teacherTimetable?.length) {
                                       </div>
                                     )}
                                   </div>
-
+                                  <p className="room text-xs mb-3 flex justify-between items-center text-gray-600">
+                                <span className="font-medium">
+                                  Room {session?.room?.room_number}
+                                </span>
+                              </p>
                                   {session.class_details && (
                                     <div className="text-xs overflow-y-auto max-h-[90px]">
                                       {session.class_details.map(
@@ -220,7 +228,13 @@ if (!teacherTimetable?.length) {
                           </div>
                         )}
                       </td>
-                    ))}
+                    ) : (
+                      <td
+                        key={sessionGroupIndex}
+                        className="w-[140px] min-w-[140px] border-b border-r p-3 last:border-r-0"
+                      ></td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>

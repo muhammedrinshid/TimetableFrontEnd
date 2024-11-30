@@ -18,6 +18,7 @@ import axios from "axios";
 import { useAuth } from "../../context/Authcontext";
 import { toast } from "react-toastify";
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
+import AddAndUploadTeachers from "../../components/specific/Teachers/AddAndUploadTeachers";
 
 const TeachersInSchool = () => {
   const {apiDomain,headers,logoutUser}=useAuth()
@@ -132,13 +133,7 @@ const TeachersInSchool = () => {
   const handleUpdateTeacherClose = () => {
     setSelectedTeacherForUpdation({ isOpen: false });
   };
-  const tempUpdateTeacher = (data, teacher_id) => {
-    setTeachers((prev) =>
-      prev.map((teacher) =>
-        teacher.teacher_id === teacher_id ? { ...teacher, ...data } : teacher
-      )
-    );
-  };
+
   const deleteSubmit = async () => {
     let teacherId=isDeleteTeacherPopupOpen
     try {
@@ -228,19 +223,7 @@ const TeachersInSchool = () => {
       </div>
 
       {/* addd new teacher */}
-      <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-white rounded-2xl flex justify-center items-center">
-        <div>
-          <IconButton onClick={handleCreateTeacherOpen}>
-            <AddCircleOutlineRoundedIcon
-              sx={{
-                color: "#312ECB",
-                fontSize: 100,
-                opacity: 0.8,
-              }}
-            />
-          </IconButton>
-        </div>
-      </div>
+   <AddAndUploadTeachers handleCreateTeacherOpen={handleCreateTeacherOpen}/>
 
       {/* Create new teacher pop up */}
       <Dialog open={createTeacherFormOpen} onClose={handleCreateTeacherClose}>

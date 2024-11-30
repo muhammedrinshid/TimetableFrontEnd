@@ -2,15 +2,26 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./utlts/MaterilauiTheme";
+
+import { QueryClient, QueryClientProvider } from 'react-query';
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Disable automatic refetching
+      refetchOnWindowFocus: false,
+      // Optional: set a default stale time
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      // Optional: retry failed queries
+      retry: 1
+    }
+  }
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <QueryClientProvider client={queryClient}>
       <App />
-    </ThemeProvider>
-    ,
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

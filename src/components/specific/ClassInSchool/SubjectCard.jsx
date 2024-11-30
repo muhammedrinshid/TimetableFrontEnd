@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Avatar, IconButton, Chip } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import GroupIcon from '@mui/icons-material/Group';
-import BookIcon from '@mui/icons-material/Book';
-import { useAuth } from '../../../context/Authcontext';
-import DeleteConfirmationPopup from '../../common/DeleteConfirmationPopup';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { FaLayerGroup } from 'react-icons/fa6';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Avatar, IconButton, Chip, Tooltip } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import GroupIcon from "@mui/icons-material/Group";
+import BookIcon from "@mui/icons-material/Book";
+import { useAuth } from "../../../context/Authcontext";
+import DeleteConfirmationPopup from "../../common/DeleteConfirmationPopup";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { FaLayerGroup } from "react-icons/fa6";
+import { PiClockAfternoonBold, PiClockAfternoonFill } from "react-icons/pi";
 
-const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdit }) => {
+const SubjectCard = ({
+  subject,
+  refresh,
+  selectedClassforView,
+  onAddGroup,
+  onEdit,
+}) => {
   const { apiDomain, headers } = useAuth();
-  const [isDeleteClassSubjectForm, setIsDeleteClassSubjectForm] = useState(null);
+  const [isDeleteClassSubjectForm, setIsDeleteClassSubjectForm] =
+    useState(null);
 
   const handleConfirmClassrSubjectDelete = async () => {
     if (isDeleteClassSubjectForm) {
@@ -53,10 +61,19 @@ const SubjectCard = ({ subject, refresh, selectedClassforView, onAddGroup, onEdi
                   <span className="flex items-center text-slate-500 ml-2 text-sm">
                     <FaLayerGroup className="mr-1" size={16} />x
                     {subject.multi_block_lessons}{" "}
-                    {/* Multiplication symbol and block count */}
                   </span>
                 )}
-              </h3>{" "}
+                {subject.prevent_first_half_period && (
+                  <Tooltip
+                    title="This subject cannot be scheduled in the first half of the day"
+                    arrow
+                  >
+                    <span className="ml-2 flex items-center text-red-500">
+                      <PiClockAfternoonBold  size={18} />
+                    </span>
+                  </Tooltip>
+                )}
+              </h3>
               <div className="flex items-center text-sm text-gray-600">
                 <BookIcon fontSize="small" className="mr-1" />
                 <span>{subject.lessons_per_week} lessons/week</span>

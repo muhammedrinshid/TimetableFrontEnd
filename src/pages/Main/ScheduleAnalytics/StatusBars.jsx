@@ -126,7 +126,7 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
           />
           <MetricsCard
             title="Total Work Sessions"
-            value={teachersWeekAnalytics.chart_header_details?.total_classroom_work_sessions || 0}
+            value={0 ||teachersWeekAnalytics.chart_header_details?.total_classroom_work_sessions || 0}
             icon={Calendar}
             trend={{ isPositive: false, value: 3 }}
           />

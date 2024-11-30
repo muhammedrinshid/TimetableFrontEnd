@@ -15,7 +15,8 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
   const [isTeacherView, setIsTeacherView] = useState(true);
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState({});
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
-  const [lessonsPerDay, setLessonsPerDay] = useState(5);
+  const [studentTimetableDaySchedules, setStudentTimetableDaySchedules] = useState([]);
+  const [teacherTimetableDaySchedules, setTeacherTimetableDaySchedules] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isTimetableLoading, setIsTimetableLoading] = useState(false);
 
@@ -35,8 +36,8 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
           headers,
         }
       );
-      setTeacherWeekTimetable(response.data.week_timetable);
-      setLessonsPerDay(response.data.lessons_per_day);
+      setTeacherWeekTimetable(response.data?.week_timetable);
+      setTeacherTimetableDaySchedules(response.data?.day_schedules);
     } catch (error) {
       const errorMessage = error.response
         ? `Error fetching teacher timetable: ${error.response.status}. ${
@@ -59,6 +60,8 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
         }
       );
       setStudentWeekTimetable(response.data.week_timetable);
+      setStudentTimetableDaySchedules(response?.data?.day_schedules);
+
     } catch (error) {
       console.error(
         `Error fetching student timetable: ${
@@ -75,7 +78,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
     fetchStudentTimetable();
   }, []);
 
-  const days = teacherWeekTimetable ? Object.keys(teacherWeekTimetable) : [];
+  const days = teacherTimetableDaySchedules ? teacherTimetableDaySchedules.map((teacherTimetableDaySchedule)=>teacherTimetableDaySchedule.day) : [];
   const handleDayChange = (event) => {
     setSelectedDay(event.target.value);
   };
@@ -96,7 +99,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
       />
 
       <div className="w-full flex justify-center mb-4">
-        {Object.keys(teacherWeekTimetable || {}).map((day) => (
+        {days.map((day) => (
           <button
             key={day}
             onClick={() => handleDayClick(day)}
@@ -118,11 +121,15 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
         <TeacherTimeTableComponent
           teacherTimetable={teacherWeekTimetable?.[selectedDay] || []}
           searchTerm={searchTerm}
+
+          teacherTimetableDaySchedules={teacherTimetableDaySchedules?.find((daySchedule)=>daySchedule.day==selectedDay)}
+
         />
       ) : (
         <StudentTimeTableComponent
           studentTimeTable={studentWeekTimetable?.[selectedDay] || []}
           searchTerm={searchTerm}
+          studentTimetableDaySchedules={studentTimetableDaySchedules?.find((daySchedule)=>daySchedule.day==selectedDay)}
         />
       )}
     </div>

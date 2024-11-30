@@ -7,11 +7,7 @@ import ClassroomInfoCard from "./ClassroomInfoCard";
 import { ConstructionOutlined } from "@mui/icons-material";
 
 // Column dragging component
-const DraggableColumn = ({
-  columnIndex,
-  children,
-  moveColumn,
-}) => {
+const DraggableColumn = ({ columnIndex, children, moveColumn }) => {
   const [, drag] = useDrag({
     type: "COLUMN",
     item: { columnIndex, type: "COLUMN" },
@@ -52,17 +48,18 @@ const StudentDraggableTimetable = ({
   openChangeOrSwapSessionDialog,
   handleOpenRoomChangeDialog,
   handleOpenTeacherChangeDialog,
+  handleOpenAssignOverlappingSession,
 }) => {
   const [columns, setColumns] = useState(
     Array.from({ length: NumberOfPeriodsInAday }, (_, i) => `Period ${i + 1}`)
   );
   const [filteredTimetable, setFilteredTimetable] = useState(
-    studentWeekTimetable[selectedDay]
+    studentWeekTimetable[selectedDay] || []
   );
   const [currentSwapParams, setCurrentSwapParams] = useState(null);
 
   const checkedConflicts = useConflictChecker(
-    studentWeekTimetable[selectedDay],
+    studentWeekTimetable[selectedDay] || [],
     "student"
   );
 
@@ -72,6 +69,9 @@ const StudentDraggableTimetable = ({
 
   useEffect(() => {
     setFilteredTimetable(studentWeekTimetable[selectedDay]);
+    setColumns(
+      Array.from({ length: NumberOfPeriodsInAday }, (_, i) => `Period ${i + 1}`)
+    );
   }, [studentWeekTimetable, selectedDay]);
 
   useEffect(() => {
@@ -185,9 +185,8 @@ const StudentDraggableTimetable = ({
     },
     [selectedDay, setStudentWeekTimetable]
   );
-console.log(conflicts)
+
   const hasConflict = (classRoomId, sessionGroup) => {
-    
     return (
       conflicts?.length > 0 &&
       conflicts?.some(
@@ -200,7 +199,7 @@ console.log(conflicts)
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-[88%] w-full">
+      <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-full w-full">
         <table className="border-collapse w-full h-full">
           <thead>
             <tr className="sticky left-0 top-0 z-20 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200 p-4 font-semibold">
@@ -241,6 +240,9 @@ console.log(conflicts)
                       studentWeekTimetable={studentWeekTimetable}
                       openChangeOrSwapSessionDialog={
                         openChangeOrSwapSessionDialog
+                      }
+                      handleOpenAssignOverlappingSession={
+                        handleOpenAssignOverlappingSession
                       }
                     />
                   ))}

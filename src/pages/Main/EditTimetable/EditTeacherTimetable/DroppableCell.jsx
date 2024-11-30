@@ -32,6 +32,8 @@ const DroppableCell = ({
   onOpenTeacherSwapDialog,
   selectedDay,
   handleOpenRoomChangeDialog,
+  changeTecherStatus = null, // Default value set to null
+  copyDetails = null, // Default value set to null
 }) => {
   const [, drop] = useDrop({
     accept: "SESSION",
@@ -85,6 +87,8 @@ const DroppableCell = ({
                 onOpenTeacherSwapDialog={onOpenTeacherSwapDialog}
                 teacherWeekTimetable={teacherWeekTimetable}
                 handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
+                changeTecherStatus={changeTecherStatus}
+                copyDetails={copyDetails}
               />
             ))}
           </div>

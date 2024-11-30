@@ -76,6 +76,13 @@ const AddNewRoom = ({ open, handleClose, handleSave, initialRoom = null }) => {
       return;
     }
     handleSave(room);
+    setRoom(   initialRoom || {
+      name: "",
+      room_number: "",
+      capacity: "",
+      occupied: false,
+      room_type: "CLASSROOM",
+    })
     handleClose();
   };
 

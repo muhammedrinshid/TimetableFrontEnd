@@ -112,6 +112,7 @@ const AddNewSubjectForm = ({
       need_special_rooms: false,
       need_multi_block_lessons:false,
       multi_block_lessons:1,
+      prevent_first_half_period:false,
       multi_block_lessons_error:'',
 
       subjects:
@@ -134,6 +135,12 @@ const AddNewSubjectForm = ({
     const updatedSubjects = [...selectedSubjects];
     updatedSubjects[index].need_special_rooms =
       !updatedSubjects[index].need_special_rooms;
+    setSelectedSubjects(updatedSubjects);
+  };
+  const handleTogglePreventFirstHalfPeriod = (index) => {
+    const updatedSubjects = [...selectedSubjects];
+    updatedSubjects[index].prevent_first_half_period =
+      !updatedSubjects[index].prevent_first_half_period;
     setSelectedSubjects(updatedSubjects);
   };
 
@@ -303,149 +310,160 @@ const AddNewSubjectForm = ({
           />
           <Box mt={2}>
             {selectedSubjects.map((subject, index) => (
-              <Box
-                key={subject.id}
-                mb={2}
-                p={2}
-                border={1}
-                borderColor="grey.300"
-                borderRadius={1}
-              >
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  mb={3}
-                >
-                  <Typography variant="h6">
-                    {subject.name} ({subject.elective_or_core})
-                  </Typography>
-                  <Box>
-                    {subject.elective_or_core == "core" && (
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={subject.need_special_rooms}
-                            onChange={() => handleToggleSpecialRooms(index)}
-                          />
-                        }
-                        label="Need Special Rooms"
-                      />
-                    )}
-                    {subject.elective_or_core == "core" && (
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={subject.need_multi_block_lessons}
-                            onChange={() =>
-                              handleToggleneedMultiBlockLessons(index)
-                            }
-                          />
-                        }
-                        label="Need Multi-block Lessons."
-                      />
-                    )}
-                    <IconButton
-                      onClick={() => handleRemoveSubject(index)}
-                      size="small"
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                </Box>
-                {subject.need_special_rooms && (
-                  <Box mb={3}>
-                    <Typography variant="h6" gutterBottom>
-                      Special Rooms
-                    </Typography>
-                    <Autocomplete
-                      multiple
-                      options={availableRooms}
-                      getOptionLabel={(option) =>
-                        `${option.room_number} - ${option.name}`
-                      }
-                      value={subject.subjects[0].preferedRooms}
-                      onChange={(e, newValue) =>
-                        handlePreferedRoomSelect(index, newValue)
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          label="Select Prefered Rooms"
-                          placeholder="Choose rooms"
-                        />
-                      )}
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                          <Chip
-                            variant="outlined"
-                            label={`${option.room_number} - ${option.name}`}
-                            {...getTagProps({ index })}
-                          />
-                        ))
-                      }
-                    />
-                  </Box>
-                )}
-                {subject?.need_multi_block_lessons && (
-                  <MultiBlockLessonsInput
-                    subject={subject}
-                    index={index}
-                    setSelectedSubjects={setSelectedSubjects}
-                  />
-                )}
+            <Box
+            key={subject.id}
+            mb={2}
+            p={2}
+            border={1}
+            borderColor="grey.300"
+            borderRadius={1}
+          >
+            {/* Header Section */}
+            <Box
+              display="flex"
+              flexDirection={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems="center"
+              gap={2}
+              mb={3}
+            >
+              <Typography variant="h6" sx={{ flex: 1 }}>
+                {subject.name} ({subject.elective_or_core})
+              </Typography>
+              <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
                 {subject.elective_or_core === "core" && (
-                  <Box mt={1}>
-                    <Typography variant="subtitle1">
-                      Qualified Teachers:
-                    </Typography>
-                    {availableSubjects
-                      .find((s) => s.id === subject.id)
-                      ?.qualified_teachers.map((teacher) => (
-                        <Chip
-                          key={teacher.id}
-                          avatar={
-                            <Avatar
-                              alt={teacher.full_name}
-                              src={
-                                teacher.profile_image &&
-                                `${apiDomain}${teacher.profile_image}`
-                              }
-                            />
-                          }
-                          label={teacher.full_name}
-                          onClick={() => handleTeacherSelect(index, teacher.id)}
-                          color={
-                            subject.subjects[0].qualifiedTeachers.includes(
-                              teacher.id
-                            )
-                              ? "primary"
-                              : "default"
-                          }
-                          sx={{ m: 0.5 }}
+                  <>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={subject.need_special_rooms}
+                          onChange={() => handleToggleSpecialRooms(index)}
                         />
-                      ))}
-                  </Box>
+                      }
+                      label="Need Special Rooms"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={subject.prevent_first_half_period}
+                          onChange={() => handleTogglePreventFirstHalfPeriod(index)}
+                        />
+                      }
+                      label="Prevent First Half Period"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={subject.need_multi_block_lessons}
+                          onChange={() => handleToggleneedMultiBlockLessons(index)}
+                        />
+                      }
+                      label="Need Multi-block Lessons"
+                    />
+                  </>
                 )}
-                <Box mt={1} display="flex" alignItems="center">
-                  <Typography variant="subtitle1">Lessons per week:</Typography>
-                  <IconButton
-                    onClick={() => handlelessons_per_weekChange(index, -1)}
-                    size="small"
-                  >
-                    <RemoveIcon />
-                  </IconButton>
-                  <Typography>{subject.lessons_per_week}</Typography>
-                  <IconButton
-                    onClick={() => handlelessons_per_weekChange(index, 1)}
-                    size="small"
-                  >
-                    <AddIcon />
-                  </IconButton>
-                </Box>
+                <IconButton
+                  onClick={() => handleRemoveSubject(index)}
+                  size="small"
+                  color="error"
+                >
+                  <DeleteIcon />
+                </IconButton>
               </Box>
+            </Box>
+          
+            {/* Special Rooms Section */}
+            {subject.need_special_rooms && (
+              <Box mb={3}>
+                <Typography variant="h6" gutterBottom>
+                  Special Rooms
+                </Typography>
+                <Autocomplete
+                  multiple
+                  options={availableRooms}
+                  getOptionLabel={(option) => `${option.room_number} - ${option.name}`}
+                  value={subject.subjects[0].preferedRooms}
+                  onChange={(e, newValue) => handlePreferedRoomSelect(index, newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Select Preferred Rooms"
+                      placeholder="Choose rooms"
+                    />
+                  )}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                      <Chip
+                        variant="outlined"
+                        label={`${option.room_number} - ${option.name}`}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                />
+              </Box>
+            )}
+          
+            {/* Multi-block Lessons Section */}
+            {subject.need_multi_block_lessons && (
+              <MultiBlockLessonsInput
+                subject={subject}
+                index={index}
+                setSelectedSubjects={setSelectedSubjects}
+              />
+            )}
+          
+            {/* Qualified Teachers Section */}
+            {subject.elective_or_core === "core" && (
+              <Box mt={1}>
+                <Typography variant="subtitle1">Qualified Teachers:</Typography>
+                {availableSubjects
+                  .find((s) => s.id === subject.id)
+                  ?.qualified_teachers.map((teacher) => (
+                    <Chip
+                      key={teacher.id}
+                      avatar={
+                        <Avatar
+                          alt={teacher.full_name}
+                          src={
+                            teacher.profile_image &&
+                            `${apiDomain}${teacher.profile_image}`
+                          }
+                        />
+                      }
+                      label={teacher.full_name}
+                      onClick={() => handleTeacherSelect(index, teacher.id)}
+                      color={
+                        subject.subjects[0].qualifiedTeachers.includes(teacher.id)
+                          ? "primary"
+                          : "default"
+                      }
+                      sx={{ m: 0.5 }}
+                    />
+                  ))}
+              </Box>
+            )}
+          
+            {/* Lessons Per Week Section */}
+            <Box mt={1} display="flex" alignItems="center" gap={1}>
+              <Typography variant="subtitle1">Lessons per week:</Typography>
+              <IconButton
+                onClick={() => handlelessons_per_weekChange(index, -1)}
+                size="small"
+              >
+                <RemoveIcon />
+              </IconButton>
+              <Typography>{subject.lessons_per_week}</Typography>
+              <IconButton
+                onClick={() => handlelessons_per_weekChange(index, 1)}
+                size="small"
+              >
+                <AddIcon />
+              </IconButton>
+            </Box>
+          </Box>
+          
             ))}
           </Box>
         </DialogContent>

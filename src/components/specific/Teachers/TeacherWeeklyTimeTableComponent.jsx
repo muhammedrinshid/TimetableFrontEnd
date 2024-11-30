@@ -1,4 +1,3 @@
-
 import { useAuth } from "../../../context/Authcontext";
 import { Avatar, Box, Typography, Chip, Tooltip } from "@mui/material";
 import { styled } from "@mui/system";
@@ -10,13 +9,18 @@ import axios from "axios";
 const TeacherWeeklyTimeTableComponent = ({
   teacherWeeklyTimetable,
   TeacherDetails,
+  timetableDaySchedules,
 }) => {
   const { apiDomain, headers } = useAuth();
   console.log(teacherWeeklyTimetable);
   const { NumberOfPeriodsInAday } = useAuth();
+  const maxTeachingSlots = Math.max(
+    0, // Fallback value for empty arrays
+    ...timetableDaySchedules.map((schedule) => schedule.teaching_slots)
+  );
   const teacherRow1 = [
     "Instructor",
-    ...Array(NumberOfPeriodsInAday)
+    ...Array(maxTeachingSlots)
       .fill()
       .map((_, i) => `Session${i + 1}`),
   ];
@@ -89,7 +93,6 @@ const TeacherWeeklyTimeTableComponent = ({
     fontWeight: "bold",
     marginRight: theme.spacing(2),
     boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
   }));
 
   if (!teacherWeeklyTimetable || teacherWeeklyTimetable.length === 0) {
@@ -98,7 +101,6 @@ const TeacherWeeklyTimeTableComponent = ({
 
   return (
     <div className="">
-      
       <div className="container mx-auto  ">
         {/* <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 animate-pulse">
         Teacher Timetable
@@ -118,14 +120,14 @@ const TeacherWeeklyTimeTableComponent = ({
               </button>
             </Tooltip>
           </div>
-          <table className="min-w-full table-fixed  ">
+          <table className="min-w-full table-fixed  rounded-t-lg overflow-clip">
             <thead className="sticky top-0 left-0 z-20 backdrop-blur-[6.4px]">
-              <tr className="bg-gradient-to-r from-light-primary to-light-secondary text-white">
-                <th className=" w-[150px] p-4 text-left font-semibold">
+              <tr className="bg-gradient-to-r from-light-primary to-light-secondary text-white ">
+                <th className=" w-[150px] p-4 text-left font-semibold border border-r">
                   {teacherRow1[0]}
                 </th>
                 {teacherRow1.slice(1).map((header, index) => (
-                  <th key={index} className=" p-4 text-left font-semibold">
+                  <th key={index} className=" p-4 text-left font-semibold border-l">
                     {header}
                   </th>
                 ))}
@@ -137,7 +139,7 @@ const TeacherWeeklyTimeTableComponent = ({
                   key={dayIndex}
                   className="bg-white hover:bg-gray-50 transition-colors duration-300"
                 >
-                  <td className="border-b p-4 w-[120px]">
+                  <td className="border-b border-l p-4 w-[120px]">
                     <Box
                       display="flex"
                       alignItems="center"
@@ -164,10 +166,11 @@ const TeacherWeeklyTimeTableComponent = ({
                       </Box>
                     </Box>
                   </td>
-                  {day.sessions
-                    .slice(0, NumberOfPeriodsInAday)
-                    .map((session, sessionIndex) => (
-                      <td key={sessionIndex} className="border-b p-2 w-[120px]">
+                  {teacherRow1.slice(1).map((_, sessionIndex) => {
+                    const session = day.sessions[sessionIndex]; // Access session by index
+
+                    return session ? (
+                      <td key={sessionIndex} className="border-b border-l p-2 w-[120px]">
                         <div
                           className={`rounded-lg p-4 h-full ${getSessionColor(
                             session
@@ -234,7 +237,10 @@ const TeacherWeeklyTimeTableComponent = ({
                           )}
                         </div>
                       </td>
-                    ))}
+                    ) : (
+                      <td className="border-b border-l p-2 w-[120px]"></td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>

@@ -10,55 +10,93 @@ import EditStudentTimetableControlePanel from "./EditStudentTimetable/EditStuden
 import ChangeOrSwapSessionDialog from "./EditStudentTimetable/ChangeOrSwapSessionDialog.jsx";
 import StudentViewRoomChangeDialog from "./EditStudentTimetable/StudentViewRoomChangeDialog.jsx";
 import StudentViewTeacherChangeDialog from "./EditStudentTimetable/StudentViewTeacherChangeDialog.jsx";
-
+import OverflowSessionsHandleDialog from "./EditStudentTimetable/OverflowSessionsHandleDialog.jsx";
 
 const EditStudentTimetable = ({ timeTableId }) => {
   const { apiDomain, headers } = useAuth();
   const [selectedDay, setSelectedDay] = useState("MON");
   const [searchTerm, setSearchTerm] = useState("");
-  const [lessonsPerDay, setLessonsPerDay] = useState(5);
   const [loading, setLoading] = useState(true); // Loading state
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [conflicts, setConflicts] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
-    //  const [
-    //    studentWeekTimetable,
-    //    { set: setStudentWeekTimetable, undo, redo, canUndo, canRedo },
-    //  ] = useUndo({
-    //    MON: [],
-    //    TUE: [],
-    //    WED: [],
-    //    THU: [],
-    //    FRI: [],
-    //    SAT: [],
-    //    SUN: [],
-    //  }  );
+  const [studentTimetableDaySchedules, setStudentTimetableDaySchedules] = useState([]);
+
+  //  const [
+  //    studentWeekTimetable,
+  //    { set: setStudentWeekTimetable, undo, redo, canUndo, canRedo },
+  //  ] = useUndo({
+  //    MON: [],
+  //    TUE: [],
+  //    WED: [],
+  //    THU: [],
+  //    FRI: [],
+  //    SAT: [],
+  //    SUN: [],
+  //  }  );
 
   const [changeOrSwapSessionDialog, setChangeOrSwapSessionDialog] = useState({
     isOpen: false,
     classroomId: null,
     sessionGrpIndex: null,
     session: null,
-    dayOfWeek:null
+    dayOfWeek: null,
   });
-    const [roomChangeDialogOpen, setRoomChangeDialogOpen] = useState({
-      isOpen: false,
-      fromRoom: null,
-      toRoom: null,
-      type: null,
-      selectedSessionForRoomNumber:null,
+  const [roomChangeDialogOpen, setRoomChangeDialogOpen] = useState({
+    isOpen: false,
+    fromRoom: null,
+    toRoom: null,
+    type: null,
+    selectedSessionForRoomNumber: null,
+  });
+  const [teacherChangeDialogOpen, setTeacherChangeDialogOpen] = useState({
+    isOpen: false,
+    fromTeacher: null,
+    toTeacher: null,
+    type: null,
+    selectedSessionForTeacherChange: null,
+    fromSubject: null,
+    sessionKey: null,
+  });
+  const [
+    overflowSessionsHandleDialogState,
+    overflowSessionsHandleDialogSetState,
+  ] = useState({
+    open: false,
+    classroomId: null,
+    selectedDay: null,
+    sessionGrpIndex: null,
+    overflowSessions: [],
+  });
+
+  // Function to handle opening the dialog
+  const handleOpenAssignOverlappingSession = (
+    classroomId,
+    day,
+    sessionGrpIndex
+  ) => {
+    console.log("HI");
+    overflowSessionsHandleDialogSetState((prevState) => ({
+      ...prevState,
+      open: true,
+      classroomId,
+      selectedDay: day,
+      sessionGrpIndex,
+    }));
+  };
+
+  // Function to handle closing the dialog
+  const handleCloseOverflowSessionsHandleDialog = () => {
+    overflowSessionsHandleDialogSetState({
+      open: false,
+      classroomId: null,
+      selectedDay: null,
+      sessionGrpIndex: null,
+      overflowSessions: [],
     });
-    const [teacherChangeDialogOpen, setTeacherChangeDialogOpen] = useState({
-      isOpen: false,
-      fromTeacher: null,
-      toTeacher: null,
-      type: null,
-      selectedSessionForTeacherChange:null,
-      fromSubject:null,
-      sessionKey:null,
-    });
+  };
   const fetchStudentTimetable = async () => {
     setLoading(true); // Set loading to true before fetching
 
@@ -70,7 +108,7 @@ const EditStudentTimetable = ({ timeTableId }) => {
         }
       );
       setStudentWeekTimetable(response.data.week_timetable);
-      setLessonsPerDay(response.data.lessons_per_day);
+      setStudentTimetableDaySchedules(response.data?.day_schedules)
     } catch (error) {
       console.error(
         `Error fetching student timetable: ${
@@ -115,11 +153,12 @@ const EditStudentTimetable = ({ timeTableId }) => {
   };
   useEffect(() => {
     fetchStudentTimetable();
-      fetchAvailableRooms();
-      fetchTeachers()
+    fetchAvailableRooms();
+    fetchTeachers();
   }, [timeTableId]);
 
-  const days = Object.keys(studentWeekTimetable).map((day) => day);
+  const days = studentTimetableDaySchedules ? studentTimetableDaySchedules.map((studentTimetableDaySchedule)=>studentTimetableDaySchedule.day) : [];
+
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -130,11 +169,8 @@ const EditStudentTimetable = ({ timeTableId }) => {
     session,
     dayOfWeek
   ) => {
-    console.log(session)
-    if (
-      session.type === "Core" &&
-      session.class_distribution.length === 1
-    ) {
+    console.log(session);
+    if (session.type === "Core" && session.class_distribution.length === 1) {
       // Update state to open the dialog and set parameters
       setChangeOrSwapSessionDialog({
         isOpen: true,
@@ -146,22 +182,21 @@ const EditStudentTimetable = ({ timeTableId }) => {
     }
   };
 
-
-   const closeChangeOrSwapSessionDialog = () => {
-     // Reset state to close the dialog and clear parameters
-     setChangeOrSwapSessionDialog({
-       isOpen: false,
-       classroomId: null,
-       sessionGrpIndex: null,
-       session: null,
-       dayOfWeek:null,
-     });
-   };
+  const closeChangeOrSwapSessionDialog = () => {
+    // Reset state to close the dialog and clear parameters
+    setChangeOrSwapSessionDialog({
+      isOpen: false,
+      classroomId: null,
+      sessionGrpIndex: null,
+      session: null,
+      dayOfWeek: null,
+    });
+  };
   const handleOpenRoomChangeDialog = (
     classroomId,
     sessionGrpIdx,
     sessionKey,
-    room,
+    room
   ) => {
     const newValue = {
       isOpen: true,
@@ -195,12 +230,6 @@ const EditStudentTimetable = ({ timeTableId }) => {
     setTeacherChangeDialogOpen(newValue);
   };
 
-
-
-
-
-
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -208,6 +237,11 @@ const EditStudentTimetable = ({ timeTableId }) => {
       </div>
     );
   }
+
+  const selectedDaySchedule = studentTimetableDaySchedules?.find(
+    (schedule) => schedule?.day === selectedDay
+  );
+  const NumberOfPeriodsInAday = selectedDaySchedule?.teaching_slots ?? 0;
   return (
     <div
       className={`grid grid-rows-[3fr_2fr] grid-cols-[3fr_1fr] box-border gap-4 h-full w-full overflow-hidden pr-5 transition-all relative`}
@@ -225,10 +259,11 @@ const EditStudentTimetable = ({ timeTableId }) => {
       </div>
       {/* Large Left Panel */}
       <div
-        className={`col-start-1 col-end-2 row-start-1 row-end-3 p-3 overflow-hidden ${
+        className={`col-start-1 col-end-2 row-start-1 row-end-3 p-3 overflow-hidden flex flex-col${
           isCollapsed ? "col-end-3" : ""
         } `}
       >
+        
         <EditStudentTimetableControlePanel
           days={days}
           handleDayChange={handleDayChange}
@@ -246,7 +281,7 @@ const EditStudentTimetable = ({ timeTableId }) => {
         <StudentDraggableTimetable
           selectedDay={selectedDay}
           setStudentWeekTimetable={setStudentWeekTimetable}
-          NumberOfPeriodsInAday={lessonsPerDay}
+          NumberOfPeriodsInAday={NumberOfPeriodsInAday}
           studentWeekTimetable={studentWeekTimetable}
           searchTerm={searchTerm}
           conflicts={conflicts}
@@ -254,6 +289,9 @@ const EditStudentTimetable = ({ timeTableId }) => {
           openChangeOrSwapSessionDialog={openChangeOrSwapSessionDialog}
           handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
           handleOpenTeacherChangeDialog={handleOpenTeacherChangeDialog}
+          handleOpenAssignOverlappingSession={
+            handleOpenAssignOverlappingSession
+          }
         />
       </div>
 
@@ -313,6 +351,16 @@ const EditStudentTimetable = ({ timeTableId }) => {
         selectedDay={selectedDay}
         teacherChangeDialogOpen={teacherChangeDialogOpen}
         setTeacherChangeDialogOpen={setTeacherChangeDialogOpen}
+        setStudentWeekTimetable={setStudentWeekTimetable}
+      />
+      <OverflowSessionsHandleDialog
+        open={overflowSessionsHandleDialogState.open}
+        studentWeekTimetable={studentWeekTimetable}
+        handleClose={handleCloseOverflowSessionsHandleDialog}
+        overflowSessionsHandleDialogState={overflowSessionsHandleDialogState}
+        overflowSessionsHandleDialogSetState={
+          overflowSessionsHandleDialogSetState
+        }
         setStudentWeekTimetable={setStudentWeekTimetable}
       />
     </div>

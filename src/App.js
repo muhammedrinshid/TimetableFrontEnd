@@ -21,6 +21,7 @@ import ScheduleAnalytics from "./pages/Main/ScheduleAnalytics";
 function App() {
   return (
     <div className="w-full min-h-screen dark:bg-light-background bg-[#F8F7FC] flex items-center justify-center font-Roboto max-h-screen">
+  
       <ToastContainer
         position="bottom-right"
         autoClose={2000}
@@ -45,12 +46,12 @@ function App() {
         }}
       />
       <div
-        className="w-full h-screen max-h-screen 3xl:max-w-8xl  3xl:max-h-128 3xl:rounded-md shadow-custom-2  relative"
+        className="w-full h-screen max-h-screen 3xl:max-w-8xl  3xl:max-h-128 3xl:rounded-xl shadow-custom-2 overflow-hidden  relative"
         style={{
           backgroundImage: `url(${mainBg02})`,
         }}
       >
-        <div className="absolute inset-0 bg-light-background1 dark:bg-dark-border dark:bg-opacity-80 bg-opacity-95 z-0 max-h-screen h-screen 3xl:h-128 3xl:max-h-128"></div>
+        <div className="absolute inset-0 bg-light-background1 dark:bg-dark-border dark:bg-opacity-80 bg-opacity-95 z-0 max-h-screen h-screen 3xl:h-128 3xl:max-h-128 w-full"></div>
         <BrowserRouter>
           <AuthProvider>
             <Routes>
