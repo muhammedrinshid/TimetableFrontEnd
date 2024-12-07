@@ -7,19 +7,27 @@ import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import CopyAllIcon from "@mui/icons-material/CopyAll";
 import CheckIcon from "@mui/icons-material/Check";
+import { daysToWeeks } from "date-fns";
+import { LuReplace } from "react-icons/lu";
 
-const getSessionBorderColor = (session) => {
+const getSessionBorderColor = (session,present) => {
   if (!session || !session.subject) {
     return "border-gray-300 dark:border-gray-300";
   }
-  switch (session.type) {
-    case "Core":
-      return "border-blue-500 ";
-    case "Elective":
-      return "border-purple-500 ";
-    default:
-      return "border-gray-300 ";
+  if (session.subject && present) {
+    switch (session.type) {
+      case "Core":
+        return "border-blue-500 ";
+      case "Elective":
+        return "border-purple-500 ";
+      default:
+        return "border-gray-300 ";
+    }
+  }else{
+    return "blinking-top-border"
+
   }
+ 
 };
 
 const getSessionColor = (session) => {
@@ -48,7 +56,13 @@ const DraggableSession = ({
   handleOpenRoomChangeDialog,
   changeTecherStatus = null, // Default value set to null
   copyDetails = null, // Default value set to null
+  handleOpenReplacementDialog=null,
+  present=true
 }) => {
+
+
+
+
   const { darkMode, apiDomain } = useAuth();
   
   const [{ isDragging }, drag] = useDrag({
@@ -74,12 +88,16 @@ const DraggableSession = ({
       teacherWeekTimetable
     );
   };
+
+
+
+
   return (
     <div
       ref={drag}
       style={{ opacity: isDragging ? 0.5 : 1 }}
       className={`mb-2 last:mb-0 border-t-4 rounded-lg overflow-hidden ${getSessionBorderColor(
-        session
+        session,present
       )} p-2 ${getSessionColor(session)}`}
     >
       <div className={`flex justify-between items-start mt-3`}>
@@ -180,7 +198,7 @@ const DraggableSession = ({
           <Tooltip title="Find Suitable Lesson Swaps">
             <IconButton
               onClick={handleOpenSwapDialog}
-              disabled={session.type == "Elective"}
+              disabled={session.type == "Elective"||!present}
               size="small"
               className={`p-1 rounded-full light-background-1 transition-all duration-300 ${
                 session.type === "Elective"
@@ -190,14 +208,7 @@ const DraggableSession = ({
             >
               <ChangeCircleIcon
                 fontSize="small"
-                sx={{
-                  color:
-                    session.type === "Elective"
-                      ? "#A8A8A8"
-                      : darkMode
-                      ? "#FFFFFF"
-                      : "#1F1F1F",
-                }}
+                
               />
             </IconButton>
           </Tooltip>
@@ -211,6 +222,25 @@ const DraggableSession = ({
                 onClick={() => copyDetails(teacher?.instructor, session)}
               >
                 <CopyAllIcon
+                  fontSize="small"
+                  sx={{
+                    color: darkMode ? "#FFFFFF" : "inherit",
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          )}
+        </div>
+        <div className="basis-1/3 flex justify-center items-center border-t border-l border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-400 cursor-pointer transform transition duration-200 hover:scale-95 hover:text-gray-600 dark:hover:text-gray-200">
+          {copyDetails && (
+            <Tooltip title="Re-place Teacher">
+              <IconButton
+                size="small"
+                onClick={() => handleOpenReplacementDialog(teacher?.instructor, session,columnIndex,selectedDay)}
+                disabled={present}
+              >
+                <LuReplace
+
                   fontSize="small"
                   sx={{
                     color: darkMode ? "#FFFFFF" : "inherit",

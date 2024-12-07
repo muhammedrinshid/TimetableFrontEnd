@@ -3,6 +3,7 @@ import { useAuth } from "../../../context/Authcontext";
 import { Avatar, Chip, Tooltip } from "@mui/material";
 import SavedTimeTableTeacherListCard from "./SavedTimeTableTeacherListCard";
 import EmptyDefaultTimetableState from "../../empty state management components/EmptyDefaultTimetableState";
+import { X } from "lucide-react";
 
 const TeacherTimeTableComponent = ({
   teacherTimetable,
@@ -168,10 +169,10 @@ const TeacherTimeTableComponent = ({
                                     )}
                                   </div>
                                   <p className="room text-xs mb-3 flex justify-between items-center text-gray-600">
-                                <span className="font-medium">
-                                  Room {session?.room?.room_number}
-                                </span>
-                              </p>
+                                    <span className="font-medium">
+                                      Room {session?.room?.room_number}
+                                    </span>
+                                  </p>
                                   {session.class_details && (
                                     <div className="text-xs overflow-y-auto max-h-[90px]">
                                       {session.class_details.map(
@@ -231,8 +232,10 @@ const TeacherTimeTableComponent = ({
                     ) : (
                       <td
                         key={sessionGroupIndex}
-                        className="w-[140px] min-w-[140px] border-b border-r p-3 last:border-r-0"
-                      ></td>
+                        className="w-[140px] min-w-[140px] border-b border-r p-3 last:border-r-0 flex items-center justify-center"
+                      >
+                        <X className="h-6 w-6 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors duration-200" />
+                      </td>
                     );
                   })}
                 </tr>

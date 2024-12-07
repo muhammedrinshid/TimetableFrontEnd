@@ -5,6 +5,7 @@ import TeacherNotIncludedInTimetable from "../../empty state management componen
 import { FaFileDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { X } from "lucide-react";
 
 const TeacherWeeklyTimeTableComponent = ({
   teacherWeeklyTimetable,
@@ -238,8 +239,24 @@ const TeacherWeeklyTimeTableComponent = ({
                         </div>
                       </td>
                     ) : (
-                      <td className="border-b border-l p-2 w-[120px]"></td>
-                    );
+                      <td
+                      key={sessionIndex}
+                      className="p-3 border-l border-b"
+                    >
+                       <div
+                          className={`rounded-lg p-4 h-full ${getSessionColor(
+                            ""
+                          )} transition-all duration-300 hover:shadow-lg hover:scale-102 relative overflow-hidden flex justify-center items-center w-full h-full`}
+                          style={{
+                            borderTop: `4px solid ${getSessionBorderColor(
+                              ""
+                            )}`,
+                          }}
+                        >
+                                                <X className="h-6 w-6 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors duration-200" />
+
+                        </div>
+                    </td>                    );
                   })}
                 </tr>
               ))}

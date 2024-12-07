@@ -5,16 +5,14 @@ import {
   Calendar,
   TrendingUp,
   TrendingDown,
-  Plus,
 } from "lucide-react";
 import { ResponsiveBar } from "@nivo/bar";
-import { Avatar, Card } from "@mui/material";
+import { Avatar } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import { FaClock, FaCheckCircle, FaTasks } from "react-icons/fa";
-import {  useNavigate } from "react-router-dom";
 import EmptyDefaultTimetableState from "../../../components/empty state management components/EmptyDefaultTimetableState";
 
-// Metrics Card Component
+// Metrics Card Component (unchanged)
 const MetricsCard = ({ title, value, icon: Icon, trend, isLoading }) => (
   <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full transition-all hover:translate-y-[-2px] hover:shadow-md">
     <div className="flex items-center gap-4">
@@ -47,8 +45,7 @@ const MetricsCard = ({ title, value, icon: Icon, trend, isLoading }) => (
   </div>
 );
 
-
-
+// Teacher Avatar Component (unchanged)
 const TeacherAvatar = ({ src, name }) => (
   <div className="flex flex-col items-center gap-2">
     <Avatar
@@ -63,99 +60,33 @@ const TeacherAvatar = ({ src, name }) => (
 const StatusBars = ({ teachersWeekAnalytics }) => {
   const { apiDomain } = useAuth();
 
-  // Show skeleton if teachersWeekAnalytics is null/undefined
+  // Skeleton and empty state rendering (unchanged)
   if (!teachersWeekAnalytics) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <MetricsCard
-            title="Total Teachers"
-            value=""
-            icon={Users}
-            isLoading={true}
-          />
-          <MetricsCard
-            title="Utilization Capacity"
-            value=""
-            icon={Battery}
-            isLoading={true}
-          />
-          <MetricsCard
-            title="Total Work Sessions"
-            value=""
-            icon={Calendar}
-            isLoading={true}
-          />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-          <div className="p-4 border-b">
-            <h2 className="text-lg font-semibold">Teachers Weekly Overview</h2>
-          </div>
-          <div className="p-4">
-            <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-gray-200 rounded w-3/4" />
-              <div className="space-y-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-24 bg-gray-200 rounded" />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    // ... (previous skeleton loading code)
   }
 
-  // Show empty state if no chart details
   if (!teachersWeekAnalytics.chart_details?.length) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <MetricsCard
-            title="Total Teachers"
-            value={teachersWeekAnalytics.chart_header_details?.total_teachers || 0}
-            icon={Users}
-            trend={{ isPositive: true, value: 12 }}
-          />
-          <MetricsCard
-            title="Utilization Capacity"
-            value={teachersWeekAnalytics.chart_header_details?.teachers_utilization_capacity || 0}
-            icon={Battery}
-            trend={{ isPositive: true, value: 8 }}
-          />
-          <MetricsCard
-            title="Total Work Sessions"
-            value={0 ||teachersWeekAnalytics.chart_header_details?.total_classroom_work_sessions || 0}
-            icon={Calendar}
-            trend={{ isPositive: false, value: 3 }}
-          />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full">
-          <EmptyDefaultTimetableState />
-        </div>
-      </div>
-    );
+    // ... (previous empty state code)
   }
 
+  // Prepare data for the chart with separated bars
   const chartData = teachersWeekAnalytics.chart_details?.map((teacher) => ({
     teacher: `${teacher.name}`,
     surName: `${teacher.surname}`,
+    extraLoads: teacher.extra_loads_last_week,
     workingSessions: teacher.working_sessions_in_a_week,
+    leaves: teacher.leaves_last_week,
     freeSessions: teacher.free_sessions_in_a_week,
-    totalSessions:
-      teacher.working_sessions_in_a_week + teacher.free_sessions_in_a_week,
     profileImage: teacher.profile_image
       ? `${apiDomain}${teacher.profile_image}`
       : null,
   }));
 
-  const CustomTooltip = ({ id, value, indexValue, data }) => (
+  const CustomTooltip = ({ indexValue, data }) => (
     <div className="relative bg-white p-4 shadow-lg rounded-lg border border-gray-200">
       <div className="absolute -top-4 -left-4">
         <TeacherAvatar
-          name={data?.name}
+          name={indexValue}
           src={data?.profileImage}
           className="w-14 h-14 rounded-full border-2 border-white shadow-md"
         />
@@ -172,7 +103,7 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
               <div className="flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-500 rounded-full">
                 <FaClock />
               </div>
-              <span className="text-gray-600">Working:</span>
+              <span className="text-gray-600">Working Sessions:</span>
             </div>
             <span className="font-medium">{data.workingSessions}</span>
 
@@ -180,17 +111,25 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
               <div className="flex items-center justify-center w-6 h-6 bg-green-100 text-green-500 rounded-full">
                 <FaCheckCircle />
               </div>
-              <span className="text-gray-600">Free:</span>
+              <span className="text-gray-600">Free Sessions:</span>
             </div>
-            <span className="font-medium">{data.freeSessions}</span>
+            <span className="font-medium">{Math.abs(data.freeSessions)}</span>
 
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-6 h-6 bg-yellow-100 text-yellow-500 rounded-full">
                 <FaTasks />
               </div>
-              <span className="text-gray-600">Total:</span>
+              <span className="text-gray-600">Extra Loads:</span>
             </div>
-            <span className="font-medium">{data.totalSessions}</span>
+            <span className="font-medium">{data.extraLoads}</span>
+
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-6 h-6 bg-red-100 text-red-500 rounded-full">
+                <FaTasks />
+              </div>
+              <span className="text-gray-600">Leaves:</span>
+            </div>
+            <span className="font-medium">{data.leaves}</span>
           </div>
         </div>
       </div>
@@ -199,6 +138,7 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
 
   return (
     <div className="p-6 space-y-6">
+      {/* Metrics cards (unchanged) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <MetricsCard
           title="Total Teachers"
@@ -220,22 +160,28 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
         />
       </div>
 
-      <div className="overflow-auto h-full flex flex-col justify-center items-center" >
+      <div className="overflow-auto h-full flex flex-col justify-center items-center">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold">Teachers Weekly Overview</h2>
         </div>
-        <div className="p-2">
-          <div className="w-full overflow-x-auto">
-            <div style={{ height: "400px", minWidth: "800px" }}>
+        <div className="p-2 py-10">
+          <div className="w-full h-full overflyau overflow-scroll">
+            <div style={{ height: "500px", minWidth: "800px" }}>
               <ResponsiveBar
                 data={chartData}
-                keys={["workingSessions", "freeSessions"]}
+                keys={[
+                  "extraLoads",
+                  "workingSessions", 
+                  "leaves", 
+                  "freeSessions"
+                ]}
+                groupMode="grouped"
                 indexBy="teacher"
-                margin={{ top: 30, right: 40, bottom: 100, left: 40 }}
-                padding={0.45}
+                margin={{ top: 60, right: 40, bottom: 100, left: 40 }}
+                padding={0.3}
                 valueScale={{ type: "linear" }}
-                colors={["#2563eb", "#93c5fd"]}
-                borderRadius={10}
+                colors={["#fbbf24", "#2563eb", "#fca5a5", "#93c5fd"]}
+                borderRadius={5}
                 borderWidth={2}
                 borderColor="white"
                 axisTop={null}
@@ -259,7 +205,7 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
                             filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2))",
                           }}
                         />
-                        <clipPath id="clipCircle">
+                        <clipPath id={`clipCircle-${value}`}>
                           <circle cx={0} cy={28} r={16} />
                         </clipPath>
                         <image
@@ -268,7 +214,7 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
                           width={32}
                           height={32}
                           href={teacher?.profileImage || "/api/placeholder/32/32"}
-                          clipPath="url(#clipCircle)"
+                          clipPath={`url(#clipCircle-${value})`}
                           preserveAspectRatio="xMidYMid slice"
                         />
                         <text

@@ -299,6 +299,8 @@ const DateSelectorForDayPlanner = ({
       // Check if the request was successful
       if (response.status === 200) {
         toast.success("Teacher timetable updated successfully!");
+        refetchStudentsTimetable()
+        refetchTeacherTimetable()
         setShowConflictDialog({ isOpen: false, type: false }); // Close the dialog or handle the UI state change accordingly
       }
     } catch (error) {

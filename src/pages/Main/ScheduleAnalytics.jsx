@@ -11,7 +11,7 @@ const ScheduleAnalytics = () => {
   const { apiDomain, headers } = useAuth();
 
   const [view, setView] = useState("Teacher Centric View");
-  const [teachersWeekAnalytics, setTeachersWeekAnalytics] = React.useState({
+  const [teachersWeekAnalytics, setTeachersWeekAnalytics] = useState({
     chart_header_details: {
       total_teachers: 0,
       teachers_utilization_capacity: 0,

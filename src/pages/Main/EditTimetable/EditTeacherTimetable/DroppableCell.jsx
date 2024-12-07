@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react";
 
 import DraggableSession from "./DraggableSession";
-import { useDrop } from 'react-dnd';
+import { useDrop } from "react-dnd";
 
 const getSessionColor = (session) => {
   if (!session || !session.subject) {
@@ -17,10 +17,6 @@ const getSessionColor = (session) => {
   }
 };
 
-
-
-
-
 const DroppableCell = ({
   rowIndex,
   columnIndex,
@@ -34,6 +30,8 @@ const DroppableCell = ({
   handleOpenRoomChangeDialog,
   changeTecherStatus = null, // Default value set to null
   copyDetails = null, // Default value set to null
+  handleOpenReplacementDialog = null,
+  present = true,
 }) => {
   const [, drop] = useDrop({
     accept: "SESSION",
@@ -57,21 +55,35 @@ const DroppableCell = ({
         className={`h-full transition-all duration-300 hover:shadow-lg relative flex flex-col justify-center p-2 rounded-lg`}
       >
         {sessions.length === 0 || !sessions[0].subject ? (
-          <div
-            className={`mb-2 last:mb-0 border-t-4 rounded-lg overflow-hidden ${getSessionColor(
-              sessions[0]
-            )} h-full flex items-center justify-center bg-opacity-50 backdrop-blur-sm`}
-          >
-            <div className="text-center p-4 space-y-2">
-              <p className="font-medium text-sm tracking-wide text-gray-500 dark:text-gray-400 uppercase">
-                Free Period
-              </p>
-              <div className="w-12 h-0.5 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full" />
-              <p className="text-[11px] text-gray-400 dark:text-gray-500 font-light tracking-wide">
-                Time to recharge!
-              </p>
+          !present ? (
+            <div className="mb-2 last:mb-0 border-t-4 rounded-lg overflow-hidden py-4 h-full flex items-center justify-center bg-red-500 bg-opacity-50 backdrop-blur-sm">
+              <div className="text-center p-4 space-y-2">
+                <p className="font-medium text-sm tracking-wide text-white uppercase">
+                  Absent
+                </p>
+                <div className="w-12 h-0.5 mx-auto bg-gray-300 rounded-full" />
+                <p className="text-[11px] text-white font-light tracking-wide">
+                  Please note the absence.
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div
+              className={`mb-2 last:mb-0 border-t-4 rounded-lg overflow-hidden ${getSessionColor(
+                sessions[0]
+              )} h-full flex items-center justify-center bg-opacity-50 backdrop-blur-sm`}
+            >
+              <div className="text-center p-4 space-y-2">
+                <p className="font-medium text-sm tracking-wide text-gray-500 dark:text-gray-400 uppercase">
+                  Free Period
+                </p>
+                <div className="w-12 h-0.5 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full" />
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 font-light tracking-wide">
+                  Time to recharge!
+                </p>
+              </div>
+            </div>
+          )
         ) : (
           <div className="space-y-1 h-full">
             {sessions.map((session, index) => (
@@ -89,6 +101,8 @@ const DroppableCell = ({
                 handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
                 changeTecherStatus={changeTecherStatus}
                 copyDetails={copyDetails}
+                handleOpenReplacementDialog={handleOpenReplacementDialog}
+                present={present}
               />
             ))}
           </div>
@@ -98,4 +112,4 @@ const DroppableCell = ({
   );
 };
 
-export default DroppableCell
+export default DroppableCell;

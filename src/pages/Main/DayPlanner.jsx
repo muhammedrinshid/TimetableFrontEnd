@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { CiSearch } from "../../assets/icons";
 import { Loadings, ToggleButton } from "../../components/common";
 import TeacherAttendanceStatus from "../../components/specific/DayPlanner/TeacherAttendanceStatus";
 import { useQuery } from "react-query";
-
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/Authcontext";
@@ -16,9 +15,12 @@ import StudentViewTeacherChangeDialog from "./EditTimetable/EditStudentTimetable
 import OverflowSessionsHandleDialog from "./EditTimetable/EditStudentTimetable/OverflowSessionsHandleDialog";
 import StudentViewRoomChangeDialog from "./EditTimetable/EditStudentTimetable/StudentViewRoomChangeDialog";
 import ChangeOrSwapSessionDialog from "./EditTimetable/EditStudentTimetable/ChangeOrSwapSessionDialog";
-
 import DateSelectorForDayPlanner from "../../components/specific/DayPlanner/DateSelectorForDayPlanner";
 import DeleteConfirmationPopup from "../../components/common/DeleteConfirmationPopup";
+
+
+
+
 
 const formatDate = (date) => {
   const year = date.getFullYear();
@@ -27,9 +29,16 @@ const formatDate = (date) => {
 
   return `${year}-${month}-${day}`;
 };
+
+
+
 const DayPlanner = () => {
   const today = new Date();
   const { apiDomain, headers } = useAuth();
+
+
+
+
   // 1.  states
   const [teacherChangeDialogOpen, setTeacherChangeDialogOpen] = useState({
     isOpen: false,
@@ -40,7 +49,6 @@ const DayPlanner = () => {
     fromSubject: null,
     sessionKey: null,
   });
-  const [loading, setLoading] = useState(false);
   const [teacherConflicts, setteacherConflicts] = useState([]);
   const [studentsConflicts, setStudentsConflicts] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
@@ -98,10 +106,15 @@ const DayPlanner = () => {
   const [teachers, setTeachers] = useState([]);
   const [isCustomTeacherTable, setIsCustomTeacherTable] = useState(false);
   const [isCustomStudentTable, setIsCustomStudentTable] = useState(false);
-  const [isDeleteDayTimetableForm, setIsDeleteDayTimetableForm] =
-    useState(null);
+  const [isDeleteDayTimetableForm, setIsDeleteDayTimetableForm] = useState(null);
 
-  // 2. useEffect for side effects
+
+
+
+
+
+
+  // 2. data fetching functions for side effects
   const fetchTeachers = async () => {
     try {
       const response = await axios.get(`${apiDomain}/api/teacher/teachers`, {
@@ -173,12 +186,21 @@ const DayPlanner = () => {
       throw err;
     }
   };
+
+
+  // 3. useQuery for data fetching
+
+
+  // Teachers  Query
+
   const {
     data: fetchedTeachers,
     error: teachersError,
     isLoading: teachersLoading,
     refetch: refetchTeachers,
   } = useQuery("teachers", fetchTeachers, {
+    staleTime:0,
+
     onSuccess: (data) => setTeachers(data),
     onError: () => setTeachers([]),
   });
@@ -201,6 +223,7 @@ const DayPlanner = () => {
         setIsCustomTeacherTable(data.isCustomTimetable);
         setCustomTimetableIds(data.customTimetableIds);
       },
+      staleTime:0,
       onError: () => {
         setTeacherWeekTimetable({});
         setActiveTimetableId(null);
@@ -222,12 +245,15 @@ const DayPlanner = () => {
     () => fetchStudentWeekTimetable(selectedDate),
     {
       enabled: !!selectedDate,
+      staleTime:0,
+
       onSuccess: (data) => {
         setStudentWeekTimetable(data.timetable);
         setStudentTimetableDaySchedules(data.daySchedules);
         setIsCustomStudentTable(data.isCustomTimetable);
         setCustomTimetableIds(data.customTimetableIds);
       },
+
       onError: () => {
         setStudentWeekTimetable({});
         setStudentTimetableDaySchedules([]);
@@ -246,6 +272,8 @@ const DayPlanner = () => {
   } = useQuery("availableRooms", fetchAvailableRooms, {
     onSuccess: (data) => setAvailableRooms(data),
     onError: () => setAvailableRooms([]),
+    staleTime:0,
+
   });
 
   // helper functions
@@ -257,6 +285,10 @@ const DayPlanner = () => {
     // Return the capitalized version of the day of the week
     return daysOfWeek[dayIndex].toUpperCase();
   }
+
+
+
+
   const handleSelectTimetableForDelete = (id) => {
     setIsDeleteDayTimetableForm(id);
     console.log("ID set in state:", id); // You can use this ID for further logic
@@ -483,6 +515,10 @@ const DayPlanner = () => {
     }
   };
 
+
+
+
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -568,6 +604,11 @@ const DayPlanner = () => {
                   handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
                   changeTecherStatus={changeTecherStatus}
                   teacherTimetableLoading={teacherTimetableLoading}
+                  selectedDate={selectedDate}
+                  customTimetableIds={customTimetableIds}
+                  refetchTeacherTimetable={refetchTeacherTimetable}
+                  refetchStudentsTimetable={refetchStudentsTimetable}
+
                 />
               )
             ) : studentTimetableLoading ? (
@@ -601,7 +642,6 @@ const DayPlanner = () => {
         teachersLoading={teachersLoading}
         teacherWeekTimetable={teacherWeekTimetable[capitalizedDay] || []}
         toggleFullDayLeaveorPresent={toggleFullDayLeaveorPresent}
-        
       />
       <RoomChangeDialog
         open={roomChangeDialogOpen.isOpen}

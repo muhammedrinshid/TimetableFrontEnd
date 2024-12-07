@@ -137,7 +137,7 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 6px;
   background: linear-gradient(90deg, #f39c12, #f1c40f, #e74c3c, #f39c12);
   background-size: 200% 200%;
   animation: gradient-move 2s linear infinite;

@@ -9,6 +9,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../context/Authcontext";
 import DeleteConfirmationPopup from "../../../../components/common/DeleteConfirmationPopup";
+import InstructorReplacementDialog from "./InstructorReplacementDialog";
 // Column dragging component
 const DraggableColumn = ({
   columnIndex,
@@ -57,8 +58,10 @@ const DraggableTeacherTimetable = ({
   onChangesetSelectedSessionForRoomNumber,
   handleOpenRoomChangeDialog,
   changeTecherStatus = null, // Default value set to null
-  setIsDeleteDayTimetableForm,
-  isDeleteDayTimetableForm
+  selectedDate=null,
+  customTimetableIds=null,
+  refetchStudentsTimetable=null,
+  refetchTeacherTimetable=null,
 }) => {
   const { apiDomain, headers } = useAuth();
   const [columns, setColumns] = useState(
@@ -69,7 +72,25 @@ const DraggableTeacherTimetable = ({
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentSwapParams, setCurrentSwapParams] = useState(null);
+  const [instructorReplacementDialog, setInstructorReplacementDialog] =
+    useState({
+      isOpen: false,
+      currentInstructor: null,
+      currentLesson: null,
+      currentPeriod: null,
+      currentDate: null,
+      selectedTeacher: null,
+    });
 
+  const handleOpenReplacementDialog = (instructor, lesson, period, date) => {
+    setInstructorReplacementDialog({
+      isOpen: true,
+      currentInstructor: instructor,
+      currentLesson: lesson,
+      currentPeriod: period,
+      currentDate: date,
+    });
+  };
   const checkedConflicts = useConflictChecker(
     teacherWeekTimetable[selectedDay] || [],
     "teacher"
@@ -315,6 +336,7 @@ const DraggableTeacherTimetable = ({
       return updatedTimetable;
     });
   };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-full w-full">
@@ -362,6 +384,8 @@ const DraggableTeacherTimetable = ({
                     handleOpenRoomChangeDialog={handleOpenRoomChangeDialog}
                     changeTecherStatus={changeTecherStatus}
                     copyDetails={copyDetails}
+                    handleOpenReplacementDialog={handleOpenReplacementDialog}
+                    present={teacher?.instructor?.present?.[columnIndex]}
                   />
                 ))}
               </tr>
@@ -375,8 +399,19 @@ const DraggableTeacherTimetable = ({
           swapParams={currentSwapParams}
           onConfirm={handleTeacherLessonReassignmentSwap}
         />
+        <InstructorReplacementDialog
+          instructorReplacementDialog={instructorReplacementDialog}
+          onUpdateInstructorReplacementDialog={setInstructorReplacementDialog}
+          teacherWeekTimetable={teacherWeekTimetable}
+          selectedDay={selectedDay}
+          selectedDate={selectedDate}
+          customTimetableIds={customTimetableIds}
+          setTeacherWeekTimetable={setTeacherWeekTimetable}
+          setInstructorReplacementDialog={setInstructorReplacementDialog}
+          refetchStudentsTimetable={refetchStudentsTimetable}
+          refetchTeacherTimetable={refetchTeacherTimetable}
+        />
       </div>
-
     </DndProvider>
   );
 };
