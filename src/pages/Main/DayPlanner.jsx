@@ -608,6 +608,7 @@ const DayPlanner = () => {
                   customTimetableIds={customTimetableIds}
                   refetchTeacherTimetable={refetchTeacherTimetable}
                   refetchStudentsTimetable={refetchStudentsTimetable}
+                  isDaytimetable={customTimetableIds?.day_timetable_id||false}
 
                 />
               )

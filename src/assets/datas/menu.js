@@ -18,6 +18,7 @@ import {
   MdOutlineBuild,
   MdSchedule,
   MdAutorenew, // Importing new icon for Build Schedule
+  MdWorkspacesOutline, // Importing new icon for workload analysis
 } from "react-icons/md"; // Importing new icons
 
 const menuData = [
@@ -41,14 +42,13 @@ const menuData = [
     icon: <MdOutlineClass />, // Alternative class icon
     path: "/classes",
   },
-  
   {
     name: "Directives", // New menu item
     icon: <FaSlidersH />, // Choose an appropriate icon
     path: "/directives-configuration",
   },
   {
-    name: "Ai Schedulore ", // New Build Schedule item
+    name: "Ai Schedulore", // New Build Schedule item
     icon: <FaMagic />, // Icon for building/creating
     path: "/build-schedule", // Route for Build Schedule page
   },
@@ -62,9 +62,11 @@ const menuData = [
     icon: <MdOutlineSaveAlt />, // Alternative save icon
     path: "/saved-timetables",
   },
-
-
-
+  {
+    name:  "Leave Analysis", // New menu item
+    icon: <MdWorkspacesOutline />, // Icon for workload and leave analysis
+    path: "/workload-leave-analysis", // Route for the new page
+  },
 ];
 
 export default menuData;

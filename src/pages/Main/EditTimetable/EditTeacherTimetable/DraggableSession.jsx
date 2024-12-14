@@ -57,10 +57,11 @@ const DraggableSession = ({
   changeTecherStatus = null, // Default value set to null
   copyDetails = null, // Default value set to null
   handleOpenReplacementDialog=null,
-  present=true
+  present=true,
+  isDaytimetable=false
 }) => {
 
-
+console.log("is day timetable id",isDaytimetable)
 
 
   const { darkMode, apiDomain } = useAuth();
@@ -237,7 +238,7 @@ const DraggableSession = ({
               <IconButton
                 size="small"
                 onClick={() => handleOpenReplacementDialog(teacher?.instructor, session,columnIndex,selectedDay)}
-                disabled={present}
+                disabled={present||!isDaytimetable}
               >
                 <LuReplace
 

@@ -23,8 +23,23 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem("authTokens") ? jwtDecode(authTocken.access) : null
   );
 
-
+  const formatTime = (time) => {
+    // Return null if time is not a valid string
+    if (typeof time !== "string") {
+      return null;
+    }
   
+    const [hours, minutes] = time.split(":");
+  
+    // Return null if the time format is incorrect
+    if (hours === undefined || minutes === undefined) {
+      return null;
+    }
+  
+    const ampm = +hours >= 12 ? "PM" : "AM";
+    const formattedHours = +hours % 12 || 12; // Convert 24-hour to 12-hour format
+    return `${formattedHours}:${minutes} ${ampm}`;
+  };  
   let totalperiodsInWeek=0
   useEffect(() => {
     if (loading) {
@@ -92,6 +107,8 @@ export const AuthProvider = ({ children }) => {
     is_ready_for_timetable:user?.is_ready_for_timetable,
     NumberOfPeriodsInAday: user?.teaching_slots,
     totalperiodsInWeek: (user?.total_weekly_teaching_slots),
+    academicYearStart: (user?.academic_year_start),
+    academicYearEnd: (user?.academic_year_end),
     apiDomain: apiDomain,
     updateTocken:updateTocken,
     setAuthTocken:setAuthTocken,
@@ -114,8 +131,10 @@ export const AuthProvider = ({ children }) => {
 
 
       }
+      
     
     },
+    formatTime:formatTime,
     darkMode:darkMode,
     toggleTheme:toggleTheme
 

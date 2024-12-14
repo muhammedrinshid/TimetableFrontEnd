@@ -9,7 +9,7 @@ const StudentTimeTableComponent = ({
   searchTerm,
   studentTimetableDaySchedules,
 }) => {
-  const { apiDomain, NumberOfPeriodsInAday } = useAuth();
+  const { apiDomain, formatTime } = useAuth();
   const [filteredTimetable, setFilteredTimetable] = useState(studentTimeTable);
 
   const studentRow = [
@@ -111,11 +111,29 @@ const StudentTimeTableComponent = ({
               <th className="w-1/6 p-4 text-left font-semibold">
                 {studentRow[0]}
               </th>
-              {studentRow?.slice(1)?.map((header, index) => (
-                <th key={index} className="w-1/12 p-4 text-left font-semibold">
-                  {header}
-                </th>
-              ))}
+              {Array(studentTimetableDaySchedules?.teaching_slots)
+                .fill()
+                ?.map((_, index) => {
+                  const period = studentTimetableDaySchedules?.periods[index];
+
+                  return (
+                    <th key={index} className="w-1/12 p-4 text-left font-semibold">
+
+                      <div>
+                        <span className="text-md text-gray-300">
+                          {`Session ${index + 1}`}
+                        </span>
+                        <br />
+                        {period && (
+                          <span className="text-vs ">
+                            {formatTime(period.start_time)} -{" "}
+                            {formatTime(period.end_time)}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                  );
+                })}
             </tr>
           </thead>
           <tbody>

@@ -1,9 +1,10 @@
-import React from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import AbbreviatedStudentTimetable from './AbbreviatedStudentTimetable';
+import React from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
-const AbbreviatedSavedTimetableViewerDialog = ({ open, onClose, studentWeekTimetable}) => {
+const AbbreviatedSavedTimetableViewerDialog = ({ open, onClose, children  }) => {
   return (
     <Dialog
       open={open}
@@ -12,19 +13,24 @@ const AbbreviatedSavedTimetableViewerDialog = ({ open, onClose, studentWeekTimet
       maxWidth={false}
       PaperProps={{
         style: {
-          width: '100%',
-          height: '100%',
+          width: "100%",
+          height: "100%",
         },
       }}
     >
       <DialogContent
         style={{
-          height: '100%',
-          overflow: 'auto', // Enables scrolling if content exceeds height
+          height: "100%",
+          overflow: "auto", // Enables scrolling if content exceeds height
         }}
       >
-        <AbbreviatedStudentTimetable weekTimetable={studentWeekTimetable}/>
+        {children }{" "}
       </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

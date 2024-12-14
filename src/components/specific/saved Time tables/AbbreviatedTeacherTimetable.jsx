@@ -1,10 +1,12 @@
 import React from "react";
 import { useAuth } from "../../../context/Authcontext";
 
-const AbbreviatedStudentTimetable = ({ weekTimetable }) => {
+
+const AbbreviatedTeacherTimetable = ({ weekTimetable }) => {
   const weeklyscheduleHeader = weekTimetable?.weekly_schedule_header || [];
-  const studentTimetableBody = weekTimetable?.condensed_student_timetable || [];
-const {formatTime}=useAuth()
+  const teacherTimetableBody = weekTimetable?.condensed_teacher_timetable || [];
+  const {formatTime}=useAuth()
+
   return (
     <div className=" bg-slate-200 shadow-lg rounded-xl overflow-x-auto">
       <table className="w-full border-separate border-spacing-0 rounded-xl overflow-hidden">
@@ -12,7 +14,7 @@ const {formatTime}=useAuth()
         <thead>
           <tr>
             <th className="border border-gray-300 bg-blue-600 text-white text-lg font-bold p-3 rounded-tl-xl">
-              Classrooms
+              Teachers
             </th>
             {weeklyscheduleHeader?.map((weekly_schedule, dayIndex) => (
               <React.Fragment key={weekly_schedule.day}>
@@ -71,17 +73,24 @@ const {formatTime}=useAuth()
 
         {/* Timetable Rows */}
         <tbody>
-          {studentTimetableBody.map((classroomData, rowIndex) => (
+          {teacherTimetableBody.map((teacherData, rowIndex) => (
             <tr key={rowIndex}>
-              {/* Classroom identifier */}
-              <td className="border border-gray-300 font-semibold bg-blue-50 p-3 text-blue-900">
-                {classroomData?.class_details?.full_identifier}
+              {/* Classroom identifier with reduced teacher ID */}
+              <td className="border border-gray-300 font-semibold bg-blue-50 p-3 text-blue-900 text-sm">
+                <div className="text-sm">
+                  {teacherData?.teacher_details?.full_name}
+                </div>
+                <div className="text-[0.6rem] text-blue-700">
+                  {teacherData?.teacher_details?.teacher_id}
+                </div>
               </td>
 
               {/* Loop through all days and render sessions */}
-              {Object.keys(classroomData?.timetable_rows).map((day, dayIndex) => {
-                const dayInfo = weeklyscheduleHeader.find((item) => item.day === day);
-                const dayDataSessions = classroomData?.timetable_rows[day] || [];
+              {Object.keys(teacherData?.timetable_rows).map((day, dayIndex) => {
+                const dayInfo = weeklyscheduleHeader.find(
+                  (item) => item.day === day
+                );
+                const dayDataSessions = teacherData?.timetable_rows[day] || [];
 
                 const requiredLength = dayInfo?.teaching_slots || 0;
 
@@ -102,25 +111,42 @@ const {formatTime}=useAuth()
                           {sessionGrp.length === 0
                             ? null
                             : sessionGrp.map((session, idx) => (
-                                <span
+                                <div
                                   key={idx}
-                                  className={`
-                                    w-full text-center py-1 px-2 rounded 
-                                    ${session?.is_elective 
-                                      ? "bg-purple-200 text-purple-900" 
-                                      : "bg-blue-200 text-blue-900"}
-                                    text-xs font-semibold truncate 
-                                  `}
+                                  className="w-full text-center relative"
                                 >
-                                  {session?.subject}
-                                </span>
+                                  <span
+                                    className={`
+                                      w-full block py-1 px-2 rounded 
+                                      ${
+                                        session?.is_elective
+                                          ? "bg-purple-200 text-purple-900"
+                                          : "bg-blue-200 text-blue-900"
+                                      }
+                                      text-xs font-semibold truncate 
+                                      relative
+                                    `}
+                                  >
+                                    {session?.subject}
+                                    {session?.room_no && (
+                                      <span
+                                        className="absolute bottom-0 right-0 
+                                          text-[0.5rem] text-gray-500 
+                                          bg-white/70 px-1 rounded-tl"
+                                      >
+                                        {session?.room_no}
+                                      </span>
+                                    )}
+                                  </span>
+                                </div>
                               ))}
                         </div>
                       </td>
                     ))}
                     {/* Separator column */}
-                    {dayIndex < Object.keys(classroomData?.timetable_rows).length - 1 && (
-                      <td className="border border-gray-300 bg-gray-50 border-b-0 border-t-0 "><div className="w-4"></div></td>
+                    {dayIndex <
+                      Object.keys(teacherData?.timetable_rows).length - 1 && (
+                      <td className="border border-gray-300 bg-gray-50 w-2"></td>
                     )}
                   </React.Fragment>
                 );
@@ -130,8 +156,7 @@ const {formatTime}=useAuth()
         </tbody>
       </table>
     </div>
-    
   );
 };
 
-export default AbbreviatedStudentTimetable;
+export default AbbreviatedTeacherTimetable;

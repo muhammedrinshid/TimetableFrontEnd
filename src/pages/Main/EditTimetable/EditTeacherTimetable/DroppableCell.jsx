@@ -32,6 +32,7 @@ const DroppableCell = ({
   copyDetails = null, // Default value set to null
   handleOpenReplacementDialog = null,
   present = true,
+  isDaytimetable=false
 }) => {
   const [, drop] = useDrop({
     accept: "SESSION",
@@ -103,6 +104,7 @@ const DroppableCell = ({
                 copyDetails={copyDetails}
                 handleOpenReplacementDialog={handleOpenReplacementDialog}
                 present={present}
+                isDaytimetable={isDaytimetable}
               />
             ))}
           </div>

@@ -1,44 +1,40 @@
 import React, { useEffect, useState } from "react";
-import TeacherTimeTableComponent from "./TimeTableforTeacher";
-
 import { toast } from "react-toastify";
 import { useAuth } from "../../../context/Authcontext";
 import axios from "axios";
-import StudentTimeTableComponent from "./TimeTableforStudent";
 import TimetableControlPanel from "../BuildSchedule/TimetableControlPanel";
-import { Loadings } from "../../common";
-import AbbreviatedSavedTimetableViewerDialog from "./AbbreviatedSavedTimetableViewerDialog";
-import { FaFileDownload } from "react-icons/fa";
-import { Tooltip } from "recharts";
+
+import CompactViewComponent from "./CompactViewComponent";
+import DetailedViewComponent from "./DetailedViewComponent";
 
 const SavedTimeTableViewer = ({ timeTableId }) => {
   const { headers, apiDomain, user } = useAuth();
 
-  const [selectedDay, setSelectedDay] = useState("MON");
   const [isTeacherView, setIsTeacherView] = useState(true);
+  const [isCompactView, setIsCompactView] = useState(true);
   const [teacherWeekTimetable, setTeacherWeekTimetable] = useState({});
+  const [isTimetableLoading, setIsTimetableLoading] = useState(false);
+
   const [studentWeekTimetable, setStudentWeekTimetable] = useState({});
-  const [studentCondensedTimetable, setStudentCondensedTimetable] = useState(
+  const [studentTimetableDaySchedules, setStudentTimetableDaySchedules] =
+  useState([]);
+  const [teacherTimetableDaySchedules, setTeacherTimetableDaySchedules] =
+  useState([]);
+  const [condensedTimetable, setCondensedTimetable] = useState(
     {}
   );
-  const [studentTimetableDaySchedules, setStudentTimetableDaySchedules] =
-    useState([]);
-  const [teacherTimetableDaySchedules, setTeacherTimetableDaySchedules] =
-    useState([]);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [isTimetableLoading, setIsTimetableLoading] = useState(false);
-  const [
-    isAbbreviatedSavedTimetableViewerDialogIsOpen,
-    setIsAbbreviatedSavedTimetableViewerDialogIsOpen,
-  ] = useState(false);
 
-  const handleDayClick = (day) => {
-    setSelectedDay(day);
-  };
 
-  const handleViewToggle = () => {
-    setIsTeacherView(!isTeacherView);
-  };
+
+
+  useEffect(() => {
+    fetchTeacherTimetable();
+    fetchStudentTimetable();
+    fetchCondensedTimetable();
+
+  }, []);
   const fetchTeacherTimetable = async () => {
     setIsTimetableLoading(true);
     try {
@@ -82,7 +78,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
       toast.error(`Failed to load student timetable. Please try again.`);
     }
   };
-  const fetchStudentCondensedTimetable = async () => {
+  const fetchCondensedTimetable = async () => {
     try {
       const response = await axios.get(
         `${apiDomain}/api/time-table/default-student-condensed-view-week/`,
@@ -92,7 +88,7 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
       );
 
       if (response.data && response.data.timetable) {
-        setStudentCondensedTimetable(response.data.timetable);
+        setCondensedTimetable(response.data.timetable);
         toast.success(
           response.data.message || "Timetable retrieved successfully"
         );
@@ -109,28 +105,20 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
     }
   };
   // Usage in a React component
-  useEffect(() => {
-    fetchTeacherTimetable();
-    fetchStudentTimetable();
-    fetchStudentCondensedTimetable();
-  }, []);
+ 
 
-  const days = teacherTimetableDaySchedules
-    ? teacherTimetableDaySchedules.map(
-        (teacherTimetableDaySchedule) => teacherTimetableDaySchedule.day
-      )
-    : [];
-  const handleDayChange = (event) => {
-    setSelectedDay(event.target.value);
-  };
+
+
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
+  const handleTeacherOrStudentToggle = () => {
+    setIsTeacherView(!isTeacherView);
+  };
+  const handleCompactOrDetailedToggle = () => {
+    setIsCompactView(!isCompactView);
+  };
 
-  const openAbbreviateTimetableViewerDialogTimetableDialog = () =>
-    setIsAbbreviatedSavedTimetableViewerDialogIsOpen(true);
-  const closeAbbreviateTimetableViewerDialogTimetableDialog = () =>
-    setIsAbbreviatedSavedTimetableViewerDialogIsOpen(false);
 
   const handleDownloadStudentTimetable = async (isPdf = false) => {
     try {
@@ -147,10 +135,34 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute(
-        "download",
-        `${user.name}student_timetable.${file_type}` // Remove the trailing slash
+      link.setAttribute("download", `student_timetable.${file_type}`);
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast.success("Timetable downloaded successfully!");
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast.error("Failed to download timetable. Please try again.");
+    }
+  };
+  const handleDownloadTeacherTimetable = async (isPdf = false) => {
+    try {
+      const file_type = isPdf ? "pdf" : "xlsx";
+      const response = await axios.get(
+        `${apiDomain}/api/time-table/download-whole-teacher-timetable/?file_type=${file_type}`,
+        {
+          headers,
+          responseType: "blob",
+          // params: { format },
+        }
       );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `student_timetable.${file_type}`);
 
       document.body.appendChild(link);
       link.click();
@@ -165,71 +177,40 @@ const SavedTimeTableViewer = ({ timeTableId }) => {
   return (
     <div className="mt-8">
       <TimetableControlPanel
-        selectedDay={selectedDay}
-        days={days}
-        handleDayChange={handleDayChange}
         searchTerm={searchTerm}
         handleSearch={handleSearch}
         isTeacherView={isTeacherView}
-        handleViewToggle={handleViewToggle}
+        handleViewToggle={handleCompactOrDetailedToggle}
         timeTableId={timeTableId}
+        isCompactView={isCompactView}
+        downloadWholeStucdentWeekTimetableExcel={()=>handleDownloadStudentTimetable(false)}
+        downloadWholeStudentWeekTimetablePdf={()=>handleDownloadStudentTimetable(true)}
+        downloadWholeTeacherWeekTimetableExcel={()=>handleDownloadTeacherTimetable(false)}
+        downloadWholeTeacherWeekTimetablePdf={()=>handleDownloadTeacherTimetable(true)}
       />
-      <button             onClick={handleDownloadStudentTimetable}
-      >
-        View Abbreviated Timetable
-      </button>
-        <Tooltip title={"Download Time Table File"}>
-          <button
-            onClick={handleDownloadStudentTimetable}
-            className="  p-4 bg-primary hover:bg-primary-dark bg-light-primary rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-            aria-label="Add new subject"
-          >
-            <FaFileDownload className="w-6 h-6 text-white" />
-            dfa
-          </button>
-        </Tooltip>
 
-      <div className="w-full flex justify-center mb-4">
-        {days.map((day) => (
-          <button
-            key={day}
-            onClick={() => handleDayClick(day)}
-            className={`px-4 py-2 text-sm font-medium border ${
-              selectedDay === day
-                ? "bg-light-primaryShades-800 text-white border-light-primaryShades-600 dark:border-dark-primaryShades-700 hover:bg-light-primaryShades-700 dark:bg-dark-primaryShades-700"
-                : "bg-white text-light-primaryShades-800 border-light-primaryShades-300 dark:border-dark-primaryShades-800 hover:bg-light-primaryShades-400 hover:text-blue-800 dark:text-dark-primaryShades-200 dark:bg-dark-primaryShades-600"
-            } focus:z-10 focus:ring-2 focus:ring-light-primaryShades-500 focus:bg-light-primaryShades-500 focus:text-white
-          first:rounded-l-lg last:rounded-r-lg
-          transition-all duration-300`}
-          >
-            {day}
-          </button>
-        ))}
-      </div>
-      {isTimetableLoading ? (
-        <Loadings.ThemedMiniLoader />
-      ) : isTeacherView ? (
-        <TeacherTimeTableComponent
-          teacherTimetable={teacherWeekTimetable?.[selectedDay] || []}
-          searchTerm={searchTerm}
-          teacherTimetableDaySchedules={teacherTimetableDaySchedules?.find(
-            (daySchedule) => daySchedule.day == selectedDay
-          )}
+      { isCompactView ? (
+        <CompactViewComponent
+        condensedTimetable={condensedTimetable}
+          isTeacherView={isTeacherView}
+          teacherViewToggle={handleTeacherOrStudentToggle}
+
         />
       ) : (
-        <StudentTimeTableComponent
-          studentTimeTable={studentWeekTimetable?.[selectedDay] || []}
+        <DetailedViewComponent
+          isTeacherView={isTeacherView}
           searchTerm={searchTerm}
-          studentTimetableDaySchedules={studentTimetableDaySchedules?.find(
-            (daySchedule) => daySchedule.day == selectedDay
-          )}
+          teacherViewToggle={handleTeacherOrStudentToggle}
+          studentTimetableDaySchedules={studentTimetableDaySchedules}
+          studentWeekTimetable={studentWeekTimetable}
+          teacherTimetableDaySchedules={teacherTimetableDaySchedules}
+          teacherWeekTimetable={teacherWeekTimetable}
+          isTimetableLoading={isTimetableLoading}
+
+
         />
       )}
-      <AbbreviatedSavedTimetableViewerDialog
-        open={isAbbreviatedSavedTimetableViewerDialogIsOpen}
-        onClose={closeAbbreviateTimetableViewerDialogTimetableDialog}
-        studentWeekTimetable={studentCondensedTimetable}
-      ></AbbreviatedSavedTimetableViewerDialog>
+
     </div>
   );
 };

@@ -18,6 +18,7 @@ import EditTimetable from "./pages/Main/EditTimetable";
 import { ThemeProvider } from "@mui/material";
 import { Dashboard } from "@mui/icons-material";
 import ScheduleAnalytics from "./pages/Main/ScheduleAnalytics";
+import WorkloadAndLeaveAnalysis from "./pages/Main/WorkloadAndLeaveAnalysis";
 function App() {
   return (
     <div className="w-full min-h-screen dark:bg-light-background bg-[#F8F7FC] flex items-center justify-center font-Roboto max-h-screen">
@@ -88,6 +89,10 @@ function App() {
                   <Route
                     path="edit-timetable/:viewType"
                     element={<EditTimetable />}
+                  />{" "}
+                  <Route
+                    path="workload-leave-analysis"
+                    element={<WorkloadAndLeaveAnalysis />}
                   />{" "}
                   <Route path="edit-timetable" element={<EditTimetable />} />{" "}
                 </Route>

@@ -62,6 +62,7 @@ const DraggableTeacherTimetable = ({
   customTimetableIds=null,
   refetchStudentsTimetable=null,
   refetchTeacherTimetable=null,
+  isDaytimetable=false
 }) => {
   const { apiDomain, headers } = useAuth();
   const [columns, setColumns] = useState(
@@ -386,6 +387,7 @@ const DraggableTeacherTimetable = ({
                     copyDetails={copyDetails}
                     handleOpenReplacementDialog={handleOpenReplacementDialog}
                     present={teacher?.instructor?.present?.[columnIndex]}
+                    isDaytimetable={isDaytimetable}
                   />
                 ))}
               </tr>

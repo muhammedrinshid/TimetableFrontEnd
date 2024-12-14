@@ -946,3 +946,36 @@
 
 ]
 
+// "condensed_timetable": [
+//     {
+//         "taecher_details": {
+//             "name": "10",
+//             "surname": "A",
+//             "teacher_id": "10A"
+//         },
+//         "timetable_rows": {
+//             "FRI": [
+//                 [
+//                     {
+//                         "subject": "Eng",
+//                         "is_elective": false,
+//                         "room_no":,
+//                     }
+//                 ],
+//                 [
+//                     {
+//                         "subject": "Eng",
+//                         "is_elective": true,                        "room_no":,
+
+//                     },
+//                     {
+//                         "subject": "Spa",
+//                         "is_elective": true,                        "room_no":,
+
+//                     },
+//                     {
+//                         "subject": "Fre",
+//                         "is_elective": true ,                         "room_no":,
+
+//                     }
+//                 ],

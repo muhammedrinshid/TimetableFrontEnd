@@ -10,7 +10,7 @@ const TeacherTimeTableComponent = ({
   searchTerm,
   teacherTimetableDaySchedules,
 }) => {
-  const { apiDomain, NumberOfPeriodsInAday } = useAuth();
+  const { formatTime } = useAuth();
   const [filteredTimetable, setFilteredTimetable] = useState(teacherTimetable);
   const teacherRow1 = [
     "Instructor",
@@ -101,17 +101,34 @@ const TeacherTimeTableComponent = ({
           <table className="w-full border-collapse">
             <thead className="sticky top-0">
               <tr className="sticky left-0 top-0 z-20 bg-gradient-to-r from-indigo-500 to-purple-500 text-white dark:from-gray-800 dark:to-gray-500 dark:text-gray-200">
-                <th className="w-[160px] min-w-[160px] p-4 text-left font-semibold border-r sticky left-0 z-30 ">
-                  {teacherRow1[0]}
+                <th className="w-[160px] min-w-[160px] p-4 text-left font-semibold border-r sticky left-0 z-30">
+                  {"Instructor"}
                 </th>
-                {teacherRow1.slice(1).map((header, index) => (
-                  <th
-                    key={index}
-                    className="w-[140pxpx] min-w-[140px] p-4 text-left font-semibold border-r last:border-r-0"
-                  >
-                    {header}
-                  </th>
-                ))}
+                {Array(teacherTimetableDaySchedules?.teaching_slots)
+                  .fill()
+                  ?.map((_, index) => {
+                    const period = teacherTimetableDaySchedules?.periods[index];
+
+                    return (
+                      <th
+                        key={index}
+                        className="w-[140px] min-w-[140px] p-4 text-left font-semibold border-r last:border-r-0"
+                      >
+                        <div>
+                          <span className="text-md text-gray-300">
+                            {`Session ${index + 1}`}
+                          </span>
+                          <br />
+                          {period && (
+                            <span className="text-vs ">
+                              {formatTime(period.start_time)} -{" "}
+                              {formatTime(period.end_time)}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
               </tr>
             </thead>
             <tbody>
