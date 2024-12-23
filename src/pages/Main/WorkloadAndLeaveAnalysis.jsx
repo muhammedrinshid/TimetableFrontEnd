@@ -11,7 +11,7 @@ import {
 } from "../../components/common";
 import { Avatar } from "@mui/material";
 import LeavesExtraLoadLineChart from "./WorkloadAndLeaveAnalysis/LeavesExtraLoadLineChart";
-import HeatmapWithTooltip from "./WorkloadAndLeaveAnalysis/HeatmapWithTooltip";
+import HeatmapCalendar from "./WorkloadAndLeaveAnalysis/HeatmapCalendar";
 const WorkloadAndLeaveAnalysis = () => {
   const { apiDomain } = useAuth();
 
@@ -63,8 +63,11 @@ const WorkloadAndLeaveAnalysis = () => {
             {/* <LabelDisplayer data={selectedTeacher.surname} label={"Surname"} /> */}
           </div>
         </div>
-        <LeavesExtraLoadLineChart/>
-        {/* <HeatmapWithTooltip/> */}
+        <LeavesExtraLoadLineChart />
+        <div className="bg-light-background1 w-full h-full shadow-custom-4 rounded-lg">
+        <HeatmapCalendar  />
+
+        </div>
       </div>
     </div>
   );

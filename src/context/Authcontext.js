@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import  { jwtDecode } from "jwt-decode";
+
+import { toast } from "react-toastify";
 const AuthContext = createContext();
 
 export const useAuth = () => {
@@ -99,6 +101,49 @@ export const AuthProvider = ({ children }) => {
      document.documentElement.removeAttribute("data-theme");
    }
  }, [darkMode]);
+ const handleError = (err) => {
+  // Ensure the error object has a response and validate its structure
+  if (err.response && typeof err.response === 'object') {
+    console.error("Response error:", err.response.status, err.response.data);
+
+    switch (err.response.status) {
+      case 400:
+        toast.error("Bad Request: Please check your input.");
+        break;
+      case 401:
+        toast.error("Unauthorized access: You need to log in.");
+        logoutUser();
+        break;
+      case 403:
+        toast.error("Forbidden: You don't have permission to access this resource.");
+        break;
+      case 404:
+        toast.error("Not Found: The requested resource could not be found.");
+        break;
+      case 500:
+        toast.error("Server Error: Something went wrong on the server.");
+        break;
+      case 503:
+        toast.error("Service Unavailable: The server is temporarily down.");
+        break;
+      default:
+        toast.error(`Error occurred: ${err.response.data?.message || "Unexpected error"}`);
+        break;
+    }
+  }
+  // Handle errors related to the request (no response from server)
+  else if (err.request && typeof err.request === 'object') {
+    console.error("No response received:", err.request);
+    toast.error("Error occurred: No response from server. Please check your connection.");
+  }
+  // If error does not match expected structure, log and handle it
+  else {
+    console.error("Unexpected Error:", err);
+    toast.error(`Error occurred: ${err.message || "Unknown error"}`);
+  }
+};
+
+
 
   const contextData = {
     user:user,
@@ -136,7 +181,11 @@ export const AuthProvider = ({ children }) => {
     },
     formatTime:formatTime,
     darkMode:darkMode,
-    toggleTheme:toggleTheme
+    toggleTheme:toggleTheme,
+
+
+  handleError:handleError,
+
 
   };
 

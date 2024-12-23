@@ -19,10 +19,11 @@ import { ThemeProvider } from "@mui/material";
 import { Dashboard } from "@mui/icons-material";
 import ScheduleAnalytics from "./pages/Main/ScheduleAnalytics";
 import WorkloadAndLeaveAnalysis from "./pages/Main/WorkloadAndLeaveAnalysis";
+import ElectiveGroupManager from "./pages/Main/ElectiveGroupManager";
 function App() {
   return (
     <div className="w-full min-h-screen dark:bg-light-background bg-[#F8F7FC] flex items-center justify-center font-Roboto max-h-screen">
-  
+
       <ToastContainer
         position="bottom-right"
         autoClose={2000}
@@ -94,7 +95,13 @@ function App() {
                     path="workload-leave-analysis"
                     element={<WorkloadAndLeaveAnalysis />}
                   />{" "}
-                  <Route path="edit-timetable" element={<EditTimetable />} />{" "}
+                  <Route
+                    path="elective-group-manager"
+                    element={<ElectiveGroupManager />}
+                  />{" "}
+                  <Route path="edit-timetable"
+                    element={<EditTimetable       />}
+                  />{" "}
                 </Route>
               </Route>
               <Route path="login" element={<Login />} />

@@ -61,7 +61,6 @@ const DraggableSession = ({
   isDaytimetable=false
 }) => {
 
-console.log("is day timetable id",isDaytimetable)
 
 
   const { darkMode, apiDomain } = useAuth();

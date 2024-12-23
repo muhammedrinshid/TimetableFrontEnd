@@ -198,6 +198,7 @@ const StudentDraggableTimetable = ({
   };
 
   return (
+    
     <DndProvider backend={HTML5Backend}>
       <div className="shadow-xl rounded-lg bg-white dark:bg-gray-800 overflow-auto max-h-full w-full">
         <table className="border-collapse w-full h-full">

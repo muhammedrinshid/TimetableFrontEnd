@@ -198,6 +198,13 @@ html, body {
   @apply cursor-not-allowed bg-gradient-to-r from-gray-100 to-gray-200 text-gray-400 dark:from-gray-700 dark:to-gray-800 dark:text-gray-500 shadow-none pointer-events-none;
 }
 
+
+
+/* In your custom CSS file (e.g., styles.css) */
+.rounded-irregular {
+  @apply rounded-[1.6rem] rounded-tl-[1.3rem] rounded-br-[2rem];
+}
+
 /* Button sizes */
 .btn-sm { @apply px-3 py-2 text-sm; }
 .btn-lg { @apply px-6 py-3 text-base; }
@@ -226,4 +233,35 @@ html, body {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(205, 204, 224, 0.6) #f1f1f1;
+}
+
+
+
+
+
+
+
+
+
+
+
+.color-empty {
+  fill: #ebedf0; /* Light gray for no data */
+}
+.color-scale-1 {
+  fill: #c6e48b; /* Light green for low intensity */
+}
+.color-scale-2 {
+  fill: #7bc96f; /* Medium green for moderate intensity */
+}
+.color-scale-3 {
+  fill: #239a3b; /* Dark green for high intensity */
+}
+.heatmap-container {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  max-width: 600px;
+  margin: 0 auto;
 }

@@ -152,7 +152,6 @@ const ClassList = ({
   };
   const handleGradeChange = (value) => {
     setWhichGradeToDisplay(value);
-    console.log(value);
   };
 
   // temprary function mock the add new divison

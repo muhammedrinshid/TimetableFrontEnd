@@ -20,6 +20,7 @@ import {
   MdAutorenew, // Importing new icon for Build Schedule
   MdWorkspacesOutline, // Importing new icon for workload analysis
 } from "react-icons/md"; // Importing new icons
+import { FaRegObjectGroup } from "react-icons/fa6";
 
 const menuData = [
   {
@@ -66,6 +67,11 @@ const menuData = [
     name:  "Leave Analysis", // New menu item
     icon: <MdWorkspacesOutline />, // Icon for workload and leave analysis
     path: "/workload-leave-analysis", // Route for the new page
+  },
+  {
+    name:  "Elective Groups", // New menu item
+    icon: <FaRegObjectGroup />, // Icon for workload and leave analysis
+    path: "/elective-group-manager", // Route for the new page
   },
 ];
 

@@ -5,11 +5,10 @@ import InfoIcon from "@mui/icons-material/Info";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/Authcontext";
 import { motion } from "framer-motion";
-
 const DirectivesConfiguration = () => {
   const [directives, setDirectives] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const { apiDomain, headers, logoutUser } = useAuth();
+  const { apiDomain, headers,handleError } = useAuth();
   const directiveDescriptions = {
     tutor_free_period_constraint: "Ensures atleast one free period in a day",
     elective_group_timeslot:
@@ -77,25 +76,6 @@ const DirectivesConfiguration = () => {
     }
   };
 
-  const handleError = (err) => {
-    if (err.response) {
-      console.error("Response error:", err.response.status, err.response.data);
-      if (err.response.status === 401) {
-        toast.error("Error occurred: Unauthorized access");
-        logoutUser();
-      } else {
-        toast.error(
-          `Error occurred: ${err.response.data?.message || "Unexpected error"}`
-        );
-      }
-    } else if (err.request) {
-      console.error("No response received:", err.request);
-      toast.error("Error occurred: No response from server");
-    } else {
-      console.error("Error", err.message);
-      toast.error(`Error occurred: ${err.message}`);
-    }
-  };
 
   if (isLoading) {
     return (
