@@ -46,10 +46,7 @@ module.exports = {
         "zoom-in": "zoom-in 1s ease-out",
         "blink-shadow": "blink-shadow 1s infinite",
       },
-      backgroundImage: {
-        "my-gradient":
-          "linear-gradient(102deg, rgba(3, 5, 29, 0.85) 2.11%, rgba(255, 0, 0, 0.85) 100%)",
-      },
+      
       boxShadow: {
         "custom-1": "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
         "custom-2": "rgba(0, 0, 0, 0.16) 0px 1px 4px",
@@ -66,7 +63,7 @@ module.exports = {
         "custom-9":
           "rgba(17, 17, 26, 0.05) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px",
         "custom-10": "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px",
-        bottom1: "rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;",
+        bottom1: "rgba(33, 35, 38, 0.1) 0px 10px 10px -10px",
         "custom-11":
           "rgba(255, 165, 0, 0.25) 0px 54px 55px,rgba(255, 165, 0, 0.12) 0px -12px 30px, rgba(255, 165, 0, 0.12) 0px 4px 6px, rgba(255, 165, 0, 0.17) 0px 12px 13px, rgba(255, 165, 0, 0.09) 0px -3px 5px",
       },
@@ -160,10 +157,7 @@ module.exports = {
         skyblue: "#009ee3",
       },
 
-      backgroundImage: {
-        hero: "url('assets/images/grid1.png')",
-        iconsBackground: "url('assets/images/icon bg 1.jpg')",
-      },
+    
     },
     screens: {
       sm: "640px", // Small screens and up
@@ -175,5 +169,8 @@ module.exports = {
       "4xl": "2560px", // 4XL screens and up (common for large displays)
     },
   },
-  plugins: [],
+  plugins: [  require('@tailwindcss/forms'),
+    require('tailwindcss'),
+    require('autoprefixer'),
+  ],
 };

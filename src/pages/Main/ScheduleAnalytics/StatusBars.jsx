@@ -6,11 +6,9 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
-import { ResponsiveBar } from "@nivo/bar";
 import { Avatar } from "@mui/material";
 import { useAuth } from "../../../context/Authcontext";
 import { FaClock, FaCheckCircle, FaTasks } from "react-icons/fa";
-import EmptyDefaultTimetableState from "../../../components/empty state management components/EmptyDefaultTimetableState";
 
 // Metrics Card Component (unchanged)
 const MetricsCard = ({ title, value, icon: Icon, trend, isLoading }) => (
@@ -167,7 +165,7 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
         <div className="p-2 py-10">
           <div className="w-full h-full overflyau overflow-scroll">
             <div style={{ height: "500px", minWidth: "800px" }}>
-              <ResponsiveBar
+              {/* <ResponsiveBar
                 data={chartData}
                 keys={[
                   "extraLoads",
@@ -283,7 +281,7 @@ const StatusBars = ({ teachersWeekAnalytics }) => {
                 role="application"
                 ariaLabel="Teacher sessions chart"
                 motionConfig="wobbly"
-              />
+              /> */}
             </div>
           </div>
         </div>

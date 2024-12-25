@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { ResponsivePie } from '@nivo/pie';
 import { useAuth } from '../../../context/Authcontext';
 import { Avatar } from '@mui/material';
 import { 
@@ -128,7 +127,7 @@ const TeacherStatusList = ({ teachersWeekAnalytics }) => {
           </div>
           
           <div className="h-40 relative">
-            <ResponsivePie
+            {/* <ResponsivePie
               data={[
                 {
                   id: 'Working',
@@ -185,7 +184,7 @@ const TeacherStatusList = ({ teachersWeekAnalytics }) => {
                   </text>
                 </g>
               )}
-            />
+            /> */}
             
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <Avatar

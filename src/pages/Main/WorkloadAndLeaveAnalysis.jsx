@@ -19,7 +19,7 @@ const WorkloadAndLeaveAnalysis = () => {
   return (
     <div className="p-4  grid  grid-cols-[6fr_4fr] gap-2 h-full">
       <div className="col-start-1 col-end-2 max-h-full     max-w-full  overflow-y-auto ">
-        <TeachersActivityStats setSelectedTeacher={setSelectedTeacher} />
+        {/* <TeachersActivityStats setSelectedTeacher={setSelectedTeacher} /> */}
       </div>
       <div className="col-start-2 col-end-3     max-h-full overflow-y-auto ml-6 flex flex-col gap-3">
         <div className="flex flex-row pt-6 pl-1 border-b pb-5 bg-light-background1  rounded-lg shadow-custom-4">
@@ -63,9 +63,9 @@ const WorkloadAndLeaveAnalysis = () => {
             {/* <LabelDisplayer data={selectedTeacher.surname} label={"Surname"} /> */}
           </div>
         </div>
-        <LeavesExtraLoadLineChart />
+        {/* <LeavesExtraLoadLineChart /> */}
         <div className="bg-light-background1 w-full h-full shadow-custom-4 rounded-lg">
-        <HeatmapCalendar  />
+        {/* <HeatmapCalendar  /> */}
 
         </div>
       </div>
